@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="refresh" content="5">
+<title>Trello Despacho — Taques Advogados</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f0eb; color: #223631; }
+.header { background: #223631; color: #f5f0eb; padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; }
+.header h1 { font-size: 18px; font-weight: 600; }
+.header .sub { font-size: 12px; opacity: 0.7; }
+.counters { display: flex; gap: 12px; padding: 16px 32px; background: #fff; border-bottom: 1px solid #e5e0db; }
+.counter { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; }
+.counter .dot { width: 10px; height: 10px; border-radius: 50%; }
+.main { max-width: 900px; margin: 24px auto; padding: 0 16px; }
+.section-title { font-size: 14px; font-weight: 700; margin: 24px 0 12px; padding-bottom: 8px; border-bottom: 2px solid #223631; display: flex; align-items: center; gap: 8px; }
+.card { background: #fff; border-radius: 8px; border-left: 4px solid; margin-bottom: 8px; padding: 14px 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.card-num { font-weight: 800; font-size: 14px; }
+.card-prio { font-size: 11px; font-weight: 700; color: #fff; padding: 2px 8px; border-radius: 4px; }
+.card-name { font-size: 14px; font-weight: 600; flex: 1; }
+.card-meta { font-size: 11px; color: #666; margin-bottom: 4px; }
+.card-text { font-size: 12px; color: #444; background: #f9f7f5; padding: 8px 10px; border-radius: 4px; margin-top: 6px; }
+.card-badges { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+.badge { font-size: 10px; padding: 2px 8px; border-radius: 10px; background: #eee; color: #555; }
+.card-status { font-size: 11px; padding: 3px 10px; border-radius: 12px; background: #e8f5e9; color: #2e7d32; font-weight: 500; }
+.reactions-section { background: #fafafa; border-radius: 8px; padding: 16px; margin-top: 8px; }
+.reaction-item { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 12px; }
+.reaction-item:last-child { border-bottom: none; }
+.reaction-emoji { font-size: 16px; }
+.reaction-card { font-weight: 500; flex: 1; }
+.reaction-board { color: #888; font-size: 11px; }
+.footer { text-align: center; padding: 24px; font-size: 11px; color: #999; }
+.processed { opacity: 0.5; }
+</style>
+</head>
+<body>
+<div class="header">
+  <div>
+    <h1>Trello Despacho — Secretária Executiva</h1>
+    <div class="sub">Gabinete do CEO · Taques Advogados · 06/04/2026 12:23</div>
+  </div>
+  <div style="text-align:right">
+    <div style="font-size:24px;font-weight:800">23</div>
+    <div class="sub">cards acionáveis</div>
+  </div>
+</div>
+
+<div class="counters">
+  <div class="counter"><span class="dot" style="background:#ff0000"></span>P1: 5</div>
+  <div class="counter"><span class="dot" style="background:#ffc000"></span>P2: 4</div>
+  <div class="counter"><span class="dot" style="background:#0078d4"></span>P3: 14</div>
+  <div class="counter"><span class="dot" style="background:#808080"></span>P4: 0</div>
+  <div class="counter" style="margin-left:auto;color:#999">👍 9 reações (à parte)</div>
+</div>
+
+<div class="main">
+<div class="section-title"><span style="color:#ff0000">P1 — Urgente</span></div>
+<div>
+<div class="card processed" style="border-left-color:#ff0000; background:#fff5f5">
+  <div class="card-header">
+    <span class="card-num" style="color:#ff0000">#1</span>
+    <span class="card-prio" style="background:#ff0000">P1</span>
+    <span class="card-name">CLÁUDIA STAFFEN - Retornar WhatsApp</span>
+    <span class="card-status" style="background:#e0f2e0;color:#1b5e20">Processado ✓</span>
+  </div>
+  <div class="card-meta">TAREFAS - TAQUES · Berna Bobko · 2026-03-31</div>
+  <div class="card-text">@lenontaques1 se possível retornar para Claudia amanhã</div>
+  <div class="card-badges"><span class="badge">Menção</span></div>
+</div>
+<div class="card " style="border-left-color:#ff0000; background:#fff5f5">
+  <div class="card-header">
+    <span class="card-num" style="color:#ff0000">#2</span>
+    <span class="card-prio" style="background:#ff0000">P1</span>
+    <span class="card-name">FAURI BATISTA - Fechar e assinar contrato (aguardando audiência)</span>
+    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+  </div>
+  <div class="card-meta">TAREFAS - TAQUES · Berna Bobko, Gilberto Taques · 2026-04-05</div>
+  <div class="card-text">Ok, eu preciso que vocês agora juntem esse contrato assinado, por favor, em PDF.
+
+@bernabobko @gibataques</div>
+  <div class="card-badges"><span class="badge">Anexo</span><span class="badge">Menção</span></div>
+</div>
+<div class="card " style="border-left-color:#ff0000; background:#fff5f5">
+  <div class="card-header">
+    <span class="card-num" style="color:#ff0000">#3</span>
+    <span class="card-prio" style="background:#ff0000">P1</span>
+    <span class="card-name">MARCELO PERES + FAURI BATISTA - Reunião</span>
+    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+  </div>
+  <div class="card-meta">TAREFAS - TAQUES · Berna Bobko · 2026-04-06</div>
+  <div class="card-text">@lenontaques1 Marcelo gostaria de fazer a reunião por video conferencia, tudo bem pra voce?</div>
+  <div class="card-badges"><span class="badge">Menção</span></div>
+</div>
+<div class="card " style="border-left-color:#ff0000; background:#fff5f5">
+  <div class="card-header">
+    <span class="card-num" style="color:#ff0000">#4</span>
+    <span class="card-prio" style="background:#ff0000">P1</span>
+    <span class="card-name">Responder Márcio Fabiano Helbing: quantas parcelas ainda faltam?</span>
+    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+  </div>
+  <div class="card-meta">TAREFAS - TAQUES · Berna Bobko · 2026-04-06</div>
+  <div class="card-text">@lenontaques1 Marcio gostaria de agendar uma reunião. Você teria disponibilidade 07/04/2026 (terça-feira) 14h15min? Por ...</div>
+  <div class="card-badges"><span class="badge">Menção</span></div>
+</div>
+<div class="card " style="border-left-color:#ff0000; background:#fff5f5">
+  <div class="card-header">
+    <span class="card-num" style="color:#ff0000">#5</span>
+    <span class="card-prio" style="background:#ff0000">P1</span>
+    <span class="card-name">Fazer contrato - Vitor Krzwiski</span>
+    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+  </div>
+  <div class="card-meta">TAREFAS - TAQUES · Berna Bobko · 2026-04-06</div>
+  <div class="card-text">@lenontaques1 preciso do boleto do Sr Vitor com vencimento 10/04</div>
+  <div class="card-badges"><span class="badge">Menção</span></div>
+</div>
+</div>
+<div class="section-title"><span style="color:#ffc000">P2 — Atenção</span></div>
+<div>
+<div class="card " style="border-left-color:#ffc000; background:#fffbeb">
+  <div class="card-header">
+    <span class="card-num" style="color:#ffc000">#6</span>
+    <span class="card-prio" style="background:#ffc000">P2</span>
+    <span class="card-name">HILSON LUCACHINSKI - Fazer vistoria na propriedade e elaborar laudos de frustração de safra e capacidade de pagamento</span>
+    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+  </div>
+  <div class="card-meta">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Douglas Prado Marcos · 2026-04-05</div>
+  <div class="card-text">@lenontaques1 @flavianafriedrich @bernabobko @gibataques estamos organizando para ir na quarta feira pela manhã (viajo n...</div>
+  <div class="card-badges"><span class="badge">Menção</span></div>
+</div>
+<div class="card " style="border-left-color:#ffc000; background:#fffbeb">
+  <div class="card-header">
+    <span class="card-num" style="color:#ffc000">#7</span>
+    <span class="card-prio" style="background:#ffc000">P2</span>
+    <span class="card-name">🇩🇪 CAMPOS DE JÚLIO/MT - Possível viagem</span>
+    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+  </div>
+  <div class="card-meta">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Douglas Prado Marcos · 2026-04-05</div>
+  <div class="card-text">@lenontaques1 @flavianafriedrich estamos planejando a viagem para o dia 23/04 as 3 horas da manhã, para retorno no dia 2...</div>
+  <div class="card-badges"><span class="badge">Menção</span></div>
+</div>
+<div class="card " style="border-left-color:#ffc000; background:#fffbeb">
+  <div class="card-header">
+    <span class="card-num" style="color:#ffc000">#8</span>
+    <span class="card-prio" style="background:#ffc000">P2</span>
+    <span class="card-name">Taques x Bradesco</span>
+    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+  </div>
+  <div class="card-meta">TAREFAS - TAQUES · Gilberto Taques · 2026-04-05</div>
+  <div class="card-text">@lenontaques1 estou criando esse canal para tratarmos exclusivamente do processo maior do Bradesco contra Taques, Gilber...</div>
+  <div class="card-badges"><span class="badge">Menção</span><span class="badge">Adicionado</span></div>
+</div>
+<div class="card " style="border-left-color:#ffc000; background:#fffbeb">
+  <div class="card-header">
+    <span class="card-num" style="color:#ffc000">#9</span>
+    <span class="card-prio" style="background:#ffc000">P2</span>
+    <span class="card-name">UNC X Gilberto</span>
+    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+  </div>
+  <div class="card-meta">TAREFAS - TAQUES · Gilberto Taques · 2026-04-05</div>
+  <div class="card-text">@lenontaques1 abri esse canal para tratarmos da execução UNC X GIBERTO, autos **5001674-48.2026.8.24.0041**, informo que...</div>
+  <div class="card-badges"><span class="badge">Menção</span><span class="badge">Adicionado</span></div>
+</div>
+</div>
+<div class="section-title"><span style="color:#0078d4">P3 — Rotina</span></div>
+<div>
+<div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
+  <div class="card-header">
+    <span class="card-num" style="color:#0078d4">#10</span>
+    <span class="card-prio" style="background:#0078d4">P3</span>
+    <span class="card-name">ELIEZER/PATRICIA — Elaborar PRAD — 3,61 ha (Bugre)</span>
+    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+  </div>
+  <div class="card-meta">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Larissa Baptista, Flaviana Friedrich · 2026-03-31</div>
+  <div class="card-text">@lenontaques1 Aqui nesse o PRAD vai ser em nome do Fernando?</div>
+  <div class="card-badges"><span class="badge">Menção</span></div>
+</div>
+<div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
+  <div class="card-header">
+    <span class="card-num" style="color:#0078d4">#11</span>
+    <span class="card-prio" style="background:#0078d4">P3</span>
+    <span class="card-name">ELIEZER/PATRICIA — Elaborar PRAD — 2,6 ha (Engenho Queimado)</span>
+    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+  </div>
+  <div class="card-meta">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Flaviana Friedrich · 2026-04-01</div>
+  <div class="card-text">@lenontaques1 sim Dr Lenon vamos fazer</div>
+  <div class="card-badges"><span class="badge">Menção</span></div>
+</div>
+<div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
+  <div class="card-header">
+    <span class="card-num" style="color:#0078d4">#12</span>
+    <span class="card-prio" style="background:#0078d4">P3</span>
+    <span class="card-name">FÁBIO RODRIGO NEVES - Avaliar possível recurso administrativo</span>
+    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+  </div>
+  <div class="card-meta">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Douglas Prado Marcos, Flaviana Friedrich · 2026-04-01</div>
+  <div class="card-text">@flavianafriedrich favor entrar em contato com o cliente Fábio Rodrigo Neves para informar a movimentação do caso.</div>
+  <div class="card-badges"><span class="badge">Menção</span></div>
+</div>
+<div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
+  <div class="card-header">
+    <span class="card-num" style="color:#0078d4">#13</span>
+    <span class="card-prio" style="background:#0078d4">P3</span>
+    <span class="card-name">FAURI BATISTA E CIA LTDA X ELISANGELA RODRIGUES AMARAL - Assinatura do contrato</span>
+    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+  </div>
+  <div class="card-meta">TAREFAS - TAQUES · Berna Bobko · 2026-04-01</div>
+  <div class="card-badges"><span class="badge">Anexo</span></div>
+</div>
+<div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
+  <div class="card-header">
+    <span class="card-num" style="color:#0078d4">#14</span>
+    <span class="card-prio" style="background:#0078d4">P3</span>
+    <span class="card-name">JOSMAR MILCHESKI - MONTANA - Emissão do documento - Acompanhar com despachante</span>
+    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+  </div>
+  <div class="card-meta">TAREFAS - TAQUES · Berna Bobko · 2026-04-01</div>
+  <div class="card-text">@lenontaques1 em relação ao documento da montana o mesmo já está disponível aqui no escritório, assim sendo essa etapa p...</div>
+  <div class="card-badges"><span class="badge">Menção</span></div>
+</div>
+<div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
+  <div class="card-header">
+    <span class="card-num" style="color:#0078d4">#15</span>
+    <span class="card-prio" style="background:#0078d4">P3</span>
+    <span class="card-name">RICARDO TEIXEIRA - Contrato Amarok</span>
+    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+  </div>
+  <div class="card-meta">TAREFAS - TAQUES · Gilberto Taques · 2026-04-01</div>
+  <div class="card-text">@bernabobko Amanhã precisamos focar no restante das informações no que for possível para resolvermos a questão dessa ama...</div>
+  <div class="card-badges"><span class="badge">Menção</span></div>
+</div>
+<div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
+  <div class="card-header">
+    <span class="card-num" style="color:#0078d4">#16</span>
+    <span class="card-prio" style="background:#0078d4">P3</span>
+    <span class="card-name">🇩🇪 SCHMIDMEIER - DISTRITO 2022 - Protocolar petições + laudo de monitoramento do PRAD</span>
+    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+  </div>
+  <div class="card-meta">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Douglas Prado Marcos, Larissa Baptista, Flaviana Friedrich · 2026-04-02</div>
+  <div class="card-text">[https://drive.google.com/drive/folders/1Xly6yyadsutG_QJp_LWaNvy2w6OWknst?usp=drive_link](https://drive.google.com/drive...</div>
+  <div class="card-badges"><span class="badge">Anexo</span><span class="badge">Menção</span><span class="badge">Comentário</span></div>
+</div>
+<div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
+  <div class="card-header">
+    <span class="card-num" style="color:#0078d4">#17</span>
+    <span class="card-prio" style="background:#0078d4">P3</span>
+    <span class="card-name">🇩🇪 SCHMIDMEIER PARAGUAÇU/MOEMA - Relatório do PRAD</span>
+    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+  </div>
+  <div class="card-meta">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Larissa Baptista · 2026-04-02</div>
+  <div class="card-text">[https://drive.google.com/drive/folders/16G429AvuRIpxbBBFiPMmwLm7z6mXdSL9?usp=drive_link](https://drive.google.com/drive...</div>
+  <div class="card-badges"><span class="badge">Comentário</span></div>
+</div>
+<div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
+  <div class="card-header">
+    <span class="card-num" style="color:#0078d4">#18</span>
+    <span class="card-prio" style="background:#0078d4">P3</span>
+    <span class="card-name">PEDRO COLAÇO - Protocolo do CAD</span>
+    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+  </div>
+  <div class="card-meta">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Douglas Prado Marcos · 2026-04-05</div>
+  <div class="card-text">@flavianafriedrich @lenontaques1 Vamos fazer o voo  na segunda feira após visita a Eliezer e Patrícia.</div>
+  <div class="card-badges"><span class="badge">Menção</span></div>
+</div>
+<div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
+  <div class="card-header">
+    <span class="card-num" style="color:#0078d4">#19</span>
+    <span class="card-prio" style="background:#0078d4">P3</span>
+    <span class="card-name">WALDIR JANTSCH - Apurar notificação de cobrança de dívida ativa</span>
+    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+  </div>
+  <div class="card-meta">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Berna Bobko, Flaviana Friedrich · 2026-04-06</div>
+  <div class="card-text">@flavianafriedrich vou entrar em contato com ele </div>
+  <div class="card-badges"><span class="badge">Menção</span><span class="badge">Comentário</span></div>
+</div>
+<div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
+  <div class="card-header">
+    <span class="card-num" style="color:#0078d4">#20</span>
+    <span class="card-prio" style="background:#0078d4">P3</span>
+    <span class="card-name">ELIEZER JANTSCH — Enviar guia do perito para Patrícia (R$ 10.237,50)</span>
+    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+  </div>
+  <div class="card-meta">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Berna Bobko · 2026-04-06</div>
+  <div class="card-text">@lenontaques1 @douglaspradomarcos @flavianafriedrich guia enviada.</div>
+  <div class="card-badges"><span class="badge">Menção</span></div>
+</div>
+<div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
+  <div class="card-header">
+    <span class="card-num" style="color:#0078d4">#21</span>
+    <span class="card-prio" style="background:#0078d4">P3</span>
+    <span class="card-name">Solicitar à Luciane as 200+ matrículas dos imóveis da família Schmidmeier</span>
+    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+  </div>
+  <div class="card-meta">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Berna Bobko, Douglas Prado Marcos · 2026-04-06</div>
+  <div class="card-text">@lenontaques1 @douglaspradomarcos @flavianafriedrich solicitação feita.</div>
+  <div class="card-badges"><span class="badge">Menção</span></div>
+</div>
+<div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
+  <div class="card-header">
+    <span class="card-num" style="color:#0078d4">#22</span>
+    <span class="card-prio" style="background:#0078d4">P3</span>
+    <span class="card-name">WALDIR JANTSCH - Pagamento mensal parcelamento Engenho Queimado</span>
+    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+  </div>
+  <div class="card-meta">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Berna Bobko, Douglas Prado Marcos · 2026-04-06</div>
+  <div class="card-text"> @flavianafriedrich segue boleto Sr Waldir Jantsch parcela 08, com vencimento _30/04/2026._ Vou anexar todos os comprova...</div>
+  <div class="card-badges"><span class="badge">Anexo</span><span class="badge">Menção</span></div>
+</div>
+<div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
+  <div class="card-header">
+    <span class="card-num" style="color:#0078d4">#23</span>
+    <span class="card-prio" style="background:#0078d4">P3</span>
+    <span class="card-name">ESCRITÓRIO - Reunião semanal</span>
+    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+  </div>
+  <div class="card-meta">TAREFAS - TAQUES · Berna Bobko, Gilberto Taques · 2026-04-06</div>
+  <div class="card-text">@lenontaques1 @gibataques Ok</div>
+  <div class="card-badges"><span class="badge">Menção</span></div>
+</div>
+</div>
+
+<div class="section-title" style="border-bottom-color:#ccc;color:#888">👍 Reações recebidas (somente leitura)</div>
+<div class="reactions-section">
+<div class="reaction-item">
+  <span class="reaction-emoji">👍</span>
+  <span class="reaction-card">URGENTE — Milcheski x Sicoob — Regularizar pagamento e cessar atos expropriatórios</span>
+  <span class="reaction-board">TAREFAS - TAQUES · Gilberto Taques</span>
+</div>
+<div class="reaction-item">
+  <span class="reaction-emoji">👍</span>
+  <span class="reaction-card">Reunião com Eliezer e Patrícia</span>
+  <span class="reaction-board">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Douglas Prado Marcos</span>
+</div>
+<div class="reaction-item">
+  <span class="reaction-emoji">👍</span>
+  <span class="reaction-card">AMIR STEIDEL - Possível desmatamento - Notificação do IMA</span>
+  <span class="reaction-board">NOVOS NEGÓCIOS - DF BIOENGENHARIA / TAQUES · Douglas Prado Marcos</span>
+</div>
+<div class="reaction-item">
+  <span class="reaction-emoji">👍</span>
+  <span class="reaction-card">PAULO SILAS FILHO - Árvore em área de risco - Urbano - Curitiba/PR</span>
+  <span class="reaction-board">NOVOS NEGÓCIOS - DF BIOENGENHARIA / TAQUES · Douglas Prado Marcos</span>
+</div>
+<div class="reaction-item">
+  <span class="reaction-emoji">👍</span>
+  <span class="reaction-card">WILLIAN DE LIMA - Próspera Agronegócios - Alerta no MapBiomas - Aproximadamente 10 ha</span>
+  <span class="reaction-board">NOVOS NEGÓCIOS - DF BIOENGENHARIA / TAQUES · Douglas Prado Marcos</span>
+</div>
+<div class="reaction-item">
+  <span class="reaction-emoji">👍</span>
+  <span class="reaction-card">LILIAN CRISTINA VOUK - Defesa em Execução</span>
+  <span class="reaction-board">NOVOS NEGÓCIOS - TAQUES · Gilberto Taques</span>
+</div>
+<div class="reaction-item">
+  <span class="reaction-emoji">👍</span>
+  <span class="reaction-card">HILSON LUCACHINSKI - Negociação com SICREDI + Pedido administrativo de prorrogação de dívida</span>
+  <span class="reaction-board">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Gilberto Taques</span>
+</div>
+<div class="reaction-item">
+  <span class="reaction-emoji">👍</span>
+  <span class="reaction-card">SCHMIDMEIER WERKA - Laudo hidrogeológico (Rodrigo Sato)</span>
+  <span class="reaction-board">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Douglas Prado Marcos</span>
+</div>
+<div class="reaction-item">
+  <span class="reaction-emoji">👍</span>
+  <span class="reaction-card">HILSON LUCACHINSKI - Monitorar andamento do processo</span>
+  <span class="reaction-board">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Douglas Prado Marcos</span>
+</div>
+</div>
+</div>
+<div class="footer">Dashboard somente leitura — decisões no Claude Code · Auto-refresh 5s</div>
+</body>
+</html>
