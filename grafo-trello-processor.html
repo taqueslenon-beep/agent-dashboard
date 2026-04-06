@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grafo LangGraph — Secretária Executiva | Taques Agents</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  :root {
+    --preto:#0A0908;--verde:#223631;--verde-claro:#2d4a42;--bege-medio:#D6CCC1;--bege-claro:#EAE0D5;--bege-fundo:#F5F0EB;
+    --bg-primary:#0A0908;--bg-secondary:#111110;--bg-card:#161614;--bg-elevated:#1c1c19;
+    --border:#2a2a26;--border-light:#3a3a35;--text-primary:var(--bege-claro);--text-secondary:#a8a099;--text-muted:#6e6860;
+    --accent-green:#4a8c6f;--accent-green-soft:rgba(74,140,111,0.15);
+    --accent-orange:#c4944a;--accent-orange-soft:rgba(196,148,74,0.15);
+    --accent-red:#b85450;--accent-red-soft:rgba(184,84,80,0.12);
+    --accent-blue:#6b8fa3;--accent-blue-soft:rgba(107,143,163,0.15);
+    --accent-purple:#8b7ea3;--accent-purple-soft:rgba(139,126,163,0.15);
+    --accent-cyan:#5a9e8f;--accent-cyan-soft:rgba(90,158,143,0.12);
+    --accent-yellow:#c9a84c;--accent-yellow-soft:rgba(201,168,76,0.12);
+    --accent-pink:#a36b8b;--accent-pink-soft:rgba(163,107,139,0.12);
+    --p1:#ff0000;--p1-soft:rgba(255,0,0,0.12);--p2:#ffc000;--p2-soft:rgba(255,192,0,0.12);
+    --p3:#0078d4;--p3-soft:rgba(0,120,212,0.12);--p4:#808080;--p4-soft:rgba(128,128,128,0.12);
+    --shadow:0 2px 8px rgba(0,0,0,0.3);--radius:8px;
+  }
+  [data-theme="light"] {
+    --bg-primary:#F5F0EB;--bg-secondary:#EAE0D5;--bg-card:#FFFFFF;--bg-elevated:#F0EBE5;
+    --border:#D6CCC1;--border-light:#C4B9AD;--text-primary:#0A0908;--text-secondary:#4A453F;--text-muted:#8A8279;
+    --shadow:0 2px 8px rgba(10,9,8,0.08);
+    --accent-green:#2d6b4f;--accent-green-soft:rgba(45,107,79,0.1);
+    --accent-orange:#9e7535;--accent-orange-soft:rgba(158,117,53,0.1);
+    --accent-red:#a04340;--accent-red-soft:rgba(160,67,64,0.08);
+    --accent-blue:#4a7389;--accent-blue-soft:rgba(74,115,137,0.1);
+    --accent-purple:#6b5e83;--accent-purple-soft:rgba(107,94,131,0.1);
+    --accent-cyan:#3d7f72;--accent-cyan-soft:rgba(61,127,114,0.08);
+    --accent-yellow:#9e7e2e;--accent-yellow-soft:rgba(158,126,46,0.1);
+    --accent-pink:#8b5a73;--accent-pink-soft:rgba(139,90,115,0.08);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-primary);color:var(--text-primary);height:100vh;overflow:hidden;-webkit-font-smoothing:antialiased;transition:background-color .3s,color .3s}
+  .header{background:var(--verde);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:fixed;top:0;left:0;right:0;z-index:100}
+  .header-left{display:flex;align-items:center;gap:12px}
+  .logo-mark{width:28px;height:28px;border:2px solid var(--bege-medio);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:var(--bege-claro);letter-spacing:1px}
+  .logo-text{font-size:13px;font-weight:600;color:var(--bege-claro)}.logo-sub{font-size:9px;color:var(--bege-medio);opacity:.8}
+  .hb{font-size:8px;padding:2px 7px;border-radius:3px;background:rgba(234,224,213,.1);color:var(--bege-medio);border:1px solid rgba(234,224,213,.2);font-weight:500;letter-spacing:.5px;text-transform:uppercase}
+  .header-right{display:flex;align-items:center;gap:8px}
+  .hbtn{background:rgba(234,224,213,.1);border:1px solid rgba(234,224,213,.2);border-radius:4px;padding:4px 10px;cursor:pointer;display:flex;align-items:center;gap:5px;font-size:10px;color:var(--bege-medio);font-family:inherit;transition:all .2s}
+  .hbtn:hover{background:rgba(234,224,213,.18)}
+  .sidebar{position:fixed;top:48px;left:0;bottom:28px;width:280px;background:var(--bg-secondary);border-right:1px solid var(--border);overflow-y:auto;padding:12px;z-index:50;transition:background-color .3s}
+  .stitle{font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);margin-bottom:8px}
+  .nlist{list-style:none}
+  .ni{display:flex;align-items:center;gap:6px;padding:4px 8px;border-radius:5px;margin-bottom:1px;cursor:pointer;transition:all .2s;border:1px solid transparent}
+  .ni:hover{background:var(--bg-elevated);border-color:var(--border)}.ni.active{background:var(--bg-elevated);border-color:var(--border-light)}
+  .ni.sat{padding-left:30px;opacity:.8}
+  .nn{width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;flex-shrink:0}
+  .nn.start{background:var(--accent-green-soft);color:var(--accent-green);border:1px solid var(--accent-green)}
+  .nn.action{background:var(--accent-blue-soft);color:var(--accent-blue);border:1px solid var(--accent-blue)}
+  .nn.system{background:var(--accent-cyan-soft);color:var(--accent-cyan);border:1px solid var(--accent-cyan)}
+  .nn.human{background:var(--accent-orange-soft);color:var(--accent-orange);border:1px solid var(--accent-orange)}
+  .nn.router{background:var(--accent-purple-soft);color:var(--accent-purple);border:1px solid var(--accent-purple)}
+  .nn.end{background:var(--accent-yellow-soft);color:var(--accent-yellow);border:1px solid var(--accent-yellow)}
+  .nn.enrich{background:var(--accent-cyan-soft);color:var(--accent-cyan);border:1px solid var(--accent-cyan)}
+  .nn.dispatch{background:var(--accent-purple-soft);color:var(--accent-purple);border:1px solid var(--accent-purple)}
+  .nn.trello-act{background:var(--accent-blue-soft);color:var(--accent-blue);border:1px solid var(--accent-blue)}
+  .nn.obsidian{background:var(--accent-pink-soft);color:var(--accent-pink);border:1px solid var(--accent-pink)}
+  .ninfo{flex:1;min-width:0}.nname{font-size:9px;font-weight:600;color:var(--text-primary);line-height:1.2}.ntype{font-size:7px;color:var(--text-muted)}
+  .pdiv{font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:8px 8px 3px;border-top:1px solid var(--border);margin-top:4px}
+  .pdiv:first-child{border-top:none;margin-top:0}
+  .canvas{position:fixed;top:48px;left:280px;right:0;bottom:28px;overflow:hidden;cursor:grab}.canvas:active{cursor:grabbing}
+  .ci{transform-origin:0 0;position:absolute;top:0;left:0;width:5000px;height:5000px}
+  .gs{width:100%;height:100%}.gs text{font-family:'Inter',sans-serif}
+  .pbg{rx:12;opacity:.35}
+  .gn{cursor:pointer}.gn:hover .nb{filter:brightness(1.15)}.gn:hover .nd{filter:brightness(1.15)}
+  .nb,.nd{transition:filter .2s}
+  .el{fill:none;stroke-width:1.5}.ef{stroke:var(--border-light)}.ey{stroke:var(--accent-green)}.en{stroke:var(--accent-orange);stroke-dasharray:6,3}
+  .eloop{stroke:var(--accent-cyan);stroke-dasharray:5,4}.eh{stroke:var(--accent-orange);stroke-width:2}
+  .eenr{stroke:var(--accent-cyan);stroke-width:1;opacity:.7}.edisp{stroke:var(--accent-purple);stroke-width:1;opacity:.7}
+  .etrello{stroke:var(--accent-blue);stroke-width:1;opacity:.7}.eobs{stroke:var(--accent-pink);stroke-width:1;opacity:.7}
+  .elab{font-size:7px;font-weight:600;fill:var(--text-muted)}
+  .dp{position:fixed;top:48px;right:0;bottom:28px;width:350px;background:var(--bg-secondary);border-left:1px solid var(--border);overflow-y:auto;padding:16px;z-index:50;transform:translateX(100%);transition:transform .3s ease}
+  .dp.open{transform:translateX(0)}
+  .dc{position:absolute;top:8px;right:8px;background:none;border:none;color:var(--text-muted);font-size:16px;cursor:pointer}
+  .dt{font-size:13px;font-weight:700;margin-bottom:3px}.dty{font-size:8px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:12px}
+  .ds{font-size:8px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin:12px 0 4px}
+  .dtx{font-size:10px;color:var(--text-secondary);line-height:1.7}
+  .dcd{font-family:'SF Mono','Fira Code',monospace;font-size:9px;background:var(--bg-primary);border:1px solid var(--border);border-radius:4px;padding:8px;margin-top:4px;color:var(--text-secondary);overflow-x:auto;white-space:pre-wrap;line-height:1.5}
+  .dio{margin-top:4px}.dii{font-size:9px;padding:2px 6px;border-radius:3px;background:var(--bg-primary);border:1px solid var(--border);margin-bottom:2px;display:flex;align-items:center;gap:4px}
+  .dik{color:var(--accent-cyan);font-weight:600;font-size:8px}.div{color:var(--text-secondary);font-size:8px}
+  .dmcp{font-size:9px;padding:3px 6px;border-radius:3px;background:var(--accent-blue-soft);border:1px solid rgba(107,143,163,.3);color:var(--accent-blue);margin-top:3px;font-family:'SF Mono',monospace}
+  .prow{display:flex;gap:4px;margin-top:4px}.pb{font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px}
+  .sb{position:fixed;bottom:0;left:0;right:0;height:28px;background:var(--bg-secondary);border-top:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;font-size:9px;color:var(--text-muted);z-index:100}
+  .sd{width:6px;height:6px;border-radius:50%;background:var(--accent-green)}.ss{width:1px;height:14px;background:var(--border)}
+  .legend{position:fixed;bottom:40px;right:12px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;z-index:60;font-size:8px;max-height:calc(100vh - 120px);overflow-y:auto}
+  .lt{font-weight:700;font-size:7px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);margin-bottom:4px}.li{display:flex;align-items:center;gap:5px;margin-bottom:3px;color:var(--text-secondary)}
+  .ld{width:7px;height:7px;border-radius:50%;flex-shrink:0}.ll{width:14px;height:2px;flex-shrink:0}.lsep{height:1px;background:var(--border);margin:4px 0}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-left">
+    <div class="logo-mark">TA</div>
+    <div><div class="logo-text">Taques Agents</div><div class="logo-sub">Gabinete do CEO &middot; Secretaria Executiva</div></div>
+    <span class="hb">LangGraph View</span>
+    <span class="hb" style="background:var(--accent-green-soft);color:var(--accent-green);border-color:var(--accent-green)">v4.1</span>
+    <span class="hb" style="background:var(--accent-orange-soft);color:var(--accent-orange);border-color:var(--accent-orange)">HITL</span>
+    <span class="hb" style="background:var(--accent-purple-soft);color:var(--accent-purple);border-color:var(--accent-purple)">Gabinete do CEO</span>
+    <span class="hb" style="background:var(--p1-soft);color:var(--p1);border-color:var(--p1)">2 Modos</span>
+  </div>
+  <div class="header-right">
+    <button class="hbtn" onclick="resetView()">&#8634; Reset</button>
+    <button class="hbtn" onclick="fitView()">&#9634; Fit</button>
+    <button class="hbtn" onclick="toggleTheme()">&#9681; Tema</button>
+  </div>
+</div>
+<div class="sidebar"><div class="stitle">Nodos do Grafo</div><ul class="nlist" id="nodeList"></ul></div>
+<div class="canvas" id="canvas"><div class="ci" id="ci"><svg class="gs" id="svg" xmlns="http://www.w3.org/2000/svg"></svg></div></div>
+<div class="dp" id="dp"><button class="dc" onclick="closeD()">&times;</button><div id="dc"></div></div>
+<div class="legend">
+  <div class="lt">Modos</div>
+  <div class="li"><div class="ld" style="background:var(--accent-green)"></div>Urgencia (ativo)</div>
+  <div class="li"><div class="ld" style="background:var(--accent-yellow);opacity:.5"></div>Mapeamento (futuro)</div>
+  <div class="lsep"></div>
+  <div class="lt">Nodos</div>
+  <div class="li"><div class="ld" style="background:var(--accent-green)"></div>Inicio / Fim</div>
+  <div class="li"><div class="ld" style="background:var(--accent-blue)"></div>Acao IA / MCP</div>
+  <div class="li"><div class="ld" style="background:var(--accent-cyan)"></div>Enriquecimento</div>
+  <div class="li"><div class="ld" style="background:var(--accent-orange)"></div>Human-in-the-Loop</div>
+  <div class="li"><div class="ld" style="background:var(--accent-purple)"></div>Roteador / Despacho</div>
+  <div class="li"><div class="ld" style="background:var(--accent-pink)"></div>Documentacao Obsidian</div>
+  <div class="li"><div class="ld" style="background:var(--accent-yellow)"></div>Finalizacao</div>
+  <div class="lsep"></div>
+  <div class="lt">Prioridades</div>
+  <div class="li"><div class="ld" style="background:var(--p1)"></div>P1</div>
+  <div class="li"><div class="ld" style="background:var(--p2)"></div>P2</div>
+  <div class="li"><div class="ld" style="background:var(--p3)"></div>P3</div>
+  <div class="li"><div class="ld" style="background:var(--p4)"></div>P4</div>
+  <div class="lsep"></div>
+  <div class="lt">Arestas</div>
+  <div class="li"><div class="ll" style="background:var(--border-light)"></div>Fluxo</div>
+  <div class="li"><div class="ll" style="background:var(--accent-green)"></div>Aprovado / Ativo</div>
+  <div class="li"><div class="ll" style="background:none;border-top:2px dashed var(--accent-orange)"></div>Alternativo / Futuro</div>
+  <div class="li"><div class="ll" style="background:var(--accent-cyan);opacity:.7"></div>Enriquecimento</div>
+  <div class="li"><div class="ll" style="background:var(--accent-purple);opacity:.7"></div>Despacho</div>
+  <div class="li"><div class="ll" style="background:var(--accent-pink);opacity:.7"></div>Obsidian</div>
+  <div class="li"><div class="ll" style="background:none;border-top:2px dashed var(--accent-cyan)"></div>Loop</div>
+</div>
+<div class="sb">
+  <div class="sd"></div><span>Gabinete do CEO &mdash; Secretaria Executiva</span><div class="ss"></div>
+  <span>9 fases &middot; 44 nodos &middot; HITL &middot; 2 modos</span><div class="ss"></div>
+  <span>7 fontes &middot; 6 acoes Trello &middot; 5 despachos</span><div class="ss"></div>
+  <span id="sz">Zoom: 100%</span>
+</div>
+
+<script>
+const PH=[
+  {id:'modo',l:'Fase 0 — Selecao de Modo',c:'--accent-green',b:'--accent-green-soft'},
+  {id:'map',l:'Mapeamento Geral (Futuro)',c:'--accent-yellow',b:'--accent-yellow-soft'},
+  {id:'notif',l:'Fase 1 — Notificacoes',c:'--accent-green',b:'--accent-green-soft'},
+  {id:'analise',l:'Fase 2 — Analise + P1-P4',c:'--accent-blue',b:'--accent-blue-soft'},
+  {id:'enriq',l:'Fase 3 — Enriquecimento Contextual',c:'--accent-cyan',b:'--accent-cyan-soft'},
+  {id:'hitl',l:'Fase 4 — Apresentacao + Decisao HITL',c:'--accent-orange',b:'--accent-orange-soft'},
+  {id:'trello',l:'Fase 5 — Acoes no Trello',c:'--accent-blue',b:'--accent-blue-soft'},
+  {id:'desp',l:'Fase 6 — Desdobramentos Cross-System',c:'--accent-purple',b:'--accent-purple-soft'},
+  {id:'doc',l:'Fase 7 — Documentacao Obsidian',c:'--accent-pink',b:'--accent-pink-soft'},
+  {id:'fim',l:'Fase 8 — Finalizacao',c:'--accent-yellow',b:'--accent-yellow-soft'},
+];
+
+const N=[
+  // ═══ Fase 0 — Selecao de Modo ═══
+  {id:'start',p:'modo',t:'start',l:'START',d:'Invocacao: /processar-trello no Claude Code.',
+   dt:'Ponto de entrada da Secretaria Executiva.\nGabinete do CEO.\n\nFormas de invocacao:\n/processar-trello → modo urgencia (padrao)\n/processar-trello --mapear → modo mapeamento geral\n/processar-trello --board "TAREFAS"\n/processar-trello --p1 → somente P1\n\nDetecta nota do dia para evitar reprocessamento.',
+   i:['comando','flags'],o:['config']},
+  {id:'mode_sel',p:'modo',t:'router',l:'mode_selector',d:'Urgencia ou Mapeamento Geral?',
+   dt:'Dois modos de operacao:\n\n🔥 URGENCIA (padrao)\nFoco: notificacoes nao-lidas do Trello.\nObjetivo: responder rapido e despachar.\nFluxo completo (8 fases, 44 nodos).\nPrioridade: P1 → P2 → P3 → P4.\nAtivado por padrao ou /processar-trello.\n\n📋 MAPEAMENTO GERAL (futuro)\nFoco: revisao board-a-board, card-a-card.\nObjetivo: organizar, priorizar, limpar.\nAtivado por /processar-trello --mapear.\n⚠ Em desenvolvimento — previsao v5.0.\n\nPadrao = sempre Urgencia.',
+   i:['config'],o:['modo']},
+
+  // ═══ Mapeamento Geral (futuro) ═══
+  {id:'map_start',p:'map',t:'system',l:'mapeamento_geral()',d:'Revisao completa board-a-board. EM DESENVOLVIMENTO.',
+   dt:'Modo Mapeamento Geral (em desenvolvimento):\n\n1. Listar todos os boards ativos\n2. Para cada board, listar todas as listas\n3. Para cada lista, revisar cards um a um\n4. Classificar estado de cada card\n5. Sugerir: mover, arquivar, atualizar, excluir\n6. Gerar relatorio de saude por board\n7. Criar dashboard de visao geral\n\n⚠ Previsao: v5.0.',
+   i:['config'],o:['review_plan']},
+  {id:'map_end',p:'map',t:'end',l:'EM DESENVOLVIMENTO',d:'Modo futuro — usar Urgencia por ora.',
+   dt:'Escopo planejado para v5.0:\n• Revisao de saude de boards\n• Limpeza de cards obsoletos\n• Reorganizacao de colunas\n• Relatorio de produtividade por board\n• Identificacao de cards orfaos\n• Scan profundo (varredura board-a-board)',
+   i:['review_plan'],o:['exit']},
+
+  // ═══ Fase 1 — Notificacoes ═══
+  {id:'fetch',p:'notif',t:'action',l:'fetch_notifications()',d:'Buscar notificacoes nao-lidas via API do Trello.',
+   dt:'🔥 MODO URGENCIA — Fonte primaria de dados.\n\nChamada direta:\nGET /1/members/me/notifications?read_filter=unread\n\nTipos de notificacao capturados:\n• @mencao em comentario\n• Resposta a comentario seu\n• Card atribuido a voce\n• Due date proximo/vencido\n• Card movido para lista de acao\n• Checklist item atribuido\n• Convite para board\n\nProcessamento:\n1. Agrupa notificacoes por card (deduplica)\n2. Extrai card_id unico de cada notificacao\n3. Ordena por data (mais recente primeiro)\n\nO sininho so sera zerado ao FINAL do fluxo\n(PUT /1/notifications/all/read) — nunca antes.',
+   m:'GET /members/me/notifications',i:['config'],o:['notifications[]','card_ids[]']},
+
+  // ═══ Fase 2 — Analise + P1-P4 ═══
+  {id:'identify',p:'analise',t:'action',l:'identify_actionable()',d:'Mapear cards das notificacoes que exigem acao.',
+   dt:'Para cada card_id das notificacoes:\n• Classifica tipo de acao necessaria\n• Identifica urgencia pela notificacao\n  (mencao > cobranca > due date > movimentacao)\n• Agrupa por board/lista\n• Filtra duplicatas\n\nTodo card com notificacao e potencialmente acionavel.\nA triagem P1-P4 vem na proxima etapa.',
+   i:['notifications[]','card_ids[]'],o:['actionable[]']},
+  {id:'priority',p:'analise',t:'action',l:'classify_priority()',d:'P1/P2/P3/P4 — padrao oficial.',
+   dt:'🔴 P1 (#ff0000): Vencido, cobranca direta, prazo fatal\n🟡 P2 (#ffc000): Vence em 3 dias, mencao < 48h\n🔵 P3 (#0078d4): Atividade < 7 dias, rotina\n⚪ P4 (#808080): Sem atividade recente, informativo\n\nSempre CAIXA ALTA. Sem texto adicional apos P1/P2/P3/P4.',
+   i:['actionable[]'],o:['prioritized[]: { card, priority }']},
+  {id:'readctx',p:'analise',t:'action',l:'read_full_context()',d:'Descricao + comentarios + checklist + anexos + labels.',
+   dt:'Para cada card:\n1. getCard (detalhes completos)\n2. getChecklists (itens e status)\n3. Ultimos 15 comentarios\n4. getAttachments (PDFs, links)\n5. getCardCustomFieldValues\n6. getBoardLabels (referencia)\n7. getCardMembers (responsaveis)',
+   m:'getCard + getChecklists + getAttachments',i:['prioritized[]'],o:['rich_cards[]']},
+
+  // ═══ Fase 3 — Enriquecimento Contextual ═══
+  {id:'ctxrouter',p:'enriq',t:'router',l:'context_router',d:'IA decide quais fontes externas consultar.',
+   dt:'Analise inteligente por card:\n• Processo/protocolo → Supabase\n• Email/proposta → Gmail\n• Documento/parecer → Google Drive\n• Reuniao/prazo → Calendar\n• Equipe interna → Slack\n• Tarefa/entrega → Todoist\n• Cliente/contato → WhatsApp\n\nSeletivo — nem todo card precisa de todas as fontes.',
+   i:['rich_cards[]'],o:['enrichment_plan']},
+  {id:'src_supa',p:'enriq',t:'enrich',l:'Supabase',d:'Casos, processos, clientes no ERP.',m:'execute_sql',sat:1,i:['context'],o:['db_data']},
+  {id:'src_mail',p:'enriq',t:'enrich',l:'Gmail',d:'Propostas, comunicacoes, confirmacoes.',m:'gmail_search_messages',sat:1,i:['context'],o:['emails[]']},
+  {id:'src_drv',p:'enriq',t:'enrich',l:'Google Drive',d:'Pareceres, contratos, relatorios.',m:'google_drive_search',sat:1,i:['context'],o:['docs[]']},
+  {id:'src_cal',p:'enriq',t:'enrich',l:'Calendar',d:'Reunioes, prazos, compromissos.',m:'gcal_list_events',sat:1,i:['context'],o:['events[]']},
+  {id:'src_slk',p:'enriq',t:'enrich',l:'Slack',d:'Mensagens internas, decisoes.',m:'slack_search',sat:1,i:['context'],o:['messages[]']},
+  {id:'src_td',p:'enriq',t:'enrich',l:'Todoist',d:'Tarefas, deadlines, projetos.',m:'find-tasks',sat:1,i:['context'],o:['tasks[]']},
+  {id:'src_wa',p:'enriq',t:'enrich',l:'WhatsApp',d:'Conversas com cliente/contato.',m:'whatsapp_get_chat_messages',sat:1,i:['context'],o:['chats[]']},
+  {id:'merge',p:'enriq',t:'action',l:'merge_context()',d:'Unificar Trello + fontes externas = visao 360.',
+   dt:'Combina dados do Trello com todas as fontes externas consultadas.\nRemove duplicatas e informacoes redundantes.\nOrdena por relevancia e recencia.\nGera enriched_card com contexto completo.',
+   i:['rich_cards[]','external_data'],o:['enriched_cards[]']},
+
+  // ═══ Fase 4 — Apresentacao + Decisao HITL ═══
+  {id:'gensug',p:'hitl',t:'action',l:'generate_suggestions()',d:'IA gera resumo + sugestao + acoes Trello sugeridas.',
+   dt:'Para cada enriched_card:\n1. Resume pedido (1-2 frases)\n2. Resume contexto externo relevante\n3. Identifica quem pediu e quando\n4. Gera sugestao de resposta (tom direto)\n5. SUGERE ACOES NO TRELLO:\n   • Responder comentario\n   • Alterar descricao\n   • Adicionar anexo/link\n   • Mudar etiquetas\n   • Criar/atualizar checklist\n   • Mover card entre colunas\n6. Identifica desdobramentos cross-system',
+   i:['enriched_cards[]'],o:['suggestions[]: { card, response, trello_actions[], followups[] }']},
+  {id:'buildhtml',p:'hitl',t:'system',l:'build_html_dashboard()',d:'Dashboard HTML interativo no browser (somente leitura).',
+   dt:'Cria/atualiza:\n3-recursos/agent-dashboard/trello-despacho.html\n\nExibe cards por P1→P4 com cores oficiais.\nPara cada card: resumo, contexto, sugestao, acoes sugeridas.\nAuto-refresh 5s via JSON de estado.\n\nDashboard = TELA DE TV (somente leitura).\nTodas as decisoes sao no Claude Code.',
+   i:['suggestions[]'],o:['html_path','state_json']},
+  {id:'present',p:'hitl',t:'system',l:'present_to_user()',d:'Abrir dashboard + resumo no terminal.',
+   dt:'Terminal:\n"N notificacoes em M boards:\n🔴 P1: X | 🟡 P2: Y | 🔵 P3: Z | ⚪ P4: W\n\n📊 Dashboard aberto (somente leitura).\nDecisoes aqui no Claude Code.\n\nIniciando card 1 de N..."',
+   i:['html_path','suggestions[]'],o:['dashboard_opened']},
+  {id:'showcard',p:'hitl',t:'human',l:'show_card()',d:'Card atual no terminal. Voce decide aqui.',
+   dt:'Terminal mostra:\n• Prioridade (P1-P4) + board + card name\n• Quem pediu, quando\n• Resumo do pedido\n• Contexto externo relevante\n• Sugestao de resposta\n• Acoes Trello sugeridas\n• Desdobramentos sugeridos\n\nDashboard destaca card atual.\n\nVoce responde AQUI no Claude Code:\n[a] Aprovar 100%\n[r] Aprovar com ressalvas\n[x] Rejeitar\n[d] Descartar',
+   i:['current_suggestion'],o:['user_choice']},
+  {id:'decrouter',p:'hitl',t:'router',l:'decision_router',d:'4 caminhos: aprovar | ressalvas | rejeitar | descartar.',
+   dt:'[a] APROVAR 100%\n→ Executa tudo como sugerido pela IA\n→ Resposta + acoes Trello + desdobramentos\n\n[r] RESSALVAS\n→ Voce fala modificacoes por voz/texto\n→ IA ajusta resposta e acoes conforme\n\n[x] REJEITAR\n→ Nao executa nada, registra motivo\n→ IA aprende para futuras sugestoes\n\n[d] DESCARTAR\n→ Remove da fila, sem registro\n→ Card ignorado nesta sessao',
+   i:['user_choice'],o:['routed_action']},
+  {id:'modify',p:'hitl',t:'human',l:'modify_response()',d:'Voce especifica ressalvas por voz/texto.',
+   dt:'Voce fala (voz) ou digita no Claude Code:\n• "Mude prazo para 15/04"\n• "Nao mova o card ainda"\n• "Adicione etiqueta Urgente"\n• "Nao precisa mandar WhatsApp"\n• "Troque o tom da resposta"\n\nIA ajusta resposta + acoes Trello + desdobramentos conforme ressalvas.',
+   i:['suggestion','user_input'],o:['modified_plan']},
+
+  // ═══ Fase 5 — Acoes no Trello ═══
+  {id:'taction_router',p:'trello',t:'router',l:'trello_action_router',d:'Roteador: quais acoes executar no Trello.',
+   dt:'Baseado na sugestao (aprovada ou modificada), executa combinacao de:\n\n1. Responder comentario\n2. Alterar descricao do card\n3. Adicionar anexo (PDF ou vincular card)\n4. Adicionar/mudar etiquetas\n5. Criar checklist + atribuir itens\n6. Mover card entre colunas\n\nPode executar MULTIPLAS acoes no mesmo card.',
+   i:['approved_plan'],o:['trello_actions[]']},
+  {id:'ta_comment',p:'trello',t:'trello-act',l:'Responder',d:'Postar comentario no card.',m:'addComment',sat:1,i:['card_id','text'],o:['comment_id']},
+  {id:'ta_desc',p:'trello',t:'trello-act',l:'Descricao',d:'Atualizar descricao do card.',m:'updateCard',sat:1,i:['card_id','desc'],o:['updated']},
+  {id:'ta_attach',p:'trello',t:'trello-act',l:'Anexo/Link',d:'Adicionar PDF ou vincular card.',m:'addAttachment + linkCards',sat:1,i:['card_id','file/url'],o:['attachment_id']},
+  {id:'ta_label',p:'trello',t:'trello-act',l:'Etiquetas',d:'Adicionar/mudar labels do card.',m:'updateCard (labels)',sat:1,i:['card_id','label_ids'],o:['updated']},
+  {id:'ta_check',p:'trello',t:'trello-act',l:'Checklist',d:'Criar checklist + atribuir itens.',m:'createChecklist + addChecklistItem',sat:1,i:['card_id','items[]'],o:['checklist_id']},
+  {id:'ta_move',p:'trello',t:'trello-act',l:'Mover Card',d:'Mover card entre colunas/listas.',m:'moveCard',sat:1,i:['card_id','list_id'],o:['moved']},
+
+  // ═══ Fase 6 — Desdobramentos Cross-System ═══
+  {id:'detect_fw',p:'desp',t:'action',l:'detect_followups()',d:'IA detecta acoes cross-system necessarias.',
+   dt:'Analisa resposta + contexto:\n• Menciona prazo → Todoist (regras GTD do CLAUDE.md)\n• Menciona reuniao → Calendar\n• Cliente externo → WhatsApp\n• Equipe interna → Slack (tom direto, sem "Pessoal")\n• Email formal → Gmail (draft, nao envia)\n\nTodoist segue TODAS as regras do CLAUDE.md:\n• Verbo de acao GTD\n• 3 dimensoes de labels\n• Roteamento automatico\n• Descricao + comentarios com links\n• Subtarefas sempre P4\n\nConfirma com voce antes de executar.',
+   i:['trello_result','context'],o:['followup_plan[]']},
+  {id:'fw_router',p:'desp',t:'router',l:'followup_router',d:'Despacha para cada sistema.',
+   dt:'Executa em paralelo. Cada despacho e confirmado:\n"Vou mandar WhatsApp para [X]: [msg]. Confirma?"',
+   i:['followup_plan[]'],o:['dispatched[]']},
+  {id:'fw_wa',p:'desp',t:'dispatch',l:'→ WhatsApp',d:'Mensagem para cliente/contato.',m:'whatsapp_send_text',sat:1,i:['contact','msg'],o:['sent']},
+  {id:'fw_td',p:'desp',t:'dispatch',l:'→ Todoist',d:'Criar tarefa (regras GTD completas).',m:'add-tasks',sat:1,i:['content','project','labels'],o:['task_id']},
+  {id:'fw_cal',p:'desp',t:'dispatch',l:'→ Calendar',d:'Criar/atualizar evento.',m:'gcal_create_event',sat:1,i:['title','date'],o:['event_id']},
+  {id:'fw_slk',p:'desp',t:'dispatch',l:'→ Slack',d:'Mensagem para equipe.',m:'slack_send_message',sat:1,i:['channel','msg'],o:['ts']},
+  {id:'fw_gm',p:'desp',t:'dispatch',l:'→ Gmail',d:'Draft de email.',m:'gmail_create_draft',sat:1,i:['to','subject'],o:['draft_id']},
+
+  // ═══ Fase 7 — Documentacao Obsidian ═══
+  {id:'identify_file',p:'doc',t:'obsidian',l:'identify_obsidian_target()',d:'Encontrar ou criar ficha no Obsidian.',
+   dt:'A IA identifica qual arquivo atualizar:\n\n1. Extrai nome do cliente/caso do card Trello\n2. Busca em 2-areas/casos/[cliente]/\n3. Busca em 2-areas/novos-negocios/\n\n━━ SE FICHA ENCONTRADA ━━\n→ Segue para update_ficha()\n\n━━ SE FICHA NAO ENCONTRADA ━━\nHITL — 5 opcoes no Claude Code:\n\n[1] Criar ficha de CASO\n    Gera em 2-areas/casos/ com frontmatter padrao\n\n[2] Criar ficha de NOVO NEGOCIO\n    Gera em 2-areas/novos-negocios/ com frontmatter\n\n[3] Criar ficha ADMINISTRATIVA\n    Para cards sem vinculo com caso/negocio\n\n[4] Vincular a ficha EXISTENTE\n    Voce indica caminho manualmente\n\n[5] Pular documentacao\n    Nao registra — card processado sem ficha\n\nFrontmatter gerado automaticamente:\n---\ntipo: caso | novo-negocio\ncliente: Nome do Cliente\nmateria: ambiental | civil | bancario\nstatus: em-andamento\nresponsavel: lenon | gilberto\ndata-criacao: YYYY-MM-DD\n---',
+   i:['card_data','client_name'],o:['obsidian_file_path']},
+  {id:'update_ficha',p:'doc',t:'obsidian',l:'update_ficha()',d:'Atualizar ficha com informacoes do despacho.',
+   dt:'Adiciona a ficha do caso/negocio:\n\n## Historico\n| Data | Evento |\n| DD/MM/YYYY | [Resumo da acao tomada no Trello] |\n\n## Acoes Pendentes (atualiza)\n- [ ] Novas acoes identificadas\n\n## Vinculos (se nao existir)\n| Trello | [link do card] |\n\nSe houve despacho cross-system, registra:\n• WhatsApp enviado: [resumo]\n• Todoist criado: [tarefa + link]\n• Calendar: [evento]\n• Slack: [mensagem]\n• Gmail: [draft]\n\nNao duplica informacao ja existente.',
+   i:['obsidian_file_path','actions_taken','followups'],o:['ficha_updated']},
+  {id:'save_session',p:'doc',t:'obsidian',l:'save_session_log()',d:'Salvar log da sessao em sessoes-claude/.',
+   dt:'Cria nota:\n2-areas/sessoes-claude/trello-YYYY-MM-DD.md\n\nFrontmatter:\n---\ntipo: triagem-trello\nmodo: urgencia\ndata: YYYY-MM-DD\ntotal: N\np1: X | p2: Y | p3: Z | p4: W\naprovados: A | ressalvas: B | rejeitados: C | descartados: D\n---\n\nCorpo: log completo de cada card processado.\nInclui: acoes tomadas, desdobramentos, fichas atualizadas.\n\nGera link obsidian:// clicavel no terminal.',
+   i:['all_actions','stats'],o:['session_note_path']},
+
+  // ═══ Fase 8 — Finalizacao ═══
+  {id:'hasmore',p:'fim',t:'router',l:'has_more_cards?',d:'Loop: proximo card ou finalizar.',
+   dt:'Se ha mais cards → volta para show_card() na Fase 4\nSe voce pede parar → finaliza\nSe acabaram todos os cards → finaliza\n\nAtualiza dashboard com progresso a cada card.',
+   i:['index','total'],o:['has_more']},
+  {id:'update_dash',p:'fim',t:'system',l:'update_dashboard()',d:'Atualizar dashboard HTML com resultado final.',
+   dt:'Atualiza todos os cards com status final (aprovado/rejeitado/etc).\nContadores atualizados.\nGera timestamp de conclusao.',
+   i:['all_actions'],o:['final_dashboard']},
+  {id:'mark_read',p:'fim',t:'action',l:'mark_notifications_read()',d:'Zerar sininho: marcar notificacoes como lidas.',
+   dt:'PUT /1/notifications/all/read\n\nSo executa DEPOIS de processar tudo.\nGarante que notificacoes nao-processadas\nnao sejam perdidas em caso de interrupcao.\n\nSe o fluxo foi interrompido antes de finalizar,\nas notificacoes permanecem nao-lidas para\na proxima execucao.',
+   m:'PUT /notifications/all/read',i:['all_processed'],o:['notifications_cleared']},
+  {id:'summary',p:'fim',t:'system',l:'summary()',d:'Resumo final no terminal.',
+   dt:'Terminal:\n"Sessao concluida! Modo: URGENCIA\n🔴 P1: 2/2 | 🟡 P2: 3/3 | 🔵 P3: 2/3 | ⚪ P4: 1/1\n\nTrello: 5 comentarios, 3 movimentacoes, 2 checklists\n📱 2 WhatsApp | 📋 3 Todoist | 📅 1 Calendar\n📓 4 fichas atualizadas no Obsidian\n🔔 Notificacoes zeradas\n\n📊 Dashboard: [link]\n📓 Sessao: obsidian://...\n📓 Fichas: [links clicaveis]"',
+   i:['stats'],o:['complete']},
+  {id:'end',p:'fim',t:'end',l:'END',d:'Fim. Re-invocar retoma de onde parou.',
+   dt:'Encerra a skill. Re-invocando no mesmo dia, detecta nota e retoma cards nao processados.\nNotificacoes ja foram zeradas no passo anterior.',
+   i:['complete'],o:['exit']},
+];
+
+// Positions [x,y] — v4.1: scan removido, fases 4+5 unificadas
+const P={
+  // Fase 0 — Modo
+  start:[620,40],mode_sel:[620,140],
+  // Mapeamento (futuro)
+  map_start:[960,240],map_end:[960,340],
+  // Fase 1 — Notificacoes (nodo unico)
+  fetch:[620,240],
+  // Fase 2 — Analise
+  identify:[620,350],priority:[620,430],readctx:[620,510],
+  // Fase 3 — Enriquecimento
+  ctxrouter:[620,620],
+  src_supa:[100,730],src_mail:[260,730],src_drv:[420,730],src_cal:[620,730],src_slk:[820,730],src_td:[980,730],src_wa:[1140,730],
+  merge:[620,830],
+  // Fase 4 — Apresentacao + Decisao HITL (unificada)
+  gensug:[620,930],buildhtml:[620,1010],present:[620,1090],
+  showcard:[620,1180],decrouter:[620,1280],modify:[320,1380],
+  // Fase 5 — Acoes Trello
+  taction_router:[620,1380],
+  ta_comment:[220,1480],ta_desc:[380,1480],ta_attach:[540,1480],ta_label:[700,1480],ta_check:[860,1480],ta_move:[1020,1480],
+  // Fase 6 — Desdobramentos
+  detect_fw:[620,1580],fw_router:[620,1670],
+  fw_wa:[200,1770],fw_td:[400,1770],fw_cal:[620,1770],fw_slk:[840,1770],fw_gm:[1040,1770],
+  // Fase 7 — Documentacao
+  identify_file:[620,1890],update_ficha:[620,1970],save_session:[620,2050],
+  // Fase 8 — Finalizacao
+  hasmore:[620,2160],update_dash:[620,2260],mark_read:[620,2340],summary:[620,2420],end:[620,2500],
+};
+
+const NW=200,NH=46,NWs=140,NHs=38;
+const TC={
+  start:{f:'--accent-green-soft',s:'--accent-green',t:'--accent-green'},
+  action:{f:'--accent-blue-soft',s:'--accent-blue',t:'--accent-blue'},
+  system:{f:'--accent-cyan-soft',s:'--accent-cyan',t:'--accent-cyan'},
+  human:{f:'--accent-orange-soft',s:'--accent-orange',t:'--accent-orange'},
+  router:{f:'--accent-purple-soft',s:'--accent-purple',t:'--accent-purple'},
+  end:{f:'--accent-yellow-soft',s:'--accent-yellow',t:'--accent-yellow'},
+  enrich:{f:'--accent-cyan-soft',s:'--accent-cyan',t:'--accent-cyan'},
+  dispatch:{f:'--accent-purple-soft',s:'--accent-purple',t:'--accent-purple'},
+  'trello-act':{f:'--accent-blue-soft',s:'--accent-blue',t:'--accent-blue'},
+  obsidian:{f:'--accent-pink-soft',s:'--accent-pink',t:'--accent-pink'},
+};
+const TL={start:'inicio',action:'acao',system:'sistema',human:'human-in-the-loop',router:'roteador',end:'fim',enrich:'fonte externa',dispatch:'despacho','trello-act':'acao trello',obsidian:'documentacao'};
+const IC={start:'▶',end:'■',action:'⚡',system:'◈',human:'👤',router:'◆',enrich:'🔍',dispatch:'📤','trello-act':'📝',obsidian:'📓'};
+
+const E=[
+  // Fase 0 — modo
+  ['start','mode_sel','flow'],
+  ['mode_sel','fetch','yes','urgencia'],
+  ['mode_sel','map_start','no','mapeamento'],
+  ['map_start','map_end','flow'],
+  // Fase 1 → Fase 2 (direto, sem scan)
+  ['fetch','identify','flow'],
+  // Fase 2
+  ['identify','priority','flow'],['priority','readctx','flow'],['readctx','ctxrouter','flow'],
+  // Fase 3
+  ['ctxrouter','src_supa','enrich'],['ctxrouter','src_mail','enrich'],['ctxrouter','src_drv','enrich'],
+  ['ctxrouter','src_cal','enrich'],['ctxrouter','src_slk','enrich'],['ctxrouter','src_td','enrich'],['ctxrouter','src_wa','enrich'],
+  ['src_supa','merge','enrich'],['src_mail','merge','enrich'],['src_drv','merge','enrich'],
+  ['src_cal','merge','enrich'],['src_slk','merge','enrich'],['src_td','merge','enrich'],['src_wa','merge','enrich'],
+  // Fase 4 (unificada)
+  ['merge','gensug','flow'],['gensug','buildhtml','flow'],['buildhtml','present','flow'],
+  ['present','showcard','flow'],['showcard','decrouter','human','decisao'],
+  ['decrouter','modify','no','ressalvas'],['decrouter','taction_router','yes','aprovar'],
+  ['modify','taction_router','flow'],
+  ['decrouter','hasmore','no','rejeitar/descartar'],
+  // Fase 5
+  ['taction_router','ta_comment','trello'],['taction_router','ta_desc','trello'],['taction_router','ta_attach','trello'],
+  ['taction_router','ta_label','trello'],['taction_router','ta_check','trello'],['taction_router','ta_move','trello'],
+  ['ta_comment','detect_fw','trello'],['ta_desc','detect_fw','trello'],['ta_attach','detect_fw','trello'],
+  ['ta_label','detect_fw','trello'],['ta_check','detect_fw','trello'],['ta_move','detect_fw','trello'],
+  // Fase 6
+  ['detect_fw','fw_router','flow'],
+  ['fw_router','fw_wa','dispatch'],['fw_router','fw_td','dispatch'],['fw_router','fw_cal','dispatch'],
+  ['fw_router','fw_slk','dispatch'],['fw_router','fw_gm','dispatch'],
+  ['fw_wa','identify_file','dispatch'],['fw_td','identify_file','dispatch'],['fw_cal','identify_file','dispatch'],
+  ['fw_slk','identify_file','dispatch'],['fw_gm','identify_file','dispatch'],
+  // Fase 7
+  ['identify_file','update_ficha','obs'],['update_ficha','save_session','obs'],
+  // Fase 8
+  ['save_session','hasmore','flow'],
+  ['hasmore','showcard','loop','proximo card'],['hasmore','update_dash','yes','finalizar'],
+  ['update_dash','mark_read','flow'],['mark_read','summary','flow'],['summary','end','flow'],
+];
+
+function buildSVG(){
+  const svg=document.getElementById('svg');let h='';
+  h+=`<defs>
+    <marker id="ag" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="6" markerHeight="4" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="var(--border-light)"/></marker>
+    <marker id="agr" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="6" markerHeight="4" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="var(--accent-green)"/></marker>
+    <marker id="ao" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="6" markerHeight="4" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="var(--accent-orange)"/></marker>
+    <marker id="ac" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="6" markerHeight="4" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="var(--accent-cyan)"/></marker>
+    <marker id="ap" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="6" markerHeight="4" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="var(--accent-purple)"/></marker>
+    <marker id="ab" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="6" markerHeight="4" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="var(--accent-blue)"/></marker>
+    <marker id="apk" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="6" markerHeight="4" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="var(--accent-pink)"/></marker>
+  </defs>`;
+
+  // Phase bgs
+  const pb={};
+  N.forEach(n=>{const p=P[n.id];if(!p)return;if(!pb[n.p])pb[n.p]={mx:Infinity,my:Infinity,Mx:0,My:0};const b=pb[n.p];const w=n.sat?NWs:NW,ht=n.sat?NHs:NH;
+    b.mx=Math.min(b.mx,p[0]);b.my=Math.min(b.my,p[1]);b.Mx=Math.max(b.Mx,p[0]+w);b.My=Math.max(b.My,p[1]+ht);});
+  PH.forEach(ph=>{const b=pb[ph.id];if(!b)return;const pd=30;
+    h+=`<rect class="pbg" x="${b.mx-pd}" y="${b.my-22}" width="${b.Mx-b.mx+pd*2}" height="${b.My-b.my+pd+22}" fill="var(${ph.b})" stroke="var(${ph.c})" stroke-width=".5" stroke-opacity=".2"/>`;
+    h+=`<text x="${b.mx-pd+8}" y="${b.my-9}" font-size="8" font-weight="700" fill="var(${ph.c})" opacity=".5" letter-spacing=".5">${ph.l.toUpperCase()}</text>`;
+  });
+
+  // Edges
+  E.forEach(([f,t,ty,lb])=>{
+    const fp=P[f],tp=P[t];if(!fp||!tp)return;
+    const fn=N.find(n=>n.id===f),tn=N.find(n=>n.id===t);
+    const fw=fn?.sat?NWs:NW,fh=fn?.sat?NHs:NH,tw=tn?.sat?NWs:NW,th=tn?.sat?NHs:NH;
+    const fx=fp[0]+fw/2,fy=fp[1]+fh,tx=tp[0]+tw/2,ty2=tp[1];
+    let cls='ef',mk='ag';
+    if(ty==='yes'){cls='ey';mk='agr';}if(ty==='no'){cls='en';mk='ao';}
+    if(ty==='loop'){cls='eloop';mk='ac';}if(ty==='human'){cls='eh';mk='ao';}
+    if(ty==='enrich'){cls='eenr';mk='ac';}if(ty==='dispatch'){cls='edisp';mk='ap';}
+    if(ty==='trello'){cls='etrello';mk='ab';}if(ty==='obs'){cls='eobs';mk='apk';}
+    if(ty==='loop'){
+      const mx=1320;
+      h+=`<path class="el ${cls}" d="M${fx},${fy} C${fx},${fy+25} ${mx},${fy+25} ${mx},${(fy+ty2)/2} S${mx},${ty2-25} ${tx+tw/2+8},${ty2}" marker-end="url(#${mk})"/>`;
+      if(lb)h+=`<text class="elab" x="${mx+6}" y="${(fy+ty2)/2}">${lb}</text>`;
+    } else if(Math.abs(fx-tx)>10){
+      const midY=fy+(ty2-fy)*.35;
+      h+=`<path class="el ${cls}" d="M${fx},${fy} L${fx},${midY} L${tx},${midY} L${tx},${ty2}" marker-end="url(#${mk})"/>`;
+      if(lb){const lx=(fx+tx)/2;h+=`<text class="elab" x="${lx}" y="${midY-3}" text-anchor="middle">${lb}</text>`;}
+    } else {
+      h+=`<line class="el ${cls}" x1="${fx}" y1="${fy}" x2="${tx}" y2="${ty2}" marker-end="url(#${mk})"/>`;
+      if(lb)h+=`<text class="elab" x="${fx+6}" y="${(fy+ty2)/2}">${lb}</text>`;
+    }
+  });
+
+  // Nodes
+  N.forEach(n=>{
+    const p=P[n.id];if(!p)return;const tc=TC[n.t];if(!tc)return;
+    const s=n.sat,w=s?NWs:NW,ht=s?NHs:NH;
+    h+=`<g class="gn" data-id="${n.id}" onclick="showD('${n.id}')">`;
+    if(n.t==='router'){
+      const cx=p[0]+w/2,cy=p[1]+ht/2,dw=w/2+8,dh=ht/2+6;
+      h+=`<polygon class="nd" points="${cx},${cy-dh} ${cx+dw},${cy} ${cx},${cy+dh} ${cx-dw},${cy}" fill="var(${tc.f})" stroke="var(${tc.s})" stroke-width="1.5"/>`;
+      h+=`<text x="${cx}" y="${cy+3}" text-anchor="middle" font-size="${s?8:9}" font-weight="700" fill="var(${tc.t})">${n.l}</text>`;
+    } else {
+      h+=`<rect class="nb" x="${p[0]}" y="${p[1]}" width="${w}" height="${ht}" rx="7" fill="var(${tc.f})" stroke="var(${tc.s})" stroke-width="1.5"/>`;
+      h+=`<text x="${p[0]+8}" y="${p[1]+(s?15:16)}" font-size="${s?8:9}">${IC[n.t]||'●'}</text>`;
+      const ml=s?13:22;const lb=n.l.length>ml?n.l.substring(0,ml)+'..':n.l;
+      h+=`<text x="${p[0]+(s?22:26)}" y="${p[1]+(s?15:16)}" font-size="${s?8:9}" font-weight="700" fill="var(${tc.t})">${lb}</text>`;
+      if(!s){const dd=n.d.length>32?n.d.substring(0,32)+'..':n.d;h+=`<text x="${p[0]+8}" y="${p[1]+34}" font-size="7" fill="var(--text-muted)">${dd}</text>`;}
+      else if(n.m){const sm=n.m.length>18?n.m.substring(0,18):n.m;h+=`<text x="${p[0]+8}" y="${p[1]+30}" font-size="6" fill="var(--text-muted)">${sm}</text>`;}
+    }
+    // Priority badge
+    if(n.id==='priority'){
+      h+=`<rect x="${p[0]+NW+10}" y="${p[1]}" width="65" height="${NH}" rx="5" fill="var(--bg-card)" stroke="var(--border)"/>`;
+      h+=`<circle cx="${p[0]+NW+22}" cy="${p[1]+11}" r="3.5" fill="var(--p1)"/><text x="${p[0]+NW+28}" y="${p[1]+14}" font-size="7" font-weight="700" fill="var(--p1)">P1</text>`;
+      h+=`<circle cx="${p[0]+NW+22}" cy="${p[1]+23}" r="3.5" fill="var(--p2)"/><text x="${p[0]+NW+28}" y="${p[1]+26}" font-size="7" font-weight="700" fill="var(--p2)">P2</text>`;
+      h+=`<circle cx="${p[0]+NW+50}" cy="${p[1]+11}" r="3.5" fill="var(--p3)"/><text x="${p[0]+NW+56}" y="${p[1]+14}" font-size="7" font-weight="700" fill="var(--p3)">P3</text>`;
+      h+=`<circle cx="${p[0]+NW+50}" cy="${p[1]+23}" r="3.5" fill="var(--p4)"/><text x="${p[0]+NW+56}" y="${p[1]+26}" font-size="7" font-weight="700" fill="var(--p4)">P4</text>`;
+    }
+    // Mode badges
+    if(n.id==='mode_sel'){
+      h+=`<rect x="${p[0]-160}" y="${p[1]+2}" width="90" height="42" rx="5" fill="var(--accent-green-soft)" stroke="var(--accent-green)" stroke-width="1"/>`;
+      h+=`<text x="${p[0]-115}" y="${p[1]+18}" font-size="8" font-weight="700" fill="var(--accent-green)" text-anchor="middle">🔥 URGENCIA</text>`;
+      h+=`<text x="${p[0]-115}" y="${p[1]+32}" font-size="6" fill="var(--text-muted)" text-anchor="middle">Ativo · v4.1</text>`;
+      h+=`<rect x="${p[0]+NW+70}" y="${p[1]+2}" width="100" height="42" rx="5" fill="var(--accent-yellow-soft)" stroke="var(--accent-yellow)" stroke-width="1" stroke-dasharray="4,2"/>`;
+      h+=`<text x="${p[0]+NW+120}" y="${p[1]+18}" font-size="8" font-weight="700" fill="var(--accent-yellow)" text-anchor="middle">📋 MAPEAMENTO</text>`;
+      h+=`<text x="${p[0]+NW+120}" y="${p[1]+32}" font-size="6" fill="var(--text-muted)" text-anchor="middle">Futuro · v5.0</text>`;
+    }
+    // Notification API badge
+    if(n.id==='fetch'){
+      h+=`<rect x="${p[0]+NW+10}" y="${p[1]}" width="110" height="${NH}" rx="5" fill="var(--bg-card)" stroke="var(--accent-green)" stroke-width="1"/>`;
+      h+=`<text x="${p[0]+NW+18}" y="${p[1]+15}" font-size="7" font-weight="700" fill="var(--accent-green)">🔔 Trello API</text>`;
+      h+=`<text x="${p[0]+NW+18}" y="${p[1]+27}" font-size="6" fill="var(--text-muted)">/members/me/notifications</text>`;
+      h+=`<text x="${p[0]+NW+18}" y="${p[1]+37}" font-size="6" fill="var(--text-muted)">read_filter=unread</text>`;
+    }
+    // HITL badge on identify_file
+    if(n.id==='identify_file'){
+      h+=`<rect x="${p[0]+NW+10}" y="${p[1]-4}" width="95" height="54" rx="5" fill="var(--bg-card)" stroke="var(--accent-orange)" stroke-width="1" stroke-dasharray="3,2"/>`;
+      h+=`<text x="${p[0]+NW+18}" y="${p[1]+8}" font-size="7" font-weight="700" fill="var(--accent-orange)">SE NAO ENCONTRAR:</text>`;
+      h+=`<text x="${p[0]+NW+18}" y="${p[1]+18}" font-size="6" fill="var(--text-secondary)">[1] Criar caso</text>`;
+      h+=`<text x="${p[0]+NW+18}" y="${p[1]+26}" font-size="6" fill="var(--text-secondary)">[2] Criar negocio</text>`;
+      h+=`<text x="${p[0]+NW+18}" y="${p[1]+34}" font-size="6" fill="var(--text-secondary)">[3] Criar admin</text>`;
+      h+=`<text x="${p[0]+NW+18}" y="${p[1]+42}" font-size="6" fill="var(--text-secondary)">[4] Vincular  [5] Pular</text>`;
+    }
+    h+=`</g>`;
+  });
+  svg.innerHTML=h;
+}
+
+function buildSB(){
+  const l=document.getElementById('nodeList');let h='',lp='',i=0;
+  const pc={modo:'color:var(--accent-green)',map:'color:var(--accent-yellow)',notif:'color:var(--accent-green)',analise:'color:var(--accent-blue)',enriq:'color:var(--accent-cyan)',hitl:'color:var(--accent-orange)',trello:'color:var(--accent-blue)',desp:'color:var(--accent-purple)',doc:'color:var(--accent-pink)',fim:'color:var(--accent-yellow)'};
+  N.forEach(n=>{
+    if(n.p!==lp){const ph=PH.find(p=>p.id===n.p);h+=`<div class="pdiv" style="${pc[n.p]||''}">${ph.l}</div>`;lp=n.p;}
+    i++;h+=`<li class="ni ${n.sat?'sat':''}" data-id="${n.id}" onclick="showD('${n.id}')"><div class="nn ${n.t}">${i}</div><div class="ninfo"><div class="nname">${n.l}</div><div class="ntype">${TL[n.t]||n.t}${n.m?' · MCP':''}</div></div></li>`;
+  });
+  l.innerHTML=h;
+}
+
+function showD(id){
+  const n=N.find(x=>x.id===id);if(!n)return;const tc=TC[n.t];
+  const dp=document.getElementById('dp'),dc=document.getElementById('dc');
+  let h=`<div class="dt" style="color:var(${tc.t})">${n.l}</div><div class="dty">${TL[n.t]||n.t} · ${PH.find(p=>p.id===n.p).l}</div>`;
+  h+=`<div class="ds">Descricao</div><div class="dtx">${n.d}</div>`;
+  if(n.dt)h+=`<div class="ds">Detalhamento</div><div class="dcd">${n.dt}</div>`;
+  if(n.m)h+=`<div class="ds">MCP Tools</div><div class="dmcp">${n.m}</div>`;
+  if(n.i){h+=`<div class="ds">Inputs</div><div class="dio">`;n.i.forEach(x=>h+=`<div class="dii"><span class="dik">←</span><span class="div">${x}</span></div>`);h+=`</div>`;}
+  if(n.o){h+=`<div class="ds">Outputs</div><div class="dio">`;n.o.forEach(x=>h+=`<div class="dii"><span class="dik">→</span><span class="div">${x}</span></div>`);h+=`</div>`;}
+  if(n.id==='priority'){
+    h+=`<div class="ds">Prioridades Oficiais</div><div class="prow">
+      <span class="pb" style="background:var(--p1-soft);color:var(--p1);border:1px solid var(--p1)">P1</span>
+      <span class="pb" style="background:var(--p2-soft);color:var(--p2);border:1px solid var(--p2)">P2</span>
+      <span class="pb" style="background:var(--p3-soft);color:var(--p3);border:1px solid var(--p3)">P3</span>
+      <span class="pb" style="background:var(--p4-soft);color:var(--p4);border:1px solid var(--p4)">P4</span>
+    </div><div class="dcd">P1=#ff0000 P2=#ffc000 P3=#0078d4 P4=#808080\nSempre CAIXA ALTA, sem texto adicional.</div>`;
+  }
+  if(n.id==='mode_sel'){
+    h+=`<div class="ds">Modos Disponiveis</div><div class="prow">
+      <span class="pb" style="background:var(--accent-green-soft);color:var(--accent-green);border:1px solid var(--accent-green)">🔥 URGENCIA</span>
+      <span class="pb" style="background:var(--accent-yellow-soft);color:var(--accent-yellow);border:1px solid var(--accent-yellow)">📋 MAPEAMENTO</span>
+    </div>`;
+  }
+  if(n.id==='identify_file'){
+    h+=`<div class="ds">Sub-fluxo: Ficha nao encontrada</div><div class="prow" style="flex-wrap:wrap;gap:3px">
+      <span class="pb" style="background:var(--accent-orange-soft);color:var(--accent-orange);border:1px solid var(--accent-orange)">[1] Caso</span>
+      <span class="pb" style="background:var(--accent-orange-soft);color:var(--accent-orange);border:1px solid var(--accent-orange)">[2] Negocio</span>
+      <span class="pb" style="background:var(--accent-orange-soft);color:var(--accent-orange);border:1px solid var(--accent-orange)">[3] Admin</span>
+      <span class="pb" style="background:var(--accent-orange-soft);color:var(--accent-orange);border:1px solid var(--accent-orange)">[4] Vincular</span>
+      <span class="pb" style="background:var(--accent-orange-soft);color:var(--accent-orange);border:1px solid var(--accent-orange)">[5] Pular</span>
+    </div>`;
+  }
+  dc.innerHTML=h;dp.classList.add('open');
+  document.querySelectorAll('.ni').forEach(e=>e.classList.remove('active'));
+  const si=document.querySelector(`.ni[data-id="${id}"]`);if(si){si.classList.add('active');si.scrollIntoView({block:'nearest'});}
+}
+function closeD(){document.getElementById('dp').classList.remove('open');document.querySelectorAll('.ni').forEach(e=>e.classList.remove('active'));}
+
+let sc=.42,px=30,py=0,dr=false,sx,sy;
+function tx(){document.getElementById('ci').style.transform=`translate(${px}px,${py}px) scale(${sc})`;document.getElementById('sz').textContent=`Zoom: ${Math.round(sc*100)}%`;}
+const cv=document.getElementById('canvas');
+cv.addEventListener('wheel',e=>{e.preventDefault();sc=Math.max(.15,Math.min(2,sc*(e.deltaY>0?.92:1.08)));tx();});
+cv.addEventListener('mousedown',e=>{dr=true;sx=e.clientX-px;sy=e.clientY-py;});
+cv.addEventListener('mousemove',e=>{if(!dr)return;px=e.clientX-sx;py=e.clientY-sy;tx();});
+cv.addEventListener('mouseup',()=>dr=false);cv.addEventListener('mouseleave',()=>dr=false);
+function resetView(){sc=.42;px=30;py=0;tx();}
+function fitView(){sc=.30;px=40;py=10;tx();}
+function toggleTheme(){document.documentElement.dataset.theme=document.documentElement.dataset.theme==='light'?'':'light';}
+
+buildSVG();buildSB();tx();
+setInterval(()=>location.reload(),30000);
+</script>
+</body>
+</html>

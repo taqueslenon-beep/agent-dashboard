@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Organograma — Taques Agents</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  :root {
+    --preto:#0A0908;--verde:#223631;--verde-claro:#2d4a42;--bege-medio:#D6CCC1;--bege-claro:#EAE0D5;
+    --bg-primary:#0A0908;--bg-secondary:#111110;--bg-card:#161614;--bg-elevated:#1c1c19;
+    --border:#2a2a26;--border-light:#3a3a35;--text-primary:var(--bege-claro);--text-secondary:#a8a099;--text-muted:#6e6860;
+    --accent-green:#4a8c6f;--accent-green-soft:rgba(74,140,111,0.15);
+    --accent-blue:#6b8fa3;--accent-blue-soft:rgba(107,143,163,0.15);
+    --accent-cyan:#5a9e8f;--accent-cyan-soft:rgba(90,158,143,0.12);
+    --accent-orange:#c4944a;--accent-orange-soft:rgba(196,148,74,0.15);
+    --accent-purple:#8b7ea3;--accent-purple-soft:rgba(139,126,163,0.15);
+    --accent-yellow:#c9a84c;--accent-yellow-soft:rgba(201,168,76,0.12);
+    --accent-rose:#a36b6b;--accent-rose-soft:rgba(163,107,107,0.12);
+    --accent-violet:#7c6fa3;--accent-violet-soft:rgba(124,111,163,0.15);
+  }
+  [data-theme="light"] {
+    --bg-primary:#F5F0EB;--bg-secondary:#EAE0D5;--bg-card:#FFFFFF;--bg-elevated:#F0EBE5;
+    --border:#D6CCC1;--border-light:#C4B9AD;--text-primary:#0A0908;--text-secondary:#4A453F;--text-muted:#8A8279;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-primary);color:var(--text-primary);height:100vh;overflow:hidden;-webkit-font-smoothing:antialiased;transition:background-color .3s}
+  .header{background:var(--verde);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:fixed;top:0;left:0;right:0;z-index:100}
+  .header-left{display:flex;align-items:center;gap:12px}
+  .logo-mark{width:28px;height:28px;border:2px solid var(--bege-medio);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:var(--bege-claro)}
+  .logo-text{font-size:13px;font-weight:600;color:var(--bege-claro)}.logo-sub{font-size:9px;color:var(--bege-medio);opacity:.8}
+  .hb{font-size:8px;padding:2px 7px;border-radius:3px;background:rgba(234,224,213,.1);color:var(--bege-medio);border:1px solid rgba(234,224,213,.2);font-weight:500;letter-spacing:.5px;text-transform:uppercase}
+  .hbtn{background:rgba(234,224,213,.1);border:1px solid rgba(234,224,213,.2);border-radius:4px;padding:4px 10px;cursor:pointer;font-size:10px;color:var(--bege-medio);font-family:inherit;transition:all .2s}
+  .hbtn:hover{background:rgba(234,224,213,.18)}
+  .canvas{position:fixed;top:48px;left:0;right:0;bottom:28px;overflow:hidden;cursor:grab}.canvas:active{cursor:grabbing}
+  .ci{transform-origin:0 0;position:absolute;top:0;left:0;width:4000px;height:3000px}
+  svg{width:100%;height:100%}svg text{font-family:'Inter',sans-serif}
+  .org-node{cursor:pointer;transition:filter .2s}.org-node:hover{filter:brightness(1.12)}
+  .conn{fill:none;stroke:var(--border-light);stroke-width:1.5}
+  .conn-ceo{stroke:var(--accent-violet);stroke-width:2}
+  .sb{position:fixed;bottom:0;left:0;right:0;height:28px;background:var(--bg-secondary);border-top:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;font-size:9px;color:var(--text-muted);z-index:100}
+  .sd{width:6px;height:6px;border-radius:50%;background:var(--accent-green)}.ss{width:1px;height:14px;background:var(--border)}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-left">
+    <div class="logo-mark">TA</div>
+    <div><div class="logo-text">Taques Agents</div><div class="logo-sub">Organograma Empresarial</div></div>
+    <span class="hb">Hierarquia</span>
+  </div>
+  <div style="display:flex;gap:8px">
+    <button class="hbtn" onclick="resetView()">&#8634; Reset</button>
+    <button class="hbtn" onclick="fitView()">&#9634; Fit</button>
+    <button class="hbtn" onclick="toggleTheme()">&#9681; Tema</button>
+  </div>
+</div>
+<div class="canvas" id="canvas"><div class="ci" id="ci"><svg id="svg" xmlns="http://www.w3.org/2000/svg"></svg></div></div>
+<div class="sb">
+  <div class="sd"></div><span>Organograma Taques Agents</span><div class="ss"></div>
+  <span>1 Gabinete CEO &middot; 4 Departamentos &middot; 13 Agentes &middot; 4 Sub-agentes</span><div class="ss"></div>
+  <span id="sz">Zoom: 100%</span>
+</div>
+
+<script>
+const DEPTS = {
+  'gabinete-ceo': { label:'Gabinete do CEO', color:'--accent-violet', soft:'--accent-violet-soft', icon:'👔' },
+  juridico:       { label:'Dept. Juridico',   color:'--accent-blue',   soft:'--accent-blue-soft',   icon:'⚖' },
+  tecnico:        { label:'Dept. Tecnico',    color:'--accent-cyan',   soft:'--accent-cyan-soft',   icon:'🧪' },
+  administrativo: { label:'Dept. Admin.',     color:'--accent-orange', soft:'--accent-orange-soft', icon:'📋' },
+  comercial:      { label:'Dept. Comercial',  color:'--accent-rose',   soft:'--accent-rose-soft',   icon:'💼' },
+  geral:          { label:'Geral',            color:'--accent-green',  soft:'--accent-green-soft',  icon:'🔧' },
+};
+
+const AGENTS = {
+  'gabinete-ceo': [
+    { id:'secretaria-executiva', name:'Agente 1 — Secretaria Executiva', role:'Despacho Trello + Triagem', status:'prototype', icon:'🗂', level:1 },
+  ],
+  juridico: [
+    { id:'est-jur', name:'Agente 0 — Estagiario Juridico', role:'Extracao e Coleta', status:'prototype', icon:'🎓', level:0 },
+    { id:'adv-jr', name:'Agente 1 — Advogado Junior', role:'Analise e Separacao', status:'planned', icon:'🔍', level:1 },
+    { id:'adv-pl', name:'Agente 2 — Advogado Pleno', role:'Redacao e Argumentacao', status:'planned', icon:'✍', level:2,
+      subs:[
+        { name:'Pesq. Juris. Dominante', icon:'⚖️', status:'planned' },
+        { name:'Pesq. Juris. Vanguarda', icon:'🔭', status:'planned' },
+        { name:'Analista Jurimetria', icon:'📊', status:'planned' },
+        { name:'Compilador Juris.', icon:'📚', status:'planned' },
+      ]},
+    { id:'adv-sr', name:'Agente 3 — Advogado Senior', role:'Estrategia', status:'planned', icon:'🎯', level:3 },
+  ],
+  tecnico: [
+    { id:'est-tec', name:'Agente 0 — Estagiario Tecnico', role:'Extracao Ambiental', status:'prototype', icon:'🧪', level:0 },
+    { id:'ana-jr', name:'Agente 1 — Analista MA Junior', role:'Organizacao', status:'planned', icon:'📊', level:1 },
+    { id:'ana-pl', name:'Agente 2 — Analista MA Pleno', role:'Analise Integrada', status:'planned', icon:'🗺', level:2 },
+    { id:'ana-sr', name:'Agente 3 — Analista MA Senior', role:'Diagnostico', status:'planned', icon:'🚨', level:3 },
+  ],
+  administrativo: [
+    { id:'ctrl-jur', name:'Controlador Juridico', role:'Prazos e Distribuicao', status:'planned', icon:'📋', level:0 },
+  ],
+  comercial: [
+    { id:'coord-com', name:'Coordenador Comercial', role:'Pipeline Comercial', status:'planned', icon:'💼', level:0 },
+  ],
+  geral: [
+    { id:'verif-comp', name:'Verificador Compromissos', role:'WhatsApp + GCal', status:'active', icon:'🔍', level:0 },
+  ],
+};
+
+const STATUS = {
+  active:    { fill:'--accent-green-soft', stroke:'--accent-green', label:'Ativo' },
+  prototype: { fill:'--accent-orange-soft', stroke:'--accent-orange', label:'Prototipo' },
+  planned:   { fill:'--bg-elevated', stroke:'--border-light', label:'Planejado' },
+};
+
+// Layout
+const NW=200, NH=56, NWs=140, NHs=36;
+const CEO_X=900, CEO_Y=40;
+const DEPT_Y=180, DEPT_GAP=280;
+const AGENT_Y=310, AGENT_GAP=90;
+const SUB_Y=620, SUB_GAP=65;
+
+function getDeptX(idx){ return 120 + idx * DEPT_GAP; }
+
+function buildSVG(){
+  const svg=document.getElementById('svg');
+  let h='';
+
+  // Defs
+  h+=`<defs>
+    <marker id="a1" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="6" markerHeight="4" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="var(--border-light)"/></marker>
+    <marker id="a2" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="6" markerHeight="4" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="var(--accent-violet)"/></marker>
+  </defs>`;
+
+  // CEO node (top)
+  const ceoW=240, ceoH=70;
+  h+=`<g class="org-node">`;
+  h+=`<rect x="${CEO_X-ceoW/2}" y="${CEO_Y}" width="${ceoW}" height="${ceoH}" rx="10" fill="var(--accent-violet-soft)" stroke="var(--accent-violet)" stroke-width="2"/>`;
+  h+=`<text x="${CEO_X}" y="${CEO_Y+22}" text-anchor="middle" font-size="11" font-weight="800" fill="var(--accent-violet)">👔 GABINETE DO CEO</text>`;
+  h+=`<text x="${CEO_X}" y="${CEO_Y+38}" text-anchor="middle" font-size="9" fill="var(--text-secondary)">Lenon Taques — CEO</text>`;
+  h+=`<text x="${CEO_X}" y="${CEO_Y+52}" text-anchor="middle" font-size="8" fill="var(--text-muted)">Orquestrador Principal via Claude Code</text>`;
+  h+=`</g>`;
+
+  // Department nodes and connections
+  const deptKeys = Object.keys(DEPTS).filter(k => k !== 'gabinete-ceo');
+  const totalDepts = deptKeys.length;
+  const startX = CEO_X - ((totalDepts-1) * DEPT_GAP) / 2;
+
+  // Gabinete CEO agent (directly below CEO, special position)
+  const gabAgents = AGENTS['gabinete-ceo'] || [];
+  gabAgents.forEach((ag, ai) => {
+    const ax = CEO_X, ay = DEPT_Y - 10;
+    // Connection from CEO to agent
+    h+=`<line class="conn conn-ceo" x1="${CEO_X}" y1="${CEO_Y+ceoH}" x2="${ax}" y2="${ay}" marker-end="url(#a2)"/>`;
+    const st = STATUS[ag.status] || STATUS.planned;
+    h+=`<g class="org-node">`;
+    h+=`<rect x="${ax-NW/2}" y="${ay}" width="${NW}" height="${NH}" rx="8" fill="var(${st.fill})" stroke="var(--accent-violet)" stroke-width="1.5"/>`;
+    h+=`<text x="${ax-NW/2+10}" y="${ay+16}" font-size="14">${ag.icon}</text>`;
+    h+=`<text x="${ax-NW/2+30}" y="${ay+16}" font-size="9" font-weight="700" fill="var(--accent-violet)">${ag.name.length>22?ag.name.substring(0,22)+'..':ag.name}</text>`;
+    h+=`<text x="${ax-NW/2+10}" y="${ay+32}" font-size="8" fill="var(--text-secondary)">${ag.role}</text>`;
+    h+=`<text x="${ax-NW/2+10}" y="${ay+46}" font-size="7" fill="var(--text-muted)">Nivel ${ag.level} · ${st.label}</text>`;
+    h+=`</g>`;
+  });
+
+  deptKeys.forEach((dept, di) => {
+    const dx = startX + di * DEPT_GAP;
+    const dy = DEPT_Y + 90;
+    const dc = DEPTS[dept];
+
+    // Connection from CEO to department
+    h+=`<path class="conn" d="M${CEO_X},${CEO_Y+ceoH} L${CEO_X},${DEPT_Y+60} L${dx},${DEPT_Y+60} L${dx},${dy}" marker-end="url(#a1)"/>`;
+
+    // Department box
+    const dw=220, dh=50;
+    h+=`<g class="org-node">`;
+    h+=`<rect x="${dx-dw/2}" y="${dy}" width="${dw}" height="${dh}" rx="8" fill="var(${dc.soft})" stroke="var(${dc.color})" stroke-width="1.5"/>`;
+    h+=`<text x="${dx}" y="${dy+20}" text-anchor="middle" font-size="10" font-weight="700" fill="var(${dc.color})">${dc.icon} ${dc.label}</text>`;
+    const agCount = (AGENTS[dept]||[]).length;
+    h+=`<text x="${dx}" y="${dy+36}" text-anchor="middle" font-size="8" fill="var(--text-muted)">${agCount} agente${agCount!==1?'s':''}</text>`;
+    h+=`</g>`;
+
+    // Agent nodes
+    const deptAgents = AGENTS[dept] || [];
+    const agStartY = dy + dh + 40;
+
+    deptAgents.forEach((ag, ai) => {
+      const ax = dx, ay = agStartY + ai * AGENT_GAP;
+      const st = STATUS[ag.status] || STATUS.planned;
+
+      // Connection
+      if(ai === 0) {
+        h+=`<line class="conn" x1="${dx}" y1="${dy+dh}" x2="${ax}" y2="${ay}" marker-end="url(#a1)"/>`;
+      } else {
+        h+=`<line class="conn" x1="${dx}" y1="${agStartY + (ai-1)*AGENT_GAP + NH}" x2="${ax}" y2="${ay}" marker-end="url(#a1)"/>`;
+      }
+
+      // Agent box
+      h+=`<g class="org-node">`;
+      h+=`<rect x="${ax-NW/2}" y="${ay}" width="${NW}" height="${NH}" rx="7" fill="var(${st.fill})" stroke="var(${dc.color})" stroke-width="1"/>`;
+      h+=`<text x="${ax-NW/2+8}" y="${ay+15}" font-size="12">${ag.icon}</text>`;
+      const nm = ag.name.length > 24 ? ag.name.substring(0,24)+'..' : ag.name;
+      h+=`<text x="${ax-NW/2+26}" y="${ay+15}" font-size="8" font-weight="600" fill="var(${dc.color})">${nm}</text>`;
+      h+=`<text x="${ax-NW/2+8}" y="${ay+30}" font-size="7" fill="var(--text-secondary)">${ag.role}</text>`;
+      // Status dot
+      h+=`<circle cx="${ax+NW/2-12}" cy="${ay+10}" r="3" fill="var(${st.stroke})"/>`;
+      h+=`<text x="${ax-NW/2+8}" y="${ay+44}" font-size="7" fill="var(--text-muted)">L${ag.level} · ${st.label}${ag.subs?' · '+ag.subs.length+' sub-agentes':''}</text>`;
+      h+=`</g>`;
+
+      // Sub-agents
+      if(ag.subs) {
+        ag.subs.forEach((sub, si) => {
+          const sx = ax + NW/2 + 40 + si * (NWs + 15);
+          const sy = ay + 10;
+          const sst = STATUS[sub.status] || STATUS.planned;
+          // Connection
+          h+=`<line class="conn" x1="${ax+NW/2}" y1="${ay+NH/2}" x2="${sx}" y2="${sy+NHs/2}" marker-end="url(#a1)" stroke-dasharray="4,3"/>`;
+          // Sub node
+          h+=`<g class="org-node">`;
+          h+=`<rect x="${sx}" y="${sy}" width="${NWs}" height="${NHs}" rx="5" fill="var(${sst.fill})" stroke="var(--border-light)" stroke-width="1"/>`;
+          h+=`<text x="${sx+6}" y="${sy+14}" font-size="10">${sub.icon}</text>`;
+          const snm = sub.name.length>16?sub.name.substring(0,16)+'..':sub.name;
+          h+=`<text x="${sx+22}" y="${sy+14}" font-size="7" font-weight="600" fill="var(--text-primary)">${snm}</text>`;
+          h+=`<text x="${sx+6}" y="${sy+28}" font-size="6" fill="var(--text-muted)">${sst.label}</text>`;
+          h+=`</g>`;
+        });
+      }
+    });
+  });
+
+  svg.innerHTML=h;
+}
+
+// Pan & zoom
+let sc=.6,px=100,py=0,dr=false,sx,sy;
+function tx(){document.getElementById('ci').style.transform=`translate(${px}px,${py}px) scale(${sc})`;document.getElementById('sz').textContent=`Zoom: ${Math.round(sc*100)}%`;}
+const cv=document.getElementById('canvas');
+cv.addEventListener('wheel',e=>{e.preventDefault();sc=Math.max(.2,Math.min(2,sc*(e.deltaY>0?.92:1.08)));tx();});
+cv.addEventListener('mousedown',e=>{dr=true;sx=e.clientX-px;sy=e.clientY-py;});
+cv.addEventListener('mousemove',e=>{if(!dr)return;px=e.clientX-sx;py=e.clientY-sy;tx();});
+cv.addEventListener('mouseup',()=>dr=false);cv.addEventListener('mouseleave',()=>dr=false);
+function resetView(){sc=.6;px=100;py=0;tx();}
+function fitView(){sc=.45;px=50;py=10;tx();}
+function toggleTheme(){document.documentElement.dataset.theme=document.documentElement.dataset.theme==='light'?'':'light';}
+
+buildSVG();tx();
+setInterval(()=>location.reload(),30000);
+</script>
+</body>
+</html>

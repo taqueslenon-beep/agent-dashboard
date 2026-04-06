@@ -246,6 +246,12 @@ def get_agents():
         "comercial": [
             {"id": "coordenador-comercial", "name": "Coordenador Comercial", "role": "Prospecção e Gestão Comercial", "description": "Coordena o pipeline comercial do escritório. Acompanha novos negócios, propostas e conversões.", "tags": ["Pipeline", "Propostas", "Follow-up", "Leads", "Conversão"], "status": "planned", "icon": "💼", "department": "comercial", "level": 0},
         ],
+        "geral": [
+            {"id": "verificador-compromissos", "name": "Verificador de Compromissos", "role": "Verificação diária de compromissos pessoais via WhatsApp + GCal", "description": "Agente automatizado que verifica diariamente compromissos pessoais recorrentes (terapia, barbearia) cruzando Google Calendar com WhatsApp e reportando ao painel.", "tags": ["WhatsApp", "Google Calendar", "Todoist", "Supabase", "Cron", "Pessoal"], "status": "active", "icon": "🔍", "department": "geral", "level": 0},
+        ],
+        "gabinete-ceo": [
+            {"id": "secretaria-executiva", "name": "Agente 1 — Secretária Executiva", "role": "Despacho de Trello e Triagem de Notificações", "description": "Processa notificações do Trello, enriquece contexto com 7 fontes externas (Supabase, Gmail, Drive, Calendar, Slack, Todoist, WhatsApp), sugere respostas e ações, e documenta no Obsidian. Human-in-the-Loop obrigatório.", "tags": ["Trello", "Gmail", "Calendar", "Todoist", "WhatsApp", "Slack", "Drive", "Supabase", "Obsidian", "HITL"], "status": "prototype", "icon": "🗂", "department": "gabinete-ceo", "level": 1},
+        ],
     }
 
 
@@ -255,6 +261,8 @@ def get_automations():
         {"id": "doc-obsidian", "name": "Documentação Automática Obsidian", "type_label": "Gatilho · Documentação de Sessão", "description": "Documenta sessões e decisões no Obsidian.", "tags": ["Gatilhos", "Obsidian", "Sessões"], "status": "active", "icon": "📝"},
         {"id": "briefing-comercial", "name": "Briefing Comercial", "type_label": "Automação · Cron · Coordenador Comercial", "description": "Scan diagnóstico dos boards Novos Negócios (TAQUES + DF Bio). Identifica leads parados, sem responsável, sem prazo e vencidos. Gera relatório para aprovação.", "tags": ["Novos Negócios", "Trello", "Diagnóstico", "6h"], "status": "planned", "icon": "📊", "agent_id": "coordenador-comercial", "trigger_type": "cron", "trigger_config": {"cron": "0 6 * * 1-5", "boards": ["698e0e318ec5969402a1b2a5", "698e0d2afa67614e223e358e"]}},
         {"id": "check-comercial", "name": "Check de Execução Comercial", "type_label": "Automação · Cron · Coordenador Comercial", "description": "Verificação de progresso nos boards Novos Negócios. Compara com briefing da manhã, identifica movimentações e follow-ups pendentes. Propõe ações.", "tags": ["Novos Negócios", "Trello", "Follow-up", "15h/18h"], "status": "planned", "icon": "🔄", "agent_id": "coordenador-comercial", "trigger_type": "cron", "trigger_config": {"cron": "0 15,18 * * 1-5", "boards": ["698e0e318ec5969402a1b2a5", "698e0d2afa67614e223e358e"]}},
+        {"id": "verificador-compromissos", "name": "Verificador de Compromissos Pessoais", "type_label": "Automação · Cron · WhatsApp + GCal", "description": "Verifica compromissos pessoais recorrentes (terapia, barbearia) via WhatsApp e Google Calendar. Confirma se mensagens de confirmação foram enviadas e reporta ao painel.", "tags": ["WhatsApp", "Google Calendar", "Todoist", "Pessoal", "6h"], "status": "active", "icon": "🔍", "agent_id": "verificador-compromissos", "trigger_type": "cron", "trigger_config": {"cron": "0 6 * * *", "compromissos": [{"tipo": "terapia", "contato": "Bruna de Oliveira", "jid": "554188887092@s.whatsapp.net"}, {"tipo": "corte-cabelo", "contato": "Bravos Barbearia", "jid": "554797035509@s.whatsapp.net"}]}},
+        {"id": "reordenar-rituais-todoist", "name": "Reordenação de Rituais Todoist", "type_label": "Automação · Cron · Vercel + Todoist API", "description": "Reordena subtarefas dos rituais Matinal e Noturno no Todoist diariamente à 00:01. Corrige bug de reordenação ao completar tarefas recorrentes. Roda via Vercel Cron independente do Claude Code.", "tags": ["Todoist", "Vercel Cron", "Rituais", "00:01"], "status": "active", "icon": "🔄", "trigger_type": "cron", "trigger_config": {"cron": "1 0 * * *", "endpoint": "/api/cron/reordenar-rituais", "matinal_tasks": 9, "noturno_tasks": 9}},
     ]
 
 
@@ -419,6 +427,21 @@ def sync_to_supabase(registry):
                 "status": agent["status"], "description": agent["description"],
                 "icon": agent["icon"], "tags": agent["tags"],
             }])
+
+    # Upsert automations
+    for auto in registry.get("automations", []):
+        upsert("automations", [{
+            "id": auto["id"], "name": auto["name"],
+            "type_label": auto.get("type_label"),
+            "description": auto.get("description"),
+            "trigger_type": auto.get("trigger_type"),
+            "trigger_config": json.dumps(auto["trigger_config"]) if auto.get("trigger_config") else None,
+            "agent_id": auto.get("agent_id"),
+            "tags": auto.get("tags", []),
+            "status": auto.get("status"),
+            "icon": auto.get("icon"),
+            "is_active": auto.get("status") == "active",
+        }])
 
     # Upsert MCPs
     for mcp in registry.get("mcps", []):
