@@ -14,7 +14,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .counter { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; }
 .counter .dot { width: 10px; height: 10px; border-radius: 50%; }
 .main { max-width: 900px; margin: 24px auto; padding: 0 16px; }
-.section-title { font-size: 14px; font-weight: 700; margin: 24px 0 12px; padding-bottom: 8px; border-bottom: 2px solid #223631; display: flex; align-items: center; gap: 8px; }
+.section-title { font-size: 14px; font-weight: 700; margin: 24px 0 12px; padding-bottom: 8px; border-bottom: 2px solid #223631; }
 .card { background: #fff; border-radius: 8px; border-left: 4px solid; margin-bottom: 8px; padding: 14px 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
 .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
 .card-num { font-weight: 800; font-size: 14px; }
@@ -22,14 +22,19 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .card-name { font-size: 14px; font-weight: 600; flex: 1; }
 .card-meta { font-size: 11px; color: #666; margin-bottom: 4px; }
 .card-text { font-size: 12px; color: #444; background: #f9f7f5; padding: 8px 10px; border-radius: 4px; margin-top: 6px; }
-.card-badges { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+.card-badges { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; align-items: center; }
 .badge { font-size: 10px; padding: 2px 8px; border-radius: 10px; background: #eee; color: #555; }
-.card-status { font-size: 11px; padding: 3px 10px; border-radius: 12px; background: #e8f5e9; color: #2e7d32; font-weight: 500; }
+.card-status { font-size: 11px; padding: 3px 10px; border-radius: 12px; font-weight: 500; }
+.trello-link { font-size: 11px; color: #0079bf; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 4px; background: #e4f0f6; transition: background 0.2s; }
+.trello-link:hover { background: #cce3f0; text-decoration: underline; }
+.trello-link svg { width: 14px; height: 14px; }
 .reactions-section { background: #fafafa; border-radius: 8px; padding: 16px; margin-top: 8px; }
 .reaction-item { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 12px; }
 .reaction-item:last-child { border-bottom: none; }
 .reaction-emoji { font-size: 16px; }
 .reaction-card { font-weight: 500; flex: 1; }
+.reaction-card a { color: #0079bf; text-decoration: none; }
+.reaction-card a:hover { text-decoration: underline; }
 .reaction-board { color: #888; font-size: 11px; }
 .footer { text-align: center; padding: 24px; font-size: 11px; color: #999; }
 .processed { opacity: 0.5; }
@@ -39,7 +44,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 <div class="header">
   <div>
     <h1>Trello Despacho — Secretária Executiva</h1>
-    <div class="sub">Gabinete do CEO · Taques Advogados · 06/04/2026 12:23</div>
+    <div class="sub">Gabinete do CEO · Taques Advogados · 06/04/2026 12:25</div>
   </div>
   <div style="text-align:right">
     <div style="font-size:24px;font-weight:800">23</div>
@@ -56,7 +61,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 </div>
 
 <div class="main">
-<div class="section-title"><span style="color:#ff0000">P1 — Urgente</span></div>
+<div class="section-title" style="color:#ff0000">P1 — Urgente</div>
 <div>
 <div class="card processed" style="border-left-color:#ff0000; background:#fff5f5">
   <div class="card-header">
@@ -67,256 +72,256 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
   </div>
   <div class="card-meta">TAREFAS - TAQUES · Berna Bobko · 2026-03-31</div>
   <div class="card-text">@lenontaques1 se possível retornar para Claudia amanhã</div>
-  <div class="card-badges"><span class="badge">Menção</span></div>
+  <div class="card-badges"><span class="badge">Menção</span><a href="https://trello.com/c/n5LlCbXj" target="_blank" class="trello-link" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm-9 14H5V7h7v10zm8-4h-7V7h7v6z"/></svg> Abrir no Trello</a></div>
 </div>
 <div class="card " style="border-left-color:#ff0000; background:#fff5f5">
   <div class="card-header">
     <span class="card-num" style="color:#ff0000">#2</span>
     <span class="card-prio" style="background:#ff0000">P1</span>
     <span class="card-name">FAURI BATISTA - Fechar e assinar contrato (aguardando audiência)</span>
-    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+    <span class="card-status" style="background:#fff3e0;color:#e65100">Pendente</span>
   </div>
   <div class="card-meta">TAREFAS - TAQUES · Berna Bobko, Gilberto Taques · 2026-04-05</div>
   <div class="card-text">Ok, eu preciso que vocês agora juntem esse contrato assinado, por favor, em PDF.
 
 @bernabobko @gibataques</div>
-  <div class="card-badges"><span class="badge">Anexo</span><span class="badge">Menção</span></div>
+  <div class="card-badges"><span class="badge">Anexo</span><span class="badge">Menção</span><a href="https://trello.com/c/j0kJB78y" target="_blank" class="trello-link" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm-9 14H5V7h7v10zm8-4h-7V7h7v6z"/></svg> Abrir no Trello</a></div>
 </div>
 <div class="card " style="border-left-color:#ff0000; background:#fff5f5">
   <div class="card-header">
     <span class="card-num" style="color:#ff0000">#3</span>
     <span class="card-prio" style="background:#ff0000">P1</span>
     <span class="card-name">MARCELO PERES + FAURI BATISTA - Reunião</span>
-    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+    <span class="card-status" style="background:#fff3e0;color:#e65100">Pendente</span>
   </div>
   <div class="card-meta">TAREFAS - TAQUES · Berna Bobko · 2026-04-06</div>
   <div class="card-text">@lenontaques1 Marcelo gostaria de fazer a reunião por video conferencia, tudo bem pra voce?</div>
-  <div class="card-badges"><span class="badge">Menção</span></div>
+  <div class="card-badges"><span class="badge">Menção</span><a href="https://trello.com/c/yj8mo3UH" target="_blank" class="trello-link" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm-9 14H5V7h7v10zm8-4h-7V7h7v6z"/></svg> Abrir no Trello</a></div>
 </div>
 <div class="card " style="border-left-color:#ff0000; background:#fff5f5">
   <div class="card-header">
     <span class="card-num" style="color:#ff0000">#4</span>
     <span class="card-prio" style="background:#ff0000">P1</span>
     <span class="card-name">Responder Márcio Fabiano Helbing: quantas parcelas ainda faltam?</span>
-    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+    <span class="card-status" style="background:#fff3e0;color:#e65100">Pendente</span>
   </div>
   <div class="card-meta">TAREFAS - TAQUES · Berna Bobko · 2026-04-06</div>
   <div class="card-text">@lenontaques1 Marcio gostaria de agendar uma reunião. Você teria disponibilidade 07/04/2026 (terça-feira) 14h15min? Por ...</div>
-  <div class="card-badges"><span class="badge">Menção</span></div>
+  <div class="card-badges"><span class="badge">Menção</span><a href="https://trello.com/c/yoSqSQJq" target="_blank" class="trello-link" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm-9 14H5V7h7v10zm8-4h-7V7h7v6z"/></svg> Abrir no Trello</a></div>
 </div>
 <div class="card " style="border-left-color:#ff0000; background:#fff5f5">
   <div class="card-header">
     <span class="card-num" style="color:#ff0000">#5</span>
     <span class="card-prio" style="background:#ff0000">P1</span>
     <span class="card-name">Fazer contrato - Vitor Krzwiski</span>
-    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+    <span class="card-status" style="background:#fff3e0;color:#e65100">Pendente</span>
   </div>
   <div class="card-meta">TAREFAS - TAQUES · Berna Bobko · 2026-04-06</div>
   <div class="card-text">@lenontaques1 preciso do boleto do Sr Vitor com vencimento 10/04</div>
-  <div class="card-badges"><span class="badge">Menção</span></div>
+  <div class="card-badges"><span class="badge">Menção</span><a href="https://trello.com/c/jTccznDF" target="_blank" class="trello-link" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm-9 14H5V7h7v10zm8-4h-7V7h7v6z"/></svg> Abrir no Trello</a></div>
 </div>
 </div>
-<div class="section-title"><span style="color:#ffc000">P2 — Atenção</span></div>
+<div class="section-title" style="color:#ffc000">P2 — Atenção</div>
 <div>
 <div class="card " style="border-left-color:#ffc000; background:#fffbeb">
   <div class="card-header">
     <span class="card-num" style="color:#ffc000">#6</span>
     <span class="card-prio" style="background:#ffc000">P2</span>
     <span class="card-name">HILSON LUCACHINSKI - Fazer vistoria na propriedade e elaborar laudos de frustração de safra e capacidade de pagamento</span>
-    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+    <span class="card-status" style="background:#fff3e0;color:#e65100">Pendente</span>
   </div>
   <div class="card-meta">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Douglas Prado Marcos · 2026-04-05</div>
   <div class="card-text">@lenontaques1 @flavianafriedrich @bernabobko @gibataques estamos organizando para ir na quarta feira pela manhã (viajo n...</div>
-  <div class="card-badges"><span class="badge">Menção</span></div>
+  <div class="card-badges"><span class="badge">Menção</span><a href="https://trello.com/c/4i4aN7Wr" target="_blank" class="trello-link" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm-9 14H5V7h7v10zm8-4h-7V7h7v6z"/></svg> Abrir no Trello</a></div>
 </div>
 <div class="card " style="border-left-color:#ffc000; background:#fffbeb">
   <div class="card-header">
     <span class="card-num" style="color:#ffc000">#7</span>
     <span class="card-prio" style="background:#ffc000">P2</span>
     <span class="card-name">🇩🇪 CAMPOS DE JÚLIO/MT - Possível viagem</span>
-    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+    <span class="card-status" style="background:#fff3e0;color:#e65100">Pendente</span>
   </div>
   <div class="card-meta">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Douglas Prado Marcos · 2026-04-05</div>
   <div class="card-text">@lenontaques1 @flavianafriedrich estamos planejando a viagem para o dia 23/04 as 3 horas da manhã, para retorno no dia 2...</div>
-  <div class="card-badges"><span class="badge">Menção</span></div>
+  <div class="card-badges"><span class="badge">Menção</span><a href="https://trello.com/c/7mQI5BNH" target="_blank" class="trello-link" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm-9 14H5V7h7v10zm8-4h-7V7h7v6z"/></svg> Abrir no Trello</a></div>
 </div>
 <div class="card " style="border-left-color:#ffc000; background:#fffbeb">
   <div class="card-header">
     <span class="card-num" style="color:#ffc000">#8</span>
     <span class="card-prio" style="background:#ffc000">P2</span>
     <span class="card-name">Taques x Bradesco</span>
-    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+    <span class="card-status" style="background:#fff3e0;color:#e65100">Pendente</span>
   </div>
   <div class="card-meta">TAREFAS - TAQUES · Gilberto Taques · 2026-04-05</div>
   <div class="card-text">@lenontaques1 estou criando esse canal para tratarmos exclusivamente do processo maior do Bradesco contra Taques, Gilber...</div>
-  <div class="card-badges"><span class="badge">Menção</span><span class="badge">Adicionado</span></div>
+  <div class="card-badges"><span class="badge">Menção</span><span class="badge">Adicionado</span><a href="https://trello.com/c/Yj6eia5Y" target="_blank" class="trello-link" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm-9 14H5V7h7v10zm8-4h-7V7h7v6z"/></svg> Abrir no Trello</a></div>
 </div>
 <div class="card " style="border-left-color:#ffc000; background:#fffbeb">
   <div class="card-header">
     <span class="card-num" style="color:#ffc000">#9</span>
     <span class="card-prio" style="background:#ffc000">P2</span>
     <span class="card-name">UNC X Gilberto</span>
-    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+    <span class="card-status" style="background:#fff3e0;color:#e65100">Pendente</span>
   </div>
   <div class="card-meta">TAREFAS - TAQUES · Gilberto Taques · 2026-04-05</div>
   <div class="card-text">@lenontaques1 abri esse canal para tratarmos da execução UNC X GIBERTO, autos **5001674-48.2026.8.24.0041**, informo que...</div>
-  <div class="card-badges"><span class="badge">Menção</span><span class="badge">Adicionado</span></div>
+  <div class="card-badges"><span class="badge">Menção</span><span class="badge">Adicionado</span><a href="https://trello.com/c/0U2UWMpS" target="_blank" class="trello-link" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm-9 14H5V7h7v10zm8-4h-7V7h7v6z"/></svg> Abrir no Trello</a></div>
 </div>
 </div>
-<div class="section-title"><span style="color:#0078d4">P3 — Rotina</span></div>
+<div class="section-title" style="color:#0078d4">P3 — Rotina</div>
 <div>
 <div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
   <div class="card-header">
     <span class="card-num" style="color:#0078d4">#10</span>
     <span class="card-prio" style="background:#0078d4">P3</span>
     <span class="card-name">ELIEZER/PATRICIA — Elaborar PRAD — 3,61 ha (Bugre)</span>
-    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+    <span class="card-status" style="background:#fff3e0;color:#e65100">Pendente</span>
   </div>
   <div class="card-meta">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Larissa Baptista, Flaviana Friedrich · 2026-03-31</div>
   <div class="card-text">@lenontaques1 Aqui nesse o PRAD vai ser em nome do Fernando?</div>
-  <div class="card-badges"><span class="badge">Menção</span></div>
+  <div class="card-badges"><span class="badge">Menção</span><a href="https://trello.com/c/xIb0gFkE" target="_blank" class="trello-link" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm-9 14H5V7h7v10zm8-4h-7V7h7v6z"/></svg> Abrir no Trello</a></div>
 </div>
 <div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
   <div class="card-header">
     <span class="card-num" style="color:#0078d4">#11</span>
     <span class="card-prio" style="background:#0078d4">P3</span>
     <span class="card-name">ELIEZER/PATRICIA — Elaborar PRAD — 2,6 ha (Engenho Queimado)</span>
-    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+    <span class="card-status" style="background:#fff3e0;color:#e65100">Pendente</span>
   </div>
   <div class="card-meta">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Flaviana Friedrich · 2026-04-01</div>
   <div class="card-text">@lenontaques1 sim Dr Lenon vamos fazer</div>
-  <div class="card-badges"><span class="badge">Menção</span></div>
+  <div class="card-badges"><span class="badge">Menção</span><a href="https://trello.com/c/NQAusY2H" target="_blank" class="trello-link" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm-9 14H5V7h7v10zm8-4h-7V7h7v6z"/></svg> Abrir no Trello</a></div>
 </div>
 <div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
   <div class="card-header">
     <span class="card-num" style="color:#0078d4">#12</span>
     <span class="card-prio" style="background:#0078d4">P3</span>
     <span class="card-name">FÁBIO RODRIGO NEVES - Avaliar possível recurso administrativo</span>
-    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+    <span class="card-status" style="background:#fff3e0;color:#e65100">Pendente</span>
   </div>
   <div class="card-meta">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Douglas Prado Marcos, Flaviana Friedrich · 2026-04-01</div>
   <div class="card-text">@flavianafriedrich favor entrar em contato com o cliente Fábio Rodrigo Neves para informar a movimentação do caso.</div>
-  <div class="card-badges"><span class="badge">Menção</span></div>
+  <div class="card-badges"><span class="badge">Menção</span><a href="https://trello.com/c/Q7qGuVLQ" target="_blank" class="trello-link" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm-9 14H5V7h7v10zm8-4h-7V7h7v6z"/></svg> Abrir no Trello</a></div>
 </div>
 <div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
   <div class="card-header">
     <span class="card-num" style="color:#0078d4">#13</span>
     <span class="card-prio" style="background:#0078d4">P3</span>
     <span class="card-name">FAURI BATISTA E CIA LTDA X ELISANGELA RODRIGUES AMARAL - Assinatura do contrato</span>
-    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+    <span class="card-status" style="background:#fff3e0;color:#e65100">Pendente</span>
   </div>
   <div class="card-meta">TAREFAS - TAQUES · Berna Bobko · 2026-04-01</div>
-  <div class="card-badges"><span class="badge">Anexo</span></div>
+  <div class="card-badges"><span class="badge">Anexo</span><a href="https://trello.com/c/yojlSWPA" target="_blank" class="trello-link" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm-9 14H5V7h7v10zm8-4h-7V7h7v6z"/></svg> Abrir no Trello</a></div>
 </div>
 <div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
   <div class="card-header">
     <span class="card-num" style="color:#0078d4">#14</span>
     <span class="card-prio" style="background:#0078d4">P3</span>
     <span class="card-name">JOSMAR MILCHESKI - MONTANA - Emissão do documento - Acompanhar com despachante</span>
-    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+    <span class="card-status" style="background:#fff3e0;color:#e65100">Pendente</span>
   </div>
   <div class="card-meta">TAREFAS - TAQUES · Berna Bobko · 2026-04-01</div>
   <div class="card-text">@lenontaques1 em relação ao documento da montana o mesmo já está disponível aqui no escritório, assim sendo essa etapa p...</div>
-  <div class="card-badges"><span class="badge">Menção</span></div>
+  <div class="card-badges"><span class="badge">Menção</span><a href="https://trello.com/c/p6A2EKBD" target="_blank" class="trello-link" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm-9 14H5V7h7v10zm8-4h-7V7h7v6z"/></svg> Abrir no Trello</a></div>
 </div>
 <div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
   <div class="card-header">
     <span class="card-num" style="color:#0078d4">#15</span>
     <span class="card-prio" style="background:#0078d4">P3</span>
     <span class="card-name">RICARDO TEIXEIRA - Contrato Amarok</span>
-    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+    <span class="card-status" style="background:#fff3e0;color:#e65100">Pendente</span>
   </div>
   <div class="card-meta">TAREFAS - TAQUES · Gilberto Taques · 2026-04-01</div>
   <div class="card-text">@bernabobko Amanhã precisamos focar no restante das informações no que for possível para resolvermos a questão dessa ama...</div>
-  <div class="card-badges"><span class="badge">Menção</span></div>
+  <div class="card-badges"><span class="badge">Menção</span><a href="https://trello.com/c/8MWlOIbP" target="_blank" class="trello-link" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm-9 14H5V7h7v10zm8-4h-7V7h7v6z"/></svg> Abrir no Trello</a></div>
 </div>
 <div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
   <div class="card-header">
     <span class="card-num" style="color:#0078d4">#16</span>
     <span class="card-prio" style="background:#0078d4">P3</span>
     <span class="card-name">🇩🇪 SCHMIDMEIER - DISTRITO 2022 - Protocolar petições + laudo de monitoramento do PRAD</span>
-    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+    <span class="card-status" style="background:#fff3e0;color:#e65100">Pendente</span>
   </div>
   <div class="card-meta">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Douglas Prado Marcos, Larissa Baptista, Flaviana Friedrich · 2026-04-02</div>
   <div class="card-text">[https://drive.google.com/drive/folders/1Xly6yyadsutG_QJp_LWaNvy2w6OWknst?usp=drive_link](https://drive.google.com/drive...</div>
-  <div class="card-badges"><span class="badge">Anexo</span><span class="badge">Menção</span><span class="badge">Comentário</span></div>
+  <div class="card-badges"><span class="badge">Anexo</span><span class="badge">Menção</span><span class="badge">Comentário</span><a href="https://trello.com/c/RWFuh1hh" target="_blank" class="trello-link" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm-9 14H5V7h7v10zm8-4h-7V7h7v6z"/></svg> Abrir no Trello</a></div>
 </div>
 <div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
   <div class="card-header">
     <span class="card-num" style="color:#0078d4">#17</span>
     <span class="card-prio" style="background:#0078d4">P3</span>
     <span class="card-name">🇩🇪 SCHMIDMEIER PARAGUAÇU/MOEMA - Relatório do PRAD</span>
-    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+    <span class="card-status" style="background:#fff3e0;color:#e65100">Pendente</span>
   </div>
   <div class="card-meta">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Larissa Baptista · 2026-04-02</div>
   <div class="card-text">[https://drive.google.com/drive/folders/16G429AvuRIpxbBBFiPMmwLm7z6mXdSL9?usp=drive_link](https://drive.google.com/drive...</div>
-  <div class="card-badges"><span class="badge">Comentário</span></div>
+  <div class="card-badges"><span class="badge">Comentário</span><a href="https://trello.com/c/vw4tFhLb" target="_blank" class="trello-link" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm-9 14H5V7h7v10zm8-4h-7V7h7v6z"/></svg> Abrir no Trello</a></div>
 </div>
 <div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
   <div class="card-header">
     <span class="card-num" style="color:#0078d4">#18</span>
     <span class="card-prio" style="background:#0078d4">P3</span>
     <span class="card-name">PEDRO COLAÇO - Protocolo do CAD</span>
-    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+    <span class="card-status" style="background:#fff3e0;color:#e65100">Pendente</span>
   </div>
   <div class="card-meta">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Douglas Prado Marcos · 2026-04-05</div>
   <div class="card-text">@flavianafriedrich @lenontaques1 Vamos fazer o voo  na segunda feira após visita a Eliezer e Patrícia.</div>
-  <div class="card-badges"><span class="badge">Menção</span></div>
+  <div class="card-badges"><span class="badge">Menção</span><a href="https://trello.com/c/lCRMQPlO" target="_blank" class="trello-link" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm-9 14H5V7h7v10zm8-4h-7V7h7v6z"/></svg> Abrir no Trello</a></div>
 </div>
 <div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
   <div class="card-header">
     <span class="card-num" style="color:#0078d4">#19</span>
     <span class="card-prio" style="background:#0078d4">P3</span>
     <span class="card-name">WALDIR JANTSCH - Apurar notificação de cobrança de dívida ativa</span>
-    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+    <span class="card-status" style="background:#fff3e0;color:#e65100">Pendente</span>
   </div>
   <div class="card-meta">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Berna Bobko, Flaviana Friedrich · 2026-04-06</div>
   <div class="card-text">@flavianafriedrich vou entrar em contato com ele </div>
-  <div class="card-badges"><span class="badge">Menção</span><span class="badge">Comentário</span></div>
+  <div class="card-badges"><span class="badge">Menção</span><span class="badge">Comentário</span><a href="https://trello.com/c/xw2eV7mn" target="_blank" class="trello-link" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm-9 14H5V7h7v10zm8-4h-7V7h7v6z"/></svg> Abrir no Trello</a></div>
 </div>
 <div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
   <div class="card-header">
     <span class="card-num" style="color:#0078d4">#20</span>
     <span class="card-prio" style="background:#0078d4">P3</span>
     <span class="card-name">ELIEZER JANTSCH — Enviar guia do perito para Patrícia (R$ 10.237,50)</span>
-    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+    <span class="card-status" style="background:#fff3e0;color:#e65100">Pendente</span>
   </div>
   <div class="card-meta">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Berna Bobko · 2026-04-06</div>
   <div class="card-text">@lenontaques1 @douglaspradomarcos @flavianafriedrich guia enviada.</div>
-  <div class="card-badges"><span class="badge">Menção</span></div>
+  <div class="card-badges"><span class="badge">Menção</span><a href="https://trello.com/c/4231M0v0" target="_blank" class="trello-link" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm-9 14H5V7h7v10zm8-4h-7V7h7v6z"/></svg> Abrir no Trello</a></div>
 </div>
 <div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
   <div class="card-header">
     <span class="card-num" style="color:#0078d4">#21</span>
     <span class="card-prio" style="background:#0078d4">P3</span>
     <span class="card-name">Solicitar à Luciane as 200+ matrículas dos imóveis da família Schmidmeier</span>
-    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+    <span class="card-status" style="background:#fff3e0;color:#e65100">Pendente</span>
   </div>
   <div class="card-meta">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Berna Bobko, Douglas Prado Marcos · 2026-04-06</div>
   <div class="card-text">@lenontaques1 @douglaspradomarcos @flavianafriedrich solicitação feita.</div>
-  <div class="card-badges"><span class="badge">Menção</span></div>
+  <div class="card-badges"><span class="badge">Menção</span><a href="https://trello.com/c/98bUq1X8" target="_blank" class="trello-link" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm-9 14H5V7h7v10zm8-4h-7V7h7v6z"/></svg> Abrir no Trello</a></div>
 </div>
 <div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
   <div class="card-header">
     <span class="card-num" style="color:#0078d4">#22</span>
     <span class="card-prio" style="background:#0078d4">P3</span>
     <span class="card-name">WALDIR JANTSCH - Pagamento mensal parcelamento Engenho Queimado</span>
-    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+    <span class="card-status" style="background:#fff3e0;color:#e65100">Pendente</span>
   </div>
   <div class="card-meta">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Berna Bobko, Douglas Prado Marcos · 2026-04-06</div>
   <div class="card-text"> @flavianafriedrich segue boleto Sr Waldir Jantsch parcela 08, com vencimento _30/04/2026._ Vou anexar todos os comprova...</div>
-  <div class="card-badges"><span class="badge">Anexo</span><span class="badge">Menção</span></div>
+  <div class="card-badges"><span class="badge">Anexo</span><span class="badge">Menção</span><a href="https://trello.com/c/BBKCs4ue" target="_blank" class="trello-link" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm-9 14H5V7h7v10zm8-4h-7V7h7v6z"/></svg> Abrir no Trello</a></div>
 </div>
 <div class="card " style="border-left-color:#0078d4; background:#f0f7ff">
   <div class="card-header">
     <span class="card-num" style="color:#0078d4">#23</span>
     <span class="card-prio" style="background:#0078d4">P3</span>
     <span class="card-name">ESCRITÓRIO - Reunião semanal</span>
-    <span class="card-status" style="background:#e8f5e9;color:#2e7d32">Pendente</span>
+    <span class="card-status" style="background:#fff3e0;color:#e65100">Pendente</span>
   </div>
   <div class="card-meta">TAREFAS - TAQUES · Berna Bobko, Gilberto Taques · 2026-04-06</div>
   <div class="card-text">@lenontaques1 @gibataques Ok</div>
-  <div class="card-badges"><span class="badge">Menção</span></div>
+  <div class="card-badges"><span class="badge">Menção</span><a href="https://trello.com/c/N9yHAZL1" target="_blank" class="trello-link" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm-9 14H5V7h7v10zm8-4h-7V7h7v6z"/></svg> Abrir no Trello</a></div>
 </div>
 </div>
 
@@ -324,47 +329,47 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 <div class="reactions-section">
 <div class="reaction-item">
   <span class="reaction-emoji">👍</span>
-  <span class="reaction-card">URGENTE — Milcheski x Sicoob — Regularizar pagamento e cessar atos expropriatórios</span>
+  <span class="reaction-card"><a href="https://trello.com/c/vqejT1zC" target="_blank">URGENTE — Milcheski x Sicoob — Regularizar pagamento e cessar atos expropriatórios</a></span>
   <span class="reaction-board">TAREFAS - TAQUES · Gilberto Taques</span>
 </div>
 <div class="reaction-item">
   <span class="reaction-emoji">👍</span>
-  <span class="reaction-card">Reunião com Eliezer e Patrícia</span>
+  <span class="reaction-card"><a href="https://trello.com/c/muqGsltJ" target="_blank">Reunião com Eliezer e Patrícia</a></span>
   <span class="reaction-board">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Douglas Prado Marcos</span>
 </div>
 <div class="reaction-item">
   <span class="reaction-emoji">👍</span>
-  <span class="reaction-card">AMIR STEIDEL - Possível desmatamento - Notificação do IMA</span>
+  <span class="reaction-card"><a href="https://trello.com/c/EI1NL2fq" target="_blank">AMIR STEIDEL - Possível desmatamento - Notificação do IMA</a></span>
   <span class="reaction-board">NOVOS NEGÓCIOS - DF BIOENGENHARIA / TAQUES · Douglas Prado Marcos</span>
 </div>
 <div class="reaction-item">
   <span class="reaction-emoji">👍</span>
-  <span class="reaction-card">PAULO SILAS FILHO - Árvore em área de risco - Urbano - Curitiba/PR</span>
+  <span class="reaction-card"><a href="https://trello.com/c/yRTTPhtv" target="_blank">PAULO SILAS FILHO - Árvore em área de risco - Urbano - Curitiba/PR</a></span>
   <span class="reaction-board">NOVOS NEGÓCIOS - DF BIOENGENHARIA / TAQUES · Douglas Prado Marcos</span>
 </div>
 <div class="reaction-item">
   <span class="reaction-emoji">👍</span>
-  <span class="reaction-card">WILLIAN DE LIMA - Próspera Agronegócios - Alerta no MapBiomas - Aproximadamente 10 ha</span>
+  <span class="reaction-card"><a href="https://trello.com/c/oSUEd48a" target="_blank">WILLIAN DE LIMA - Próspera Agronegócios - Alerta no MapBiomas - Aproximadamente 10 ha</a></span>
   <span class="reaction-board">NOVOS NEGÓCIOS - DF BIOENGENHARIA / TAQUES · Douglas Prado Marcos</span>
 </div>
 <div class="reaction-item">
   <span class="reaction-emoji">👍</span>
-  <span class="reaction-card">LILIAN CRISTINA VOUK - Defesa em Execução</span>
+  <span class="reaction-card"><a href="https://trello.com/c/kDm7ryTT" target="_blank">LILIAN CRISTINA VOUK - Defesa em Execução</a></span>
   <span class="reaction-board">NOVOS NEGÓCIOS - TAQUES · Gilberto Taques</span>
 </div>
 <div class="reaction-item">
   <span class="reaction-emoji">👍</span>
-  <span class="reaction-card">HILSON LUCACHINSKI - Negociação com SICREDI + Pedido administrativo de prorrogação de dívida</span>
+  <span class="reaction-card"><a href="https://trello.com/c/n3fKhPK9" target="_blank">HILSON LUCACHINSKI - Negociação com SICREDI + Pedido administrativo de prorrogação de dívida</a></span>
   <span class="reaction-board">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Gilberto Taques</span>
 </div>
 <div class="reaction-item">
   <span class="reaction-emoji">👍</span>
-  <span class="reaction-card">SCHMIDMEIER WERKA - Laudo hidrogeológico (Rodrigo Sato)</span>
+  <span class="reaction-card"><a href="https://trello.com/c/7xomiWl6" target="_blank">SCHMIDMEIER WERKA - Laudo hidrogeológico (Rodrigo Sato)</a></span>
   <span class="reaction-board">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Douglas Prado Marcos</span>
 </div>
 <div class="reaction-item">
   <span class="reaction-emoji">👍</span>
-  <span class="reaction-card">HILSON LUCACHINSKI - Monitorar andamento do processo</span>
+  <span class="reaction-card"><a href="https://trello.com/c/tt5XS1Uh" target="_blank">HILSON LUCACHINSKI - Monitorar andamento do processo</a></span>
   <span class="reaction-board">TAREFAS - PARCERIA - DF BIOENGENHARIA / TAQUES · Douglas Prado Marcos</span>
 </div>
 </div>
