@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """
-sync-registry.py — Gera registry.json escaneando skills e agentes.
+sync-registry.py — Sincroniza skills/agentes com registry.json + Supabase.
 
 Fontes de dados:
   1. .claude/skills/*/SKILL.md → frontmatter YAML → habilidades
-  2. 3-recursos/orquestracao-agentes/arquitetura-departamentos.md → agentes
-  3. Dados estáticos de automações e integrações (inline)
+  2. Dados estáticos de agentes e automações (inline)
+
+Destinos:
+  1. registry.json (para dashboard estático v1)
+  2. Supabase (para dashboard Next.js v2)
 
 Executado automaticamente via hook do Claude Code após edição em .claude/skills/.
 Também pode ser rodado manualmente: python3 sync-registry.py
@@ -19,10 +22,13 @@ from datetime import datetime
 from pathlib import Path
 
 # Paths relativos ao vault do Obsidian
-VAULT = Path(__file__).resolve().parent.parent.parent  # sobe de agent-dashboard → recursos → vault
+VAULT = Path(__file__).resolve().parent.parent.parent
 SKILLS_DIR = VAULT / ".claude" / "skills"
-ARCH_FILE = VAULT / "3-recursos" / "orquestracao-agentes" / "arquitetura-departamentos.md"
 OUTPUT = Path(__file__).resolve().parent / "registry.json"
+
+# Supabase config
+SUPABASE_URL = "https://futnqzaefgoljrhjfusj.supabase.co"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1dG5xemFlZmdvbGpyaGpmdXNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MjIyOTUsImV4cCI6MjA5MDM5ODI5NX0.4GcUgEtVsRSyuO7-EIlqLQKkOwiGZikBRP4kB2vLCmk"
 
 
 def parse_yaml_frontmatter(filepath):
@@ -39,11 +45,9 @@ def parse_yaml_frontmatter(filepath):
     fm = {}
     raw = match.group(1)
 
-    # Parser YAML simples (sem dependência externa)
     current_key = None
     current_val = ""
     for line in raw.split("\n"):
-        # Multiline value continuation (description com >)
         if current_key and (line.startswith("  ") or line.strip() == ""):
             current_val += " " + line.strip()
             continue
@@ -58,13 +62,11 @@ def parse_yaml_frontmatter(filepath):
             key = kv.group(1)
             val = kv.group(2).strip()
 
-            # Multiline indicator
             if val == ">":
                 current_key = key
                 current_val = ""
                 continue
 
-            # Remove aspas
             if val.startswith('"') and val.endswith('"'):
                 val = val[1:-1]
             elif val.startswith("'") and val.endswith("'"):
@@ -79,8 +81,6 @@ def parse_yaml_frontmatter(filepath):
 
 
 def split_description(full_desc):
-    """Separa a descrição real dos triggers de ativação."""
-    # Cortar antes de "Use SEMPRE", "Acionar quando", triggers
     for separator in ["Use SEMPRE", "Acionar quando", "TRIGGER when", "Sempre que"]:
         idx = full_desc.find(separator)
         if idx > 0:
@@ -88,14 +88,7 @@ def split_description(full_desc):
     return full_desc.strip(), ""
 
 
-def extract_tags_from_skill(fm, body_text):
-    """Extrai tags do corpo da skill (não da descrição de trigger)."""
-    tags = []
-
-    # Tags explícitas do corpo (procurar em seções de tags/capabilities)
-    name = fm.get("name", "")
-
-    # Mapeamento manual por skill (mais confiável)
+def extract_tags_from_skill(fm):
     tag_map = {
         "assessor-comunicacao": ["Slack", "WhatsApp", "Email", "Trello", "Instagram"],
         "redacao-juridica": ["CRARC", "Teses Amb.", "Teses Penais", ".docx"],
@@ -103,88 +96,59 @@ def extract_tags_from_skill(fm, body_text):
         "digitalizador-documentos": ["Escâner", "150 DPI", "Auto/Cor/PB", "Multi-página"],
         "extrator-car": ["CAR/SICAR", "Shapefiles", "GeoPandas", "Alertas", "Lote"],
     }
-
+    name = fm.get("name", "")
     if name in tag_map:
         return tag_map[name]
 
-    # Fallback: extrair do corpo
-    keywords = {
-        "Slack": "Slack", "WhatsApp": "WhatsApp", "Email": "Email",
-        "PDF": "PDF", "shapefile": "Shapefiles", "CAR": "CAR/SICAR",
-        "INCRA": "INCRA", "MapBiomas": "MapBiomas", "Python": "Python",
-    }
-    desc_part = split_description(fm.get("description", ""))[0]
-    for keyword, tag in keywords.items():
-        if keyword.lower() in desc_part.lower() and tag not in tags:
-            tags.append(tag)
+    # Fallback: parse tags field from frontmatter
+    tags_raw = fm.get("tags", "")
+    if tags_raw.startswith("[") and tags_raw.endswith("]"):
+        return [t.strip().strip("'\"") for t in tags_raw[1:-1].split(",") if t.strip()]
 
-    return tags[:6]
+    return []
 
 
 def extract_skill_body_info(filepath):
-    """Extrai informações adicionais do corpo da skill (após o frontmatter)."""
     try:
         text = filepath.read_text(encoding="utf-8")
     except Exception:
         return {}
 
-    # Remover frontmatter
     body = re.sub(r"^---\s*\n.*?\n---\s*\n", "", text, flags=re.DOTALL)
-
     info = {}
-
-    # Contar passos
     passos = re.findall(r"^## PASSO \d", body, re.MULTILINE)
     if passos:
         info["passos"] = len(passos)
-
-    # Verificar se tem código Python
     if "```python" in body:
         info["tem_codigo"] = True
-
     return info
 
 
 def infer_status(fm, body_info):
-    """Infere o status da skill a partir do frontmatter e corpo."""
     desc = fm.get("description", "").lower()
     name = fm.get("name", "").lower()
-
-    # Status explícitos conhecidos
-    status_overrides = {
-        "extrator-car": "prototype",  # em construção
-    }
+    status_overrides = {"extrator-car": "prototype"}
     if name in status_overrides:
         return status_overrides[name]
-
     if "em construção" in desc or "em construcao" in desc:
         return "prototype"
     if "planejado" in desc or "planned" in desc:
         return "planned"
-
-    return "active"  # default para skills com SKILL.md completo
+    return "active"
 
 
 def infer_icon(name):
-    """Mapeia nome da skill para um ícone emoji."""
     icons = {
-        "assessor-comunicacao": "\U0001f4ac",      # 💬
-        "redacao-juridica": "\u2696",               # ⚖
-        "separador-de-pdfs": "\U0001f4c4",          # 📄
-        "digitalizador-documentos": "\U0001f4f7",   # 📷
-        "extrator-car": "\U0001f30d",               # 🌍
-        "extrator-incra": "\U0001f3e0",             # 🏠
-        "extrator-mapbiomas": "\U0001f332",         # 🌲
-        "extrator-ima": "\U0001f3d4",               # 🏔
-        "extrator-ibama": "\U0001f6a8",             # 🚨
+        "assessor-comunicacao": "💬", "redacao-juridica": "⚖",
+        "separador-de-pdfs": "📄", "digitalizador-documentos": "📷",
+        "extrator-car": "🌍",
     }
-    return icons.get(name, "\u2699")  # ⚙ default
+    return icons.get(name, "⚙")
 
 
 def infer_department(fm):
-    """Infere o departamento da skill."""
     desc = fm.get("description", "").lower()
-    if any(k in desc for k in ["técnico", "tecnico", "car", "sicar", "ambiental", "incra", "mapbiomas"]):
+    if any(k in desc for k in ["técnico", "tecnico", "car", "sicar", "ambiental", "incra"]):
         return "tecnico"
     if any(k in desc for k in ["jurídico", "juridico", "petição", "peticao", "processual"]):
         return "juridico"
@@ -192,10 +156,7 @@ def infer_department(fm):
 
 
 def infer_type_label(fm):
-    """Gera o label de tipo para o card."""
-    desc = fm.get("description", "").lower()
     name = fm.get("name", "")
-
     type_map = {
         "assessor-comunicacao": "Habilidade · Agente de Comunicação",
         "redacao-juridica": "Habilidade · Agente de Escrita Legal",
@@ -203,29 +164,17 @@ def infer_type_label(fm):
         "digitalizador-documentos": "Habilidade · Agente de Processamento de Imagem",
         "extrator-car": "Habilidade · Dept. Técnico — Estagiário Técnico",
     }
-
-    if name in type_map:
-        return type_map[name]
-
-    if "técnico" in desc or "tecnico" in desc:
-        return "Habilidade · Dept. Técnico"
-    if "jurídico" in desc or "juridico" in desc:
-        return "Habilidade · Dept. Jurídico"
-
-    return "Habilidade · Geral"
+    return type_map.get(name, "Habilidade · Geral")
 
 
 def scan_skills():
-    """Escaneia .claude/skills/ e retorna lista de habilidades."""
     skills = []
-
     if not SKILLS_DIR.exists():
         return skills
 
     for skill_dir in sorted(SKILLS_DIR.iterdir()):
         if not skill_dir.is_dir():
             continue
-
         skill_md = skill_dir / "SKILL.md"
         if not skill_md.exists():
             continue
@@ -235,13 +184,11 @@ def scan_skills():
             continue
 
         body_info = extract_skill_body_info(skill_md)
-
         full_desc = fm.get("description", "")
         desc_short, _ = split_description(full_desc)
         if len(desc_short) > 200:
             desc_short = desc_short[:200] + "..."
 
-        # Nome formatado
         name_map = {
             "assessor-comunicacao": "Assessor de Comunicação",
             "redacao-juridica": "Redação Jurídica",
@@ -256,7 +203,7 @@ def scan_skills():
             "name": display_name,
             "type_label": infer_type_label(fm),
             "description": desc_short,
-            "tags": extract_tags_from_skill(fm, ""),
+            "tags": extract_tags_from_skill(fm),
             "status": infer_status(fm, body_info),
             "icon": infer_icon(fm["name"]),
             "path": f".claude/skills/{skill_dir.name}/SKILL.md",
@@ -264,189 +211,136 @@ def scan_skills():
             "passos": body_info.get("passos", 0),
             "tem_codigo": body_info.get("tem_codigo", False),
         }
-
         skills.append(skill)
 
     return skills
 
 
 def get_agents():
-    """Retorna a lista de agentes dos dois departamentos.
-
-    Lê do arquivo de arquitetura se existir, senão usa dados padrão.
-    """
-    agents = {
+    return {
         "juridico": [
-            {
-                "id": "estagiario-juridico",
-                "name": "Agente 0 — Estagiário Jurídico",
-                "function": "agente_estagiario()",
-                "role": "Extração e Coleta",
-                "description": "Extrai autos de processos dos sistemas judiciais. Sub-agentes: ext_eproc() [Beta], ext_sgpe() [Em Construção].",
-                "tags": ["EPROC", "SGPe", "PROJUDI", "ESAJ"],
-                "status": "prototype",
-                "icon": "\U0001f393",
-                "sub_agents": [
-                    {"name": "Extrator EPROC", "status": "planned"},
-                    {"name": "Extrator SGPE", "status": "prototype"},
-                ]
-            },
-            {
-                "id": "advogado-junior",
-                "name": "Agente 1 — Advogado Júnior",
-                "function": "agente_junior()",
-                "role": "Análise e Separação",
-                "description": "Separa e classifica peças processuais. Sub-agentes: sep_admin(), sep_eproc(), sep_projudi().",
-                "tags": ["Proc. Admin.", "EPROC", "PROJUDI"],
-                "status": "planned",
-                "icon": "\U0001f50d",
-            },
-            {
-                "id": "advogado-pleno",
-                "name": "Agente 2 — Advogado Pleno",
-                "function": "agente_pleno()",
-                "role": "Redação e Argumentação",
-                "description": "Redige peças completas. Sub-agentes: fatos(), fundamentos(), pedidos(), resumo(), finais().",
-                "tags": ["Fatos", "Fundamentos", "Pedidos", "Resumo"],
-                "status": "planned",
-                "icon": "\u270d",
-            },
-            {
-                "id": "advogado-senior",
-                "name": "Agente 3 — Advogado Sênior",
-                "function": "agente_senior()",
-                "role": "Estratégia e Jurisprudência",
-                "description": "Estratégia processual e jurisprudência. Sub-agentes: juris.dominante(), juris.vanguarda().",
-                "tags": ["Estratégia", "Juris. Dominante", "Juris. Vanguarda"],
-                "status": "planned",
-                "icon": "\U0001f3af",
-            },
+            {"id": "estagiario-juridico", "name": "Agente 0 — Estagiário Jurídico", "role": "Extração e Coleta", "description": "Extrai autos de processos dos sistemas judiciais.", "tags": ["EPROC", "SGPe", "PROJUDI", "ESAJ"], "status": "prototype", "icon": "🎓", "department": "juridico", "level": 0},
+            {"id": "advogado-junior", "name": "Agente 1 — Advogado Júnior", "role": "Análise e Separação", "description": "Separa e classifica peças processuais.", "tags": ["Proc. Admin.", "EPROC", "PROJUDI"], "status": "planned", "icon": "🔍", "department": "juridico", "level": 1},
+            {"id": "advogado-pleno", "name": "Agente 2 — Advogado Pleno", "role": "Redação e Argumentação", "description": "Redige peças completas.", "tags": ["Fatos", "Fundamentos", "Pedidos", "Resumo"], "status": "planned", "icon": "✍", "department": "juridico", "level": 2, "sub_agents": [
+                {"id": "pesquisador-juris-dominante", "name": "Pesquisador de Jurisprudência Dominante", "role": "Analista de tendências majoritárias", "description": "Mapeia jurisprudência consolidada nos tribunais.", "tags": ["jurisprudência", "tendências", "súmulas", "entendimento-majoritário"], "status": "planned", "icon": "⚖️", "department": "juridico", "level": 3},
+                {"id": "pesquisador-juris-vanguarda", "name": "Pesquisador de Jurisprudência de Vanguarda", "role": "Analista de tendências emergentes", "description": "Identifica decisões inovadoras e divergentes.", "tags": ["jurisprudência", "divergência", "inovação", "tendências-emergentes"], "status": "planned", "icon": "🔭", "department": "juridico", "level": 3},
+                {"id": "analista-jurimetria", "name": "Analista de Jurimetria", "role": "Analista quantitativo", "description": "Análise estatística de decisões por tribunal.", "tags": ["jurimetria", "estatística", "análise-quantitativa", "dados"], "status": "planned", "icon": "📊", "department": "juridico", "level": 3},
+                {"id": "pesquisador-jurisprudencia", "name": "Compilador de Jurisprudência", "role": "Pesquisador de decisões específicas", "description": "Busca decisões concretas conforme plano aprovado.", "tags": ["jurisprudência", "compilação", "busca-decisões", "TJ", "TRF", "STJ", "STF"], "status": "planned", "icon": "📚", "department": "juridico", "level": 3},
+            ]},
+            {"id": "advogado-senior", "name": "Agente 3 — Advogado Sênior", "role": "Estratégia e Jurisprudência", "description": "Estratégia processual e jurisprudência.", "tags": ["Estratégia", "Juris. Dominante", "Juris. Vanguarda"], "status": "planned", "icon": "🎯", "department": "juridico", "level": 3},
         ],
         "tecnico": [
-            {
-                "id": "estagiario-tecnico",
-                "name": "Agente 0 — Estagiário Técnico",
-                "function": "estagiario_tecnico()",
-                "role": "Extração de Dados Ambientais",
-                "description": "Coleta dados das bases ambientais e fundiárias. Orquestra skills de extração: CAR, INCRA, MapBiomas, IMA-SC, IBAMA.",
-                "tags": ["CAR", "INCRA", "MapBiomas", "IMA-SC", "IBAMA"],
-                "status": "prototype",
-                "icon": "\U0001f9ea",
-                "sub_agents": [
-                    {"name": "Extrator CAR", "status": "prototype"},
-                    {"name": "Extrator INCRA", "status": "planned"},
-                    {"name": "Extrator MapBiomas", "status": "planned"},
-                    {"name": "Extrator IMA-SC", "status": "planned"},
-                    {"name": "Extrator Embargos IBAMA", "status": "planned"},
-                    {"name": "Extrator Alertas", "status": "planned"},
-                ]
-            },
-            {
-                "id": "analista-junior",
-                "name": "Agente 1 — Analista MA Júnior",
-                "function": "analista_junior()",
-                "role": "Organização e Cruzamento",
-                "description": "Tabula dados extraídos, cruza matrícula × CAR × INCRA, detecta inconsistências básicas.",
-                "tags": ["Tabulação", "Matrícula×CAR", "Matrícula×INCRA", "Shapefiles"],
-                "status": "planned",
-                "icon": "\U0001f4ca",
-            },
-            {
-                "id": "analista-pleno",
-                "name": "Agente 2 — Analista MA Pleno",
-                "function": "analista_pleno()",
-                "role": "Análise Integrada e Relatórios",
-                "description": "Análise de APP e Reserva Legal, geração de mapas temáticos, relatórios técnicos por propriedade.",
-                "tags": ["APP", "Reserva Legal", "Mapas", "Relatórios"],
-                "status": "planned",
-                "icon": "\U0001f5fa",
-            },
-            {
-                "id": "analista-senior",
-                "name": "Agente 3 — Analista MA Sênior",
-                "function": "analista_senior()",
-                "role": "Diagnóstico Estratégico",
-                "description": "Score de risco ambiental, consolidação de passivos, ranking de propriedades por criticidade.",
-                "tags": ["Score Risco", "Passivos", "Ranking", "Estratégia"],
-                "status": "planned",
-                "icon": "\U0001f6a8",
-            },
+            {"id": "estagiario-tecnico", "name": "Agente 0 — Estagiário Técnico", "role": "Extração de Dados Ambientais", "description": "Coleta dados das bases ambientais e fundiárias.", "tags": ["CAR", "INCRA", "MapBiomas", "IMA-SC", "IBAMA"], "status": "prototype", "icon": "🧪", "department": "tecnico", "level": 0},
+            {"id": "analista-junior", "name": "Agente 1 — Analista MA Júnior", "role": "Organização e Cruzamento", "description": "Tabula dados extraídos, cruza matrícula × CAR × INCRA.", "tags": ["Tabulação", "Matrícula×CAR", "Matrícula×INCRA", "Shapefiles"], "status": "planned", "icon": "📊", "department": "tecnico", "level": 1},
+            {"id": "analista-pleno", "name": "Agente 2 — Analista MA Pleno", "role": "Análise Integrada e Relatórios", "description": "Análise de APP e Reserva Legal, mapas temáticos.", "tags": ["APP", "Reserva Legal", "Mapas", "Relatórios"], "status": "planned", "icon": "🗺", "department": "tecnico", "level": 2},
+            {"id": "analista-senior", "name": "Agente 3 — Analista MA Sênior", "role": "Diagnóstico Estratégico", "description": "Score de risco ambiental, consolidação de passivos.", "tags": ["Score Risco", "Passivos", "Ranking", "Estratégia"], "status": "planned", "icon": "🚨", "department": "tecnico", "level": 3},
+        ],
+        "administrativo": [
+            {"id": "controlador-juridico", "name": "Controlador Jurídico", "role": "Controle e Distribuição de Prazos", "description": "Anota, acompanha e distribui prazos judiciais e extrajudiciais. Cria tarefas no Trello.", "tags": ["Prazos", "Trello", "Judicial", "Extrajudicial", "Distribuição"], "status": "planned", "icon": "📋", "department": "administrativo", "level": 0},
+        ],
+        "comercial": [
+            {"id": "coordenador-comercial", "name": "Coordenador Comercial", "role": "Prospecção e Gestão Comercial", "description": "Coordena o pipeline comercial do escritório. Acompanha novos negócios, propostas e conversões.", "tags": ["Pipeline", "Propostas", "Follow-up", "Leads", "Conversão"], "status": "planned", "icon": "💼", "department": "comercial", "level": 0},
         ],
     }
 
-    return agents
-
 
 def get_automations():
-    """Retorna lista de automações (semi-estáticas por enquanto)."""
     return [
-        {
-            "id": "monitor-iat",
-            "name": "Monitor de Protocolos IAT",
-            "type_label": "Automação · Cron + Playwright + Supabase",
-            "description": "Monitora 38+ protocolos no IAT. Agendamento → Playwright → Compara Supabase → Alerta Slack.",
-            "tags": ["Playwright", "Supabase", "Cron", "Slack"],
-            "status": "prototype",
-            "icon": "\U0001f514",
-        },
-        {
-            "id": "doc-obsidian",
-            "name": "Documentação Automática Obsidian",
-            "type_label": "Gatilho · Documentação de Sessão",
-            "description": "Documenta sessões e decisões no Obsidian ao final de cada interação. Metadados YAML padronizados.",
-            "tags": ["Gatilhos", "Obsidian", "Sessões"],
-            "status": "active",
-            "icon": "\U0001f4dd",
-        },
+        {"id": "monitor-iat", "name": "Monitor de Protocolos IAT", "type_label": "Automação · Cron + Playwright + Supabase", "description": "Monitora 38+ protocolos no IAT.", "tags": ["Playwright", "Supabase", "Cron", "Slack"], "status": "prototype", "icon": "🔔"},
+        {"id": "doc-obsidian", "name": "Documentação Automática Obsidian", "type_label": "Gatilho · Documentação de Sessão", "description": "Documenta sessões e decisões no Obsidian.", "tags": ["Gatilhos", "Obsidian", "Sessões"], "status": "active", "icon": "📝"},
+        {"id": "briefing-comercial", "name": "Briefing Comercial", "type_label": "Automação · Cron · Coordenador Comercial", "description": "Scan diagnóstico dos boards Novos Negócios (TAQUES + DF Bio). Identifica leads parados, sem responsável, sem prazo e vencidos. Gera relatório para aprovação.", "tags": ["Novos Negócios", "Trello", "Diagnóstico", "6h"], "status": "planned", "icon": "📊", "agent_id": "coordenador-comercial", "trigger_type": "cron", "trigger_config": {"cron": "0 6 * * 1-5", "boards": ["698e0e318ec5969402a1b2a5", "698e0d2afa67614e223e358e"]}},
+        {"id": "check-comercial", "name": "Check de Execução Comercial", "type_label": "Automação · Cron · Coordenador Comercial", "description": "Verificação de progresso nos boards Novos Negócios. Compara com briefing da manhã, identifica movimentações e follow-ups pendentes. Propõe ações.", "tags": ["Novos Negócios", "Trello", "Follow-up", "15h/18h"], "status": "planned", "icon": "🔄", "agent_id": "coordenador-comercial", "trigger_type": "cron", "trigger_config": {"cron": "0 15,18 * * 1-5", "boards": ["698e0e318ec5969402a1b2a5", "698e0d2afa67614e223e358e"]}},
     ]
 
 
 def build_registry():
-    """Constrói o registry completo."""
     skills = scan_skills()
     agents = get_agents()
     automations = get_automations()
 
-    # Contadores
     active_skills = len([s for s in skills if s["status"] == "active"])
     prototype_skills = len([s for s in skills if s["status"] == "prototype"])
-    total_agents = len(agents["juridico"]) + len(agents["tecnico"])
+    total_agents = sum(len(v) for v in agents.values())
 
-    registry = {
-        "_meta": {
-            "generated_at": datetime.now().isoformat(),
-            "generator": "sync-registry.py",
-            "vault": str(VAULT),
-        },
+    return {
+        "_meta": {"generated_at": datetime.now().isoformat(), "generator": "sync-registry.py", "vault": str(VAULT)},
         "stats": {
-            "habilidades_ativas": active_skills,
-            "habilidades_construcao": prototype_skills,
-            "habilidades_total": len(skills),
-            "agentes_total": total_agents,
-            "automacoes_total": len(automations),
+            "habilidades_ativas": active_skills, "habilidades_construcao": prototype_skills,
+            "habilidades_total": len(skills), "agentes_total": total_agents, "automacoes_total": len(automations),
         },
         "skills": skills,
         "agents": agents,
         "automations": automations,
     }
 
-    return registry
+
+def sync_to_supabase(registry):
+    """Sincroniza dados com Supabase via REST API."""
+    import urllib.request
+
+    headers = {
+        "apikey": SUPABASE_KEY,
+        "Authorization": f"Bearer {SUPABASE_KEY}",
+        "Content-Type": "application/json",
+        "Prefer": "resolution=merge-duplicates",
+    }
+
+    def upsert(table, data):
+        url = f"{SUPABASE_URL}/rest/v1/{table}"
+        body = json.dumps(data).encode("utf-8")
+        req = urllib.request.Request(url, data=body, headers=headers, method="POST")
+        try:
+            urllib.request.urlopen(req)
+        except Exception as e:
+            print(f"  ⚠ Supabase {table}: {e}", file=sys.stderr)
+
+    # Upsert skills
+    for skill in registry["skills"]:
+        upsert("skills", [{
+            "id": skill["id"], "name": skill["name"], "description": skill["description"],
+            "type_label": skill["type_label"], "department": skill["department"],
+            "icon": skill["icon"], "tags": skill["tags"], "status": skill["status"],
+            "is_active": skill["status"] == "active", "path": skill["path"],
+            "passos": skill["passos"], "tem_codigo": skill["tem_codigo"],
+        }])
+
+    # Upsert agents
+    for dept_agents in registry["agents"].values():
+        for agent in dept_agents:
+            upsert("agents", [{
+                "id": agent["id"], "name": agent["name"],
+                "department": agent["department"], "level": agent["level"],
+                "role": agent["role"], "framework": "Claude SDK",
+                "status": agent["status"], "description": agent["description"],
+                "icon": agent["icon"], "tags": agent["tags"],
+            }])
+
+    # Log sync event
+    upsert("activity_log", [{
+        "action": f"sync-registry.py: {registry['stats']['habilidades_total']} skills, {registry['stats']['agentes_total']} agentes",
+        "event_type": "system",
+        "details": json.dumps(registry["stats"]),
+    }])
 
 
 def main():
     registry = build_registry()
 
-    OUTPUT.write_text(
-        json.dumps(registry, indent=2, ensure_ascii=False),
-        encoding="utf-8"
-    )
+    # 1. Salvar registry.json (compatibilidade v1)
+    OUTPUT.write_text(json.dumps(registry, indent=2, ensure_ascii=False), encoding="utf-8")
 
-    # Resumo
     stats = registry["stats"]
     print(f"✓ registry.json gerado em {OUTPUT}")
     print(f"  Habilidades: {stats['habilidades_total']} ({stats['habilidades_ativas']} ativas, {stats['habilidades_construcao']} em construção)")
     print(f"  Agentes: {stats['agentes_total']}")
     print(f"  Automações: {stats['automacoes_total']}")
+
+    # 2. Sync com Supabase
+    try:
+        sync_to_supabase(registry)
+        print("✓ Supabase sincronizado")
+    except Exception as e:
+        print(f"⚠ Supabase sync falhou: {e}", file=sys.stderr)
 
 
 if __name__ == "__main__":

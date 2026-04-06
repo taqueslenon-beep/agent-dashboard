@@ -1,15 +1,15 @@
 {
   "_meta": {
-    "generated_at": "2026-04-06T00:17:42.513407",
+    "generated_at": "2026-04-06T01:34:26.654648",
     "generator": "sync-registry.py",
     "vault": "/Users/lenontaques/Documents/Obsidian do Lenon"
   },
   "stats": {
-    "habilidades_ativas": 4,
+    "habilidades_ativas": 5,
     "habilidades_construcao": 1,
-    "habilidades_total": 5,
-    "agentes_total": 8,
-    "automacoes_total": 2
+    "habilidades_total": 6,
+    "agentes_total": 10,
+    "automacoes_total": 4
   },
   "skills": [
     {
@@ -69,6 +69,19 @@
       "tem_codigo": true
     },
     {
+      "id": "extrator-eproc",
+      "name": "Extrator Eproc",
+      "type_label": "Habilidade · Geral",
+      "description": "Extrator de processos judiciais do E-PROC (TJSC/TRF4)",
+      "tags": [],
+      "status": "active",
+      "icon": "⚙",
+      "path": ".claude/skills/extrator-eproc/SKILL.md",
+      "department": "juridico",
+      "passos": 7,
+      "tem_codigo": false
+    },
+    {
       "id": "redacao-juridica",
       "name": "Redação Jurídica",
       "type_label": "Habilidade · Agente de Escrita Legal",
@@ -110,9 +123,8 @@
       {
         "id": "estagiario-juridico",
         "name": "Agente 0 — Estagiário Jurídico",
-        "function": "agente_estagiario()",
         "role": "Extração e Coleta",
-        "description": "Extrai autos de processos dos sistemas judiciais. Sub-agentes: ext_eproc() [Beta], ext_sgpe() [Em Construção].",
+        "description": "Extrai autos de processos dos sistemas judiciais.",
         "tags": [
           "EPROC",
           "SGPe",
@@ -121,37 +133,29 @@
         ],
         "status": "prototype",
         "icon": "🎓",
-        "sub_agents": [
-          {
-            "name": "Extrator EPROC",
-            "status": "planned"
-          },
-          {
-            "name": "Extrator SGPE",
-            "status": "prototype"
-          }
-        ]
+        "department": "juridico",
+        "level": 0
       },
       {
         "id": "advogado-junior",
         "name": "Agente 1 — Advogado Júnior",
-        "function": "agente_junior()",
         "role": "Análise e Separação",
-        "description": "Separa e classifica peças processuais. Sub-agentes: sep_admin(), sep_eproc(), sep_projudi().",
+        "description": "Separa e classifica peças processuais.",
         "tags": [
           "Proc. Admin.",
           "EPROC",
           "PROJUDI"
         ],
         "status": "planned",
-        "icon": "🔍"
+        "icon": "🔍",
+        "department": "juridico",
+        "level": 1
       },
       {
         "id": "advogado-pleno",
         "name": "Agente 2 — Advogado Pleno",
-        "function": "agente_pleno()",
         "role": "Redação e Argumentação",
-        "description": "Redige peças completas. Sub-agentes: fatos(), fundamentos(), pedidos(), resumo(), finais().",
+        "description": "Redige peças completas.",
         "tags": [
           "Fatos",
           "Fundamentos",
@@ -159,30 +163,101 @@
           "Resumo"
         ],
         "status": "planned",
-        "icon": "✍"
+        "icon": "✍",
+        "department": "juridico",
+        "level": 2,
+        "sub_agents": [
+          {
+            "id": "pesquisador-juris-dominante",
+            "name": "Pesquisador de Jurisprudência Dominante",
+            "role": "Analista de tendências majoritárias",
+            "description": "Mapeia jurisprudência consolidada nos tribunais.",
+            "tags": [
+              "jurisprudência",
+              "tendências",
+              "súmulas",
+              "entendimento-majoritário"
+            ],
+            "status": "planned",
+            "icon": "⚖️",
+            "department": "juridico",
+            "level": 3
+          },
+          {
+            "id": "pesquisador-juris-vanguarda",
+            "name": "Pesquisador de Jurisprudência de Vanguarda",
+            "role": "Analista de tendências emergentes",
+            "description": "Identifica decisões inovadoras e divergentes.",
+            "tags": [
+              "jurisprudência",
+              "divergência",
+              "inovação",
+              "tendências-emergentes"
+            ],
+            "status": "planned",
+            "icon": "🔭",
+            "department": "juridico",
+            "level": 3
+          },
+          {
+            "id": "analista-jurimetria",
+            "name": "Analista de Jurimetria",
+            "role": "Analista quantitativo",
+            "description": "Análise estatística de decisões por tribunal.",
+            "tags": [
+              "jurimetria",
+              "estatística",
+              "análise-quantitativa",
+              "dados"
+            ],
+            "status": "planned",
+            "icon": "📊",
+            "department": "juridico",
+            "level": 3
+          },
+          {
+            "id": "pesquisador-jurisprudencia",
+            "name": "Compilador de Jurisprudência",
+            "role": "Pesquisador de decisões específicas",
+            "description": "Busca decisões concretas conforme plano aprovado.",
+            "tags": [
+              "jurisprudência",
+              "compilação",
+              "busca-decisões",
+              "TJ",
+              "TRF",
+              "STJ",
+              "STF"
+            ],
+            "status": "planned",
+            "icon": "📚",
+            "department": "juridico",
+            "level": 3
+          }
+        ]
       },
       {
         "id": "advogado-senior",
         "name": "Agente 3 — Advogado Sênior",
-        "function": "agente_senior()",
         "role": "Estratégia e Jurisprudência",
-        "description": "Estratégia processual e jurisprudência. Sub-agentes: juris.dominante(), juris.vanguarda().",
+        "description": "Estratégia processual e jurisprudência.",
         "tags": [
           "Estratégia",
           "Juris. Dominante",
           "Juris. Vanguarda"
         ],
         "status": "planned",
-        "icon": "🎯"
+        "icon": "🎯",
+        "department": "juridico",
+        "level": 3
       }
     ],
     "tecnico": [
       {
         "id": "estagiario-tecnico",
         "name": "Agente 0 — Estagiário Técnico",
-        "function": "estagiario_tecnico()",
         "role": "Extração de Dados Ambientais",
-        "description": "Coleta dados das bases ambientais e fundiárias. Orquestra skills de extração: CAR, INCRA, MapBiomas, IMA-SC, IBAMA.",
+        "description": "Coleta dados das bases ambientais e fundiárias.",
         "tags": [
           "CAR",
           "INCRA",
@@ -192,39 +267,14 @@
         ],
         "status": "prototype",
         "icon": "🧪",
-        "sub_agents": [
-          {
-            "name": "Extrator CAR",
-            "status": "prototype"
-          },
-          {
-            "name": "Extrator INCRA",
-            "status": "planned"
-          },
-          {
-            "name": "Extrator MapBiomas",
-            "status": "planned"
-          },
-          {
-            "name": "Extrator IMA-SC",
-            "status": "planned"
-          },
-          {
-            "name": "Extrator Embargos IBAMA",
-            "status": "planned"
-          },
-          {
-            "name": "Extrator Alertas",
-            "status": "planned"
-          }
-        ]
+        "department": "tecnico",
+        "level": 0
       },
       {
         "id": "analista-junior",
         "name": "Agente 1 — Analista MA Júnior",
-        "function": "analista_junior()",
         "role": "Organização e Cruzamento",
-        "description": "Tabula dados extraídos, cruza matrícula × CAR × INCRA, detecta inconsistências básicas.",
+        "description": "Tabula dados extraídos, cruza matrícula × CAR × INCRA.",
         "tags": [
           "Tabulação",
           "Matrícula×CAR",
@@ -232,14 +282,15 @@
           "Shapefiles"
         ],
         "status": "planned",
-        "icon": "📊"
+        "icon": "📊",
+        "department": "tecnico",
+        "level": 1
       },
       {
         "id": "analista-pleno",
         "name": "Agente 2 — Analista MA Pleno",
-        "function": "analista_pleno()",
         "role": "Análise Integrada e Relatórios",
-        "description": "Análise de APP e Reserva Legal, geração de mapas temáticos, relatórios técnicos por propriedade.",
+        "description": "Análise de APP e Reserva Legal, mapas temáticos.",
         "tags": [
           "APP",
           "Reserva Legal",
@@ -247,14 +298,15 @@
           "Relatórios"
         ],
         "status": "planned",
-        "icon": "🗺"
+        "icon": "🗺",
+        "department": "tecnico",
+        "level": 2
       },
       {
         "id": "analista-senior",
         "name": "Agente 3 — Analista MA Sênior",
-        "function": "analista_senior()",
         "role": "Diagnóstico Estratégico",
-        "description": "Score de risco ambiental, consolidação de passivos, ranking de propriedades por criticidade.",
+        "description": "Score de risco ambiental, consolidação de passivos.",
         "tags": [
           "Score Risco",
           "Passivos",
@@ -262,7 +314,47 @@
           "Estratégia"
         ],
         "status": "planned",
-        "icon": "🚨"
+        "icon": "🚨",
+        "department": "tecnico",
+        "level": 3
+      }
+    ],
+    "administrativo": [
+      {
+        "id": "controlador-juridico",
+        "name": "Controlador Jurídico",
+        "role": "Controle e Distribuição de Prazos",
+        "description": "Anota, acompanha e distribui prazos judiciais e extrajudiciais. Cria tarefas no Trello.",
+        "tags": [
+          "Prazos",
+          "Trello",
+          "Judicial",
+          "Extrajudicial",
+          "Distribuição"
+        ],
+        "status": "planned",
+        "icon": "📋",
+        "department": "administrativo",
+        "level": 0
+      }
+    ],
+    "comercial": [
+      {
+        "id": "coordenador-comercial",
+        "name": "Coordenador Comercial",
+        "role": "Prospecção e Gestão Comercial",
+        "description": "Coordena o pipeline comercial do escritório. Acompanha novos negócios, propostas e conversões.",
+        "tags": [
+          "Pipeline",
+          "Propostas",
+          "Follow-up",
+          "Leads",
+          "Conversão"
+        ],
+        "status": "planned",
+        "icon": "💼",
+        "department": "comercial",
+        "level": 0
       }
     ]
   },
@@ -271,7 +363,7 @@
       "id": "monitor-iat",
       "name": "Monitor de Protocolos IAT",
       "type_label": "Automação · Cron + Playwright + Supabase",
-      "description": "Monitora 38+ protocolos no IAT. Agendamento → Playwright → Compara Supabase → Alerta Slack.",
+      "description": "Monitora 38+ protocolos no IAT.",
       "tags": [
         "Playwright",
         "Supabase",
@@ -285,7 +377,7 @@
       "id": "doc-obsidian",
       "name": "Documentação Automática Obsidian",
       "type_label": "Gatilho · Documentação de Sessão",
-      "description": "Documenta sessões e decisões no Obsidian ao final de cada interação. Metadados YAML padronizados.",
+      "description": "Documenta sessões e decisões no Obsidian.",
       "tags": [
         "Gatilhos",
         "Obsidian",
@@ -293,6 +385,52 @@
       ],
       "status": "active",
       "icon": "📝"
+    },
+    {
+      "id": "briefing-comercial",
+      "name": "Briefing Comercial",
+      "type_label": "Automação · Cron · Coordenador Comercial",
+      "description": "Scan diagnóstico dos boards Novos Negócios (TAQUES + DF Bio). Identifica leads parados, sem responsável, sem prazo e vencidos. Gera relatório para aprovação.",
+      "tags": [
+        "Novos Negócios",
+        "Trello",
+        "Diagnóstico",
+        "6h"
+      ],
+      "status": "planned",
+      "icon": "📊",
+      "agent_id": "coordenador-comercial",
+      "trigger_type": "cron",
+      "trigger_config": {
+        "cron": "0 6 * * 1-5",
+        "boards": [
+          "698e0e318ec5969402a1b2a5",
+          "698e0d2afa67614e223e358e"
+        ]
+      }
+    },
+    {
+      "id": "check-comercial",
+      "name": "Check de Execução Comercial",
+      "type_label": "Automação · Cron · Coordenador Comercial",
+      "description": "Verificação de progresso nos boards Novos Negócios. Compara com briefing da manhã, identifica movimentações e follow-ups pendentes. Propõe ações.",
+      "tags": [
+        "Novos Negócios",
+        "Trello",
+        "Follow-up",
+        "15h/18h"
+      ],
+      "status": "planned",
+      "icon": "🔄",
+      "agent_id": "coordenador-comercial",
+      "trigger_type": "cron",
+      "trigger_config": {
+        "cron": "0 15,18 * * 1-5",
+        "boards": [
+          "698e0e318ec5969402a1b2a5",
+          "698e0d2afa67614e223e358e"
+        ]
+      }
     }
   ]
 }
