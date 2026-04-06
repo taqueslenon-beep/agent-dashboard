@@ -1,15 +1,17 @@
 {
   "_meta": {
-    "generated_at": "2026-04-06T01:34:26.654648",
+    "generated_at": "2026-04-06T10:00:25.076056",
     "generator": "sync-registry.py",
     "vault": "/Users/lenontaques/Documents/Obsidian do Lenon"
   },
   "stats": {
     "habilidades_ativas": 5,
-    "habilidades_construcao": 1,
-    "habilidades_total": 6,
+    "habilidades_construcao": 2,
+    "habilidades_total": 7,
     "agentes_total": 10,
-    "automacoes_total": 4
+    "automacoes_total": 4,
+    "mcps_total": 8,
+    "mcps_connected": 8
   },
   "skills": [
     {
@@ -70,12 +72,18 @@
     },
     {
       "id": "extrator-eproc",
-      "name": "Extrator Eproc",
-      "type_label": "Habilidade · Geral",
+      "name": "Extrator E-PROC (TJSC)",
+      "type_label": "Habilidade · Dept. Jurídico — Estagiário Jurídico",
       "description": "Extrator de processos judiciais do E-PROC (TJSC/TRF4)",
-      "tags": [],
-      "status": "active",
-      "icon": "⚙",
+      "tags": [
+        "E-PROC",
+        "TJSC",
+        "Playwright",
+        "Cert. A1",
+        "Lote"
+      ],
+      "status": "prototype",
+      "icon": "🏛",
       "path": ".claude/skills/extrator-eproc/SKILL.md",
       "department": "juridico",
       "passos": 7,
@@ -113,6 +121,26 @@
       "status": "active",
       "icon": "📄",
       "path": ".claude/skills/separador-de-pdfs/SKILL.md",
+      "department": "geral",
+      "passos": 5,
+      "tem_codigo": false
+    },
+    {
+      "id": "Verificador de Compromissos Pessoais",
+      "name": "Verificador De Compromissos Pessoais",
+      "type_label": "Habilidade · Geral",
+      "description": "Verifica compromissos pessoais recorrentes (terapia, barbearia) via WhatsApp + Google Calendar e reporta ao painel Taques Agents. Roda diariamente as 06:00.",
+      "tags": [
+        "WhatsApp",
+        "Google Calendar",
+        "Todoist",
+        "Supabase",
+        "Cron",
+        "Pessoal"
+      ],
+      "status": "active",
+      "icon": "⚙",
+      "path": ".claude/skills/verificador-compromissos/SKILL.md",
       "department": "geral",
       "passos": 5,
       "tem_codigo": false
@@ -431,6 +459,108 @@
           "698e0d2afa67614e223e358e"
         ]
       }
+    }
+  ],
+  "mcps": [
+    {
+      "id": "todoist",
+      "name": "Todoist",
+      "url": "mcp://todoist",
+      "status": "connected",
+      "tools_available": [
+        "add-tasks",
+        "find-tasks",
+        "update-tasks",
+        "complete-tasks",
+        "get-overview",
+        "reschedule-tasks"
+      ]
+    },
+    {
+      "id": "trello",
+      "name": "Trello",
+      "url": "mcp://trello",
+      "status": "connected",
+      "tools_available": [
+        "getMyBoards",
+        "getLists",
+        "getCardsByList",
+        "getMyCards",
+        "addCard",
+        "updateCard",
+        "moveCard",
+        "archiveCard"
+      ]
+    },
+    {
+      "id": "google-drive",
+      "name": "Google Drive",
+      "url": "mcp://gdrive",
+      "status": "connected",
+      "tools_available": [
+        "google_drive_search",
+        "google_drive_fetch"
+      ]
+    },
+    {
+      "id": "whatsapp",
+      "name": "WhatsApp (GOWA)",
+      "url": "http://localhost:8080",
+      "status": "connected",
+      "tools_available": [
+        "whatsapp_send_text",
+        "whatsapp_list_chats",
+        "whatsapp_get_chat_messages",
+        "whatsapp_send_image"
+      ]
+    },
+    {
+      "id": "slack",
+      "name": "Slack",
+      "url": "mcp://slack",
+      "status": "connected",
+      "tools_available": [
+        "slack_send_message",
+        "slack_read_channel",
+        "slack_search_public",
+        "slack_create_canvas"
+      ]
+    },
+    {
+      "id": "supabase",
+      "name": "Supabase",
+      "url": "mcp://supabase",
+      "status": "connected",
+      "tools_available": [
+        "execute_sql",
+        "apply_migration",
+        "list_tables",
+        "list_projects",
+        "get_project"
+      ]
+    },
+    {
+      "id": "google-calendar",
+      "name": "Google Calendar",
+      "url": "mcp://gcal",
+      "status": "connected",
+      "tools_available": [
+        "gcal_list_events",
+        "gcal_create_event",
+        "gcal_update_event",
+        "gcal_find_free_time"
+      ]
+    },
+    {
+      "id": "gmail",
+      "name": "Gmail",
+      "url": "mcp://gmail",
+      "status": "connected",
+      "tools_available": [
+        "gmail_search_messages",
+        "gmail_read_message",
+        "gmail_create_draft"
+      ]
     }
   ]
 }

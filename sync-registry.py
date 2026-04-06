@@ -18,6 +18,8 @@ import json
 import os
 import re
 import sys
+import urllib.error
+import urllib.request
 from datetime import datetime
 from pathlib import Path
 
@@ -95,6 +97,7 @@ def extract_tags_from_skill(fm):
         "separador-de-pdfs": ["Divisão PDF", "Cronológico", "NotebookLM", "Índice.md"],
         "digitalizador-documentos": ["Escâner", "150 DPI", "Auto/Cor/PB", "Multi-página"],
         "extrator-car": ["CAR/SICAR", "Shapefiles", "GeoPandas", "Alertas", "Lote"],
+        "extrator-eproc": ["E-PROC", "TJSC", "Playwright", "Cert. A1", "Lote"],
     }
     name = fm.get("name", "")
     if name in tag_map:
@@ -127,7 +130,7 @@ def extract_skill_body_info(filepath):
 def infer_status(fm, body_info):
     desc = fm.get("description", "").lower()
     name = fm.get("name", "").lower()
-    status_overrides = {"extrator-car": "prototype"}
+    status_overrides = {"extrator-car": "prototype", "extrator-eproc": "prototype"}
     if name in status_overrides:
         return status_overrides[name]
     if "em construção" in desc or "em construcao" in desc:
@@ -141,7 +144,7 @@ def infer_icon(name):
     icons = {
         "assessor-comunicacao": "💬", "redacao-juridica": "⚖",
         "separador-de-pdfs": "📄", "digitalizador-documentos": "📷",
-        "extrator-car": "🌍",
+        "extrator-car": "🌍", "extrator-eproc": "🏛",
     }
     return icons.get(name, "⚙")
 
@@ -163,6 +166,7 @@ def infer_type_label(fm):
         "separador-de-pdfs": "Habilidade · Agente de Processamento Documental",
         "digitalizador-documentos": "Habilidade · Agente de Processamento de Imagem",
         "extrator-car": "Habilidade · Dept. Técnico — Estagiário Técnico",
+        "extrator-eproc": "Habilidade · Dept. Jurídico — Estagiário Jurídico",
     }
     return type_map.get(name, "Habilidade · Geral")
 
@@ -195,6 +199,7 @@ def scan_skills():
             "separador-de-pdfs": "Separador de PDFs",
             "digitalizador-documentos": "Digitalizador de Documentos",
             "extrator-car": "Extrator CAR (SICAR)",
+            "extrator-eproc": "Extrator E-PROC (TJSC)",
         }
         display_name = name_map.get(fm["name"], fm["name"].replace("-", " ").title())
 
@@ -253,24 +258,124 @@ def get_automations():
     ]
 
 
+# ── MCP Servers ─────────────────────────────────────────────────────────────
+
+MCP_REGISTRY = [
+    # Stdio MCPs (definidos em ~/.claude/.mcp.json)
+    {"id": "todoist", "name": "Todoist", "url": "mcp://todoist", "detect": "stdio", "config_key": "todoist",
+     "tools": ["add-tasks", "find-tasks", "update-tasks", "complete-tasks", "get-overview", "reschedule-tasks"]},
+    {"id": "trello", "name": "Trello", "url": "mcp://trello", "detect": "stdio", "config_key": "trello",
+     "tools": ["getMyBoards", "getLists", "getCardsByList", "getMyCards", "addCard", "updateCard", "moveCard", "archiveCard"]},
+    {"id": "google-drive", "name": "Google Drive", "url": "mcp://gdrive", "detect": "stdio", "config_key": "google-drive",
+     "tools": ["google_drive_search", "google_drive_fetch"]},
+    # SSE MCPs (processo separado)
+    {"id": "whatsapp", "name": "WhatsApp (GOWA)", "url": "http://localhost:8080", "detect": "sse",
+     "health_url": "http://localhost:8080",
+     "tools": ["whatsapp_send_text", "whatsapp_list_chats", "whatsapp_get_chat_messages", "whatsapp_send_image"]},
+    # Plugin MCPs (marketplace)
+    {"id": "slack", "name": "Slack", "url": "mcp://slack", "detect": "plugin", "plugin_name": "slack",
+     "tools": ["slack_send_message", "slack_read_channel", "slack_search_public", "slack_create_canvas"]},
+    {"id": "supabase", "name": "Supabase", "url": "mcp://supabase", "detect": "plugin", "plugin_name": "supabase",
+     "tools": ["execute_sql", "apply_migration", "list_tables", "list_projects", "get_project"]},
+    # Conectores gerenciados (infraestrutura Claude)
+    {"id": "google-calendar", "name": "Google Calendar", "url": "mcp://gcal", "detect": "connector",
+     "tools": ["gcal_list_events", "gcal_create_event", "gcal_update_event", "gcal_find_free_time"]},
+    {"id": "gmail", "name": "Gmail", "url": "mcp://gmail", "detect": "connector",
+     "tools": ["gmail_search_messages", "gmail_read_message", "gmail_create_draft"]},
+]
+
+
+def _check_mcp_status(mcp, stdio_config, plugins_dir):
+    """Determina status de conexão de um MCP server."""
+    detect = mcp.get("detect", "unknown")
+
+    if detect == "stdio":
+        config_key = mcp.get("config_key", "")
+        if config_key not in stdio_config:
+            return "disconnected"
+        cmd = stdio_config[config_key].get("command", "")
+        if not cmd:
+            return "disconnected"
+        if cmd in ("npx", "node"):
+            return "connected"
+        return "connected" if Path(cmd).exists() else "disconnected"
+
+    elif detect == "sse":
+        health_url = mcp.get("health_url", "")
+        if not health_url:
+            return "unknown"
+        try:
+            req = urllib.request.Request(health_url, method="HEAD")
+            urllib.request.urlopen(req, timeout=3)
+            return "connected"
+        except urllib.error.HTTPError:
+            return "connected"  # servidor respondeu, está vivo
+        except Exception:
+            return "disconnected"
+
+    elif detect == "plugin":
+        plugin_name = mcp.get("plugin_name", "")
+        if plugin_name and (plugins_dir / plugin_name).exists():
+            return "connected"
+        return "disconnected"
+
+    elif detect == "connector":
+        return "connected"
+
+    return "unknown"
+
+
+def get_mcps():
+    """Escaneia e verifica todos os MCP servers conhecidos."""
+    mcp_json_path = Path.home() / ".claude" / ".mcp.json"
+    stdio_config = {}
+    if mcp_json_path.exists():
+        try:
+            stdio_config = json.loads(mcp_json_path.read_text()).get("mcpServers", {})
+        except Exception:
+            pass
+
+    plugins_dir = (
+        Path.home() / ".claude" / "plugins" / "marketplaces"
+        / "claude-plugins-official" / "external_plugins"
+    )
+
+    results = []
+    for mcp in MCP_REGISTRY:
+        status = _check_mcp_status(mcp, stdio_config, plugins_dir)
+        results.append({
+            "id": mcp["id"],
+            "name": mcp["name"],
+            "url": mcp["url"],
+            "status": status,
+            "tools_available": mcp["tools"],
+        })
+    return results
+
+
 def build_registry():
     skills = scan_skills()
     agents = get_agents()
     automations = get_automations()
+    mcps = get_mcps()
 
     active_skills = len([s for s in skills if s["status"] == "active"])
     prototype_skills = len([s for s in skills if s["status"] == "prototype"])
     total_agents = sum(len(v) for v in agents.values())
+    mcps_connected = len([m for m in mcps if m["status"] == "connected"])
 
     return {
         "_meta": {"generated_at": datetime.now().isoformat(), "generator": "sync-registry.py", "vault": str(VAULT)},
         "stats": {
             "habilidades_ativas": active_skills, "habilidades_construcao": prototype_skills,
-            "habilidades_total": len(skills), "agentes_total": total_agents, "automacoes_total": len(automations),
+            "habilidades_total": len(skills), "agentes_total": total_agents,
+            "automacoes_total": len(automations), "mcps_total": len(mcps),
+            "mcps_connected": mcps_connected,
         },
         "skills": skills,
         "agents": agents,
         "automations": automations,
+        "mcps": mcps,
     }
 
 
@@ -315,9 +420,16 @@ def sync_to_supabase(registry):
                 "icon": agent["icon"], "tags": agent["tags"],
             }])
 
+    # Upsert MCPs
+    for mcp in registry.get("mcps", []):
+        upsert("mcp_servers", [{
+            "id": mcp["id"], "name": mcp["name"], "url": mcp["url"],
+            "status": mcp["status"], "tools_available": mcp["tools_available"],
+        }])
+
     # Log sync event
     upsert("activity_log", [{
-        "action": f"sync-registry.py: {registry['stats']['habilidades_total']} skills, {registry['stats']['agentes_total']} agentes",
+        "action": f"sync-registry.py: {registry['stats']['habilidades_total']} skills, {registry['stats']['agentes_total']} agentes, {registry['stats']['mcps_connected']}/{registry['stats']['mcps_total']} MCPs",
         "event_type": "system",
         "details": json.dumps(registry["stats"]),
     }])
@@ -334,6 +446,7 @@ def main():
     print(f"  Habilidades: {stats['habilidades_total']} ({stats['habilidades_ativas']} ativas, {stats['habilidades_construcao']} em construção)")
     print(f"  Agentes: {stats['agentes_total']}")
     print(f"  Automações: {stats['automacoes_total']}")
+    print(f"  MCPs: {stats['mcps_connected']}/{stats['mcps_total']} conectados")
 
     # 2. Sync com Supabase
     try:
