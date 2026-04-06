@@ -1,14 +1,14 @@
 {
   "_meta": {
-    "generated_at": "2026-04-06T12:49:34.641161",
+    "generated_at": "2026-04-06T14:04:38.096677",
     "generator": "sync-registry.py",
     "vault": "/Users/lenontaques/Documents/Obsidian do Lenon"
   },
   "stats": {
-    "habilidades_ativas": 5,
+    "habilidades_ativas": 6,
     "habilidades_construcao": 2,
-    "habilidades_total": 7,
-    "agentes_total": 12,
+    "habilidades_total": 8,
+    "agentes_total": 18,
     "automacoes_total": 6,
     "mcps_total": 8,
     "mcps_connected": 8
@@ -108,6 +108,25 @@
       "tem_codigo": false
     },
     {
+      "id": "revisor-trello-diario",
+      "name": "Revisor Trello Diario",
+      "type_label": "Habilidade · Geral",
+      "description": "Revisor diário automático de questões e discussões nos cards do Trello. Coleta toda atividade das últimas 24h (comentários, atualizações, checklists, movimentações) e insere as questões novas nas fich...",
+      "tags": [
+        "Trello",
+        "Obsidian",
+        "Cron",
+        "Auto-sync",
+        "19h"
+      ],
+      "status": "active",
+      "icon": "⚙",
+      "path": ".claude/skills/revisor-trello-diario/SKILL.md",
+      "department": "tecnico",
+      "passos": 6,
+      "tem_codigo": false
+    },
+    {
       "id": "separador-de-pdfs",
       "name": "Separador de PDFs",
       "type_label": "Habilidade · Agente de Processamento Documental",
@@ -147,10 +166,51 @@
     }
   ],
   "agents": {
+    "gabinete-ceo": [
+      {
+        "id": "secretaria-executiva",
+        "name": "Secretária Executiva",
+        "role": "Despacho de Trello e Triagem de Notificações",
+        "description": "Processa notificações do Trello, enriquece contexto com 7 fontes externas, sugere respostas e ações, e documenta no Obsidian. HITL obrigatório.",
+        "tags": [
+          "Trello",
+          "Gmail",
+          "Calendar",
+          "Todoist",
+          "WhatsApp",
+          "Slack",
+          "Drive",
+          "Supabase",
+          "Obsidian",
+          "HITL"
+        ],
+        "status": "prototype",
+        "icon": "🗂",
+        "department": "gabinete-ceo",
+        "level": 1
+      },
+      {
+        "id": "gestor-rotinas",
+        "name": "Gestor de Agendas e Tarefas",
+        "role": "Gestão de Agenda, Tarefas e Rituais",
+        "description": "Gerencia rotinas diárias (rituais matinal/noturno), sincroniza Google Calendar com Todoist, e mantém a agenda organizada.",
+        "tags": [
+          "Google Calendar",
+          "Todoist",
+          "Rituais",
+          "Agenda",
+          "WhatsApp"
+        ],
+        "status": "planned",
+        "icon": "📅",
+        "department": "gabinete-ceo",
+        "level": 1
+      }
+    ],
     "juridico": [
       {
         "id": "estagiario-juridico",
-        "name": "Agente 0 — Estagiário Jurídico",
+        "name": "Estagiário Jurídico",
         "role": "Extração e Coleta",
         "description": "Extrai autos de processos dos sistemas judiciais.",
         "tags": [
@@ -166,7 +226,7 @@
       },
       {
         "id": "advogado-junior",
-        "name": "Agente 1 — Advogado Júnior",
+        "name": "Advogado Júnior",
         "role": "Análise e Separação",
         "description": "Separa e classifica peças processuais.",
         "tags": [
@@ -181,7 +241,7 @@
       },
       {
         "id": "advogado-pleno",
-        "name": "Agente 2 — Advogado Pleno",
+        "name": "Advogado Pleno",
         "role": "Redação e Argumentação",
         "description": "Redige peças completas.",
         "tags": [
@@ -197,7 +257,7 @@
         "sub_agents": [
           {
             "id": "pesquisador-juris-dominante",
-            "name": "Pesquisador de Jurisprudência Dominante",
+            "name": "Pesq. Juris. Dominante",
             "role": "Analista de tendências majoritárias",
             "description": "Mapeia jurisprudência consolidada nos tribunais.",
             "tags": [
@@ -213,7 +273,7 @@
           },
           {
             "id": "pesquisador-juris-vanguarda",
-            "name": "Pesquisador de Jurisprudência de Vanguarda",
+            "name": "Pesq. Juris. Vanguarda",
             "role": "Analista de tendências emergentes",
             "description": "Identifica decisões inovadoras e divergentes.",
             "tags": [
@@ -266,7 +326,7 @@
       },
       {
         "id": "advogado-senior",
-        "name": "Agente 3 — Advogado Sênior",
+        "name": "Advogado Sênior",
         "role": "Estratégia e Jurisprudência",
         "description": "Estratégia processual e jurisprudência.",
         "tags": [
@@ -283,7 +343,7 @@
     "tecnico": [
       {
         "id": "estagiario-tecnico",
-        "name": "Agente 0 — Estagiário Técnico",
+        "name": "Estagiário Técnico",
         "role": "Extração de Dados Ambientais",
         "description": "Coleta dados das bases ambientais e fundiárias.",
         "tags": [
@@ -300,7 +360,7 @@
       },
       {
         "id": "analista-junior",
-        "name": "Agente 1 — Analista MA Júnior",
+        "name": "Analista MA Júnior",
         "role": "Organização e Cruzamento",
         "description": "Tabula dados extraídos, cruza matrícula × CAR × INCRA.",
         "tags": [
@@ -316,7 +376,7 @@
       },
       {
         "id": "analista-pleno",
-        "name": "Agente 2 — Analista MA Pleno",
+        "name": "Analista MA Pleno",
         "role": "Análise Integrada e Relatórios",
         "description": "Análise de APP e Reserva Legal, mapas temáticos.",
         "tags": [
@@ -332,7 +392,7 @@
       },
       {
         "id": "analista-senior",
-        "name": "Agente 3 — Analista MA Sênior",
+        "name": "Analista MA Sênior",
         "role": "Diagnóstico Estratégico",
         "description": "Score de risco ambiental, consolidação de passivos.",
         "tags": [
@@ -385,48 +445,101 @@
         "level": 0
       }
     ],
-    "geral": [
+    "inteligencia": [
       {
-        "id": "verificador-compromissos",
-        "name": "Verificador de Compromissos",
-        "role": "Verificação diária de compromissos pessoais via WhatsApp + GCal",
-        "description": "Agente automatizado que verifica diariamente compromissos pessoais recorrentes (terapia, barbearia) cruzando Google Calendar com WhatsApp e reportando ao painel.",
+        "id": "monitor-legislativo",
+        "name": "Monitor Legislativo",
+        "role": "Monitoramento de Leis, Resoluções e Portarias",
+        "description": "Monitora publicações legislativas relevantes para direito ambiental.",
         "tags": [
-          "WhatsApp",
-          "Google Calendar",
-          "Todoist",
-          "Supabase",
-          "Cron",
-          "Pessoal"
+          "Legislação",
+          "CONAMA",
+          "IBAMA",
+          "Direito Ambiental"
         ],
-        "status": "active",
-        "icon": "🔍",
-        "department": "geral",
+        "status": "planned",
+        "icon": "📜",
+        "department": "inteligencia",
         "level": 0
-      }
-    ],
-    "gabinete-ceo": [
+      },
       {
-        "id": "secretaria-executiva",
-        "name": "Agente 1 — Secretária Executiva",
-        "role": "Despacho de Trello e Triagem de Notificações",
-        "description": "Processa notificações do Trello, enriquece contexto com 7 fontes externas (Supabase, Gmail, Drive, Calendar, Slack, Todoist, WhatsApp), sugere respostas e ações, e documenta no Obsidian. Human-in-the-Loop obrigatório.",
+        "id": "monitor-jurisprudencial",
+        "name": "Monitor Jurisprudencial",
+        "role": "Monitoramento de Decisões dos Tribunais",
+        "description": "Acompanha decisões de tribunais superiores e TJs em matéria ambiental.",
         "tags": [
-          "Trello",
-          "Gmail",
-          "Calendar",
-          "Todoist",
-          "WhatsApp",
-          "Slack",
-          "Drive",
-          "Supabase",
-          "Obsidian",
-          "HITL"
+          "Jurisprudência",
+          "STJ",
+          "STF",
+          "TRF4",
+          "TJSC"
         ],
-        "status": "prototype",
-        "icon": "🗂",
-        "department": "gabinete-ceo",
-        "level": 1
+        "status": "planned",
+        "icon": "⚖️",
+        "department": "inteligencia",
+        "level": 0
+      },
+      {
+        "id": "monitor-geoambiental",
+        "name": "Monitor Geoambiental",
+        "role": "Monitoramento de MapBiomas, DETER e CAR",
+        "description": "Monitora alertas de desmatamento, mudanças no MapBiomas e atualizações do CAR/SICAR.",
+        "tags": [
+          "MapBiomas",
+          "DETER",
+          "CAR",
+          "SICAR",
+          "Geoprocessamento"
+        ],
+        "status": "planned",
+        "icon": "🗺️",
+        "department": "inteligencia",
+        "level": 0
+      },
+      {
+        "id": "monitor-juridico",
+        "name": "Monitor Jurídico",
+        "role": "Monitoramento de Sites Jurídicos Especializados",
+        "description": "Acompanha publicações em sites jurídicos especializados.",
+        "tags": [
+          "Notícias",
+          "Doutrina",
+          "Artigos Jurídicos"
+        ],
+        "status": "planned",
+        "icon": "📰",
+        "department": "inteligencia",
+        "level": 0
+      },
+      {
+        "id": "monitor-concorrencia",
+        "name": "Monitor de Concorrência",
+        "role": "Monitoramento de Posicionamento de Concorrentes",
+        "description": "Monitora atuação de escritórios concorrentes em direito ambiental.",
+        "tags": [
+          "Concorrência",
+          "Mercado",
+          "Benchmarking"
+        ],
+        "status": "planned",
+        "icon": "🎯",
+        "department": "inteligencia",
+        "level": 0
+      },
+      {
+        "id": "monitor-tendencias",
+        "name": "Monitor de Tendências",
+        "role": "Monitoramento de Tendências de Mercado",
+        "description": "Identifica tendências emergentes no mercado jurídico ambiental.",
+        "tags": [
+          "Tendências",
+          "Mercado",
+          "Oportunidades"
+        ],
+        "status": "planned",
+        "icon": "📈",
+        "department": "inteligencia",
+        "level": 0
       }
     ]
   },
