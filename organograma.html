@@ -69,7 +69,7 @@
 <div class="canvas" id="canvas"><div class="ci" id="ci"><svg id="svg" xmlns="http://www.w3.org/2000/svg"></svg></div></div>
 <div class="sb">
   <div class="sd"></div><span>Organograma Taques Agents</span><div class="ss"></div>
-  <span>1 Gabinete CEO &middot; 5 Departamentos &middot; 18 Agentes &middot; 4 Sub-agentes</span><div class="ss"></div>
+  <span>1 Gabinete CEO &middot; 5 Departamentos &middot; 18 Agentes &middot; 6 Sub-agentes</span><div class="ss"></div>
   <span id="sz">Zoom: 100%</span>
 </div>
 
@@ -98,13 +98,19 @@ const AGENTS = {
         { name:'Analista Jurimetria', icon:'📊', status:'planned' },
         { name:'Compilador Juris.', icon:'📚', status:'planned' },
       ]},
-    { id:'adv-sr', name:'Agente 3 — Advogado Senior', role:'Estrategia', status:'planned', icon:'🎯', level:3 },
+    { id:'adv-sr', name:'Agente 3 — Advogado Senior', role:'Estrategia', status:'planned', icon:'🎯', level:3,
+      subs:[
+        { name:'Contra-Arg. Juridico', icon:'⚔️', status:'planned' },
+      ]},
   ],
   tecnico: [
     { id:'est-tec', name:'Agente 0 — Estagiario Tecnico', role:'Extracao Ambiental', status:'prototype', icon:'🧪', level:0 },
     { id:'ana-jr', name:'Agente 1 — Analista MA Junior', role:'Organizacao', status:'planned', icon:'📊', level:1 },
     { id:'ana-pl', name:'Agente 2 — Analista MA Pleno', role:'Analise Integrada', status:'planned', icon:'🗺', level:2 },
-    { id:'ana-sr', name:'Agente 3 — Analista MA Senior', role:'Diagnostico', status:'planned', icon:'🚨', level:3 },
+    { id:'ana-sr', name:'Agente 3 — Analista MA Senior', role:'Diagnostico', status:'planned', icon:'🚨', level:3,
+      subs:[
+        { name:'Contra-Arg. Ambiental', icon:'🔥', status:'planned' },
+      ]},
   ],
   administrativo: [
     { id:'ctrl-jur', name:'Controlador Juridico', role:'Prazos e Distribuicao', status:'planned', icon:'📋', level:0 },
@@ -140,7 +146,7 @@ function setFilter(f) {
 }
 
 // Layout
-const NW=200, NH=56, NWs=140, NHs=36;
+const NW=200, NH=56, NWs=130, NHs=36;
 const CEO_X=900, CEO_Y=40;
 const DEPT_Y=180, DEPT_GAP=280;
 const AGENT_Y=310, AGENT_GAP=90;
@@ -211,22 +217,20 @@ function buildSVG(){
     h+=`<text x="${dx}" y="${dy+36}" text-anchor="middle" font-size="8" fill="var(--text-muted)">${agCount} agente${agCount!==1?'s':''}</text>`;
     h+=`</g>`;
 
-    // Agent nodes
+    // Agent nodes — cumulative Y (accommodates variable sub-agent blocks below each agent)
     const deptAgents = AGENTS[dept] || [];
     const agStartY = dy + dh + 40;
+    let currentY = agStartY;
+    let prevBottomY = dy + dh; // tracks bottom of previous element for connection lines
 
-    deptAgents.forEach((ag, ai) => {
-      const ax = dx, ay = agStartY + ai * AGENT_GAP;
+    deptAgents.forEach((ag) => {
+      const ax = dx, ay = currentY;
       const st = STATUS[ag.status] || STATUS.planned;
       const matches = activeFilter === 'all' || ag.status === activeFilter;
       const op = matches ? 1 : 0.1;
 
-      // Connection
-      if(ai === 0) {
-        h+=`<line class="conn" opacity="${op}" x1="${dx}" y1="${dy+dh}" x2="${ax}" y2="${ay}" marker-end="url(#a1)"/>`;
-      } else {
-        h+=`<line class="conn" opacity="${op}" x1="${dx}" y1="${agStartY + (ai-1)*AGENT_GAP + NH}" x2="${ax}" y2="${ay}" marker-end="url(#a1)"/>`;
-      }
+      // Connection from previous element (dept header or previous agent/sub-block)
+      h+=`<line class="conn" opacity="${op}" x1="${dx}" y1="${prevBottomY}" x2="${ax}" y2="${ay}" marker-end="url(#a1)"/>`;
 
       // Agent box
       h+=`<g class="org-node" opacity="${op}">`;
@@ -235,28 +239,43 @@ function buildSVG(){
       const nm = ag.name.length > 24 ? ag.name.substring(0,24)+'..' : ag.name;
       h+=`<text x="${ax-NW/2+26}" y="${ay+15}" font-size="8" font-weight="600" fill="var(${dc.color})">${nm}</text>`;
       h+=`<text x="${ax-NW/2+8}" y="${ay+30}" font-size="7" fill="var(--text-secondary)">${ag.role}</text>`;
-      // Status dot
       h+=`<circle cx="${ax+NW/2-12}" cy="${ay+10}" r="3" fill="var(${st.stroke})"/>`;
-      h+=`<text x="${ax-NW/2+8}" y="${ay+44}" font-size="7" fill="var(--text-muted)">L${ag.level} · ${st.label}${ag.subs?' · '+ag.subs.length+' sub-agentes':''}</text>`;
+      h+=`<text x="${ax-NW/2+8}" y="${ay+44}" font-size="7" fill="var(--text-muted)">L${ag.level} · ${st.label}${ag.subs?' · '+ag.subs.length+' sub-agente'+(ag.subs.length>1?'s':''):''}</text>`;
       h+=`</g>`;
 
-      // Sub-agents
-      if(ag.subs) {
+      // Sub-agents — 2-column grid below parent (avoids horizontal overflow)
+      if(ag.subs && ag.subs.length > 0) {
+        const subCols = ag.subs.length === 1 ? 1 : 2;
+        const subGapX = 8, subGapY = 8, subTopGap = 12;
+        const subTotalW = subCols * NWs + (subCols - 1) * subGapX;
+        const subStartX = ax - subTotalW / 2;
+        const subStartY = ay + NH + subTopGap;
+        const numSubRows = Math.ceil(ag.subs.length / subCols);
+        const subBlockH = numSubRows * NHs + (numSubRows - 1) * subGapY;
+
         ag.subs.forEach((sub, si) => {
-          const sx = ax + NW/2 + 40 + si * (NWs + 15);
-          const sy = ay + 10;
+          const col = si % subCols;
+          const row = Math.floor(si / subCols);
+          const sx = subStartX + col * (NWs + subGapX);
+          const sy = subStartY + row * (NHs + subGapY);
+          const sCx = sx + NWs / 2;
           const sst = STATUS[sub.status] || STATUS.planned;
-          // Connection
-          h+=`<line class="conn" opacity="${op}" x1="${ax+NW/2}" y1="${ay+NH/2}" x2="${sx}" y2="${sy+NHs/2}" marker-end="url(#a1)" stroke-dasharray="4,3"/>`;
-          // Sub node
+          h+=`<line class="conn" opacity="${op}" x1="${ax}" y1="${ay+NH}" x2="${sCx}" y2="${sy}" marker-end="url(#a1)" stroke-dasharray="4,3"/>`;
           h+=`<g class="org-node" opacity="${op}">`;
           h+=`<rect x="${sx}" y="${sy}" width="${NWs}" height="${NHs}" rx="5" fill="var(${sst.fill})" stroke="var(--border-light)" stroke-width="1"/>`;
           h+=`<text x="${sx+6}" y="${sy+14}" font-size="10">${sub.icon}</text>`;
-          const snm = sub.name.length>16?sub.name.substring(0,16)+'..':sub.name;
+          const snm = sub.name.length>17?sub.name.substring(0,17)+'..':sub.name;
           h+=`<text x="${sx+22}" y="${sy+14}" font-size="7" font-weight="600" fill="var(--text-primary)">${snm}</text>`;
           h+=`<text x="${sx+6}" y="${sy+28}" font-size="6" fill="var(--text-muted)">${sst.label}</text>`;
           h+=`</g>`;
         });
+
+        // Next agent connects from bottom of sub-block
+        prevBottomY = ay + NH + subTopGap + subBlockH + 16;
+        currentY = prevBottomY + 14;
+      } else {
+        prevBottomY = ay + NH;
+        currentY += AGENT_GAP;
       }
     });
   });

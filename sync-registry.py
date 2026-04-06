@@ -98,6 +98,7 @@ def extract_tags_from_skill(fm):
         "digitalizador-documentos": ["Escâner", "150 DPI", "Auto/Cor/PB", "Multi-página"],
         "extrator-car": ["CAR/SICAR", "Shapefiles", "GeoPandas", "Alertas", "Lote"],
         "extrator-eproc": ["E-PROC", "TJSC", "Playwright", "Cert. A1", "Lote"],
+        "revisor-trello-diario": ["Trello", "Obsidian", "Cron", "Auto-sync", "19h"],
     }
     name = fm.get("name", "")
     if name in tag_map:
@@ -130,7 +131,7 @@ def extract_skill_body_info(filepath):
 def infer_status(fm, body_info):
     desc = fm.get("description", "").lower()
     name = fm.get("name", "").lower()
-    status_overrides = {"extrator-car": "prototype", "extrator-eproc": "prototype"}
+    status_overrides = {"extrator-car": "prototype", "extrator-eproc": "prototype", "revisor-trello-diario": "prototype"}
     if name in status_overrides:
         return status_overrides[name]
     if "em construção" in desc or "em construcao" in desc:
@@ -145,6 +146,7 @@ def infer_icon(name):
         "assessor-comunicacao": "💬", "redacao-juridica": "⚖",
         "separador-de-pdfs": "📄", "digitalizador-documentos": "📷",
         "extrator-car": "🌍", "extrator-eproc": "🏛",
+        "revisor-trello-diario": "🔄",
     }
     return icons.get(name, "⚙")
 
@@ -167,6 +169,7 @@ def infer_type_label(fm):
         "digitalizador-documentos": "Habilidade · Agente de Processamento de Imagem",
         "extrator-car": "Habilidade · Dept. Técnico — Estagiário Técnico",
         "extrator-eproc": "Habilidade · Dept. Jurídico — Estagiário Jurídico",
+        "revisor-trello-diario": "Automação · Cron · Gabinete CEO",
     }
     return type_map.get(name, "Habilidade · Geral")
 
@@ -200,6 +203,7 @@ def scan_skills():
             "digitalizador-documentos": "Digitalizador de Documentos",
             "extrator-car": "Extrator CAR (SICAR)",
             "extrator-eproc": "Extrator E-PROC (TJSC)",
+            "revisor-trello-diario": "Revisor Trello Diário",
         }
         display_name = name_map.get(fm["name"], fm["name"].replace("-", " ").title())
 
@@ -236,13 +240,17 @@ def get_agents():
                 {"id": "analista-jurimetria", "name": "Analista de Jurimetria", "role": "Analista quantitativo", "description": "Análise estatística de decisões por tribunal.", "tags": ["jurimetria", "estatística", "análise-quantitativa", "dados"], "status": "planned", "icon": "📊", "department": "juridico", "level": 3},
                 {"id": "pesquisador-jurisprudencia", "name": "Compilador de Jurisprudência", "role": "Pesquisador de decisões específicas", "description": "Busca decisões concretas conforme plano aprovado.", "tags": ["jurisprudência", "compilação", "busca-decisões", "TJ", "TRF", "STJ", "STF"], "status": "planned", "icon": "📚", "department": "juridico", "level": 3},
             ]},
-            {"id": "advogado-senior", "name": "Advogado Sênior", "role": "Estratégia e Jurisprudência", "description": "Estratégia processual e jurisprudência.", "tags": ["Estratégia", "Juris. Dominante", "Juris. Vanguarda"], "status": "planned", "icon": "🎯", "department": "juridico", "level": 3},
+            {"id": "advogado-senior", "name": "Advogado Sênior", "role": "Estratégia e Jurisprudência", "description": "Estratégia processual e jurisprudência.", "tags": ["Estratégia", "Juris. Dominante", "Juris. Vanguarda"], "status": "planned", "icon": "🎯", "department": "juridico", "level": 3, "sub_agents": [
+                {"id": "contra-argumentador-juridico", "name": "Contra-Argumentador Jurídico", "role": "Advogado do Diabo — Jurídico", "description": "Ataca teses e petições como faria a parte contrária. Identifica pontos fracos, jurisprudência adversa e lacunas argumentativas antes da audiência.", "tags": ["contra-argumentação", "pontos-fracos", "parte-contrária", "estratégia-adversarial"], "status": "planned", "icon": "⚔️", "department": "juridico", "level": 4},
+            ]},
         ],
         "tecnico": [
             {"id": "estagiario-tecnico", "name": "Estagiário Técnico", "role": "Extração de Dados Ambientais", "description": "Coleta dados das bases ambientais e fundiárias.", "tags": ["CAR", "INCRA", "MapBiomas", "IMA-SC", "IBAMA"], "status": "prototype", "icon": "🧪", "department": "tecnico", "level": 0},
             {"id": "analista-junior", "name": "Analista MA Júnior", "role": "Organização e Cruzamento", "description": "Tabula dados extraídos, cruza matrícula × CAR × INCRA.", "tags": ["Tabulação", "Matrícula×CAR", "Matrícula×INCRA", "Shapefiles"], "status": "planned", "icon": "📊", "department": "tecnico", "level": 1},
             {"id": "analista-pleno", "name": "Analista MA Pleno", "role": "Análise Integrada e Relatórios", "description": "Análise de APP e Reserva Legal, mapas temáticos.", "tags": ["APP", "Reserva Legal", "Mapas", "Relatórios"], "status": "planned", "icon": "🗺", "department": "tecnico", "level": 2},
-            {"id": "analista-senior", "name": "Analista MA Sênior", "role": "Diagnóstico Estratégico", "description": "Score de risco ambiental, consolidação de passivos.", "tags": ["Score Risco", "Passivos", "Ranking", "Estratégia"], "status": "planned", "icon": "🚨", "department": "tecnico", "level": 3},
+            {"id": "analista-senior", "name": "Analista MA Sênior", "role": "Diagnóstico Estratégico", "description": "Score de risco ambiental, consolidação de passivos.", "tags": ["Score Risco", "Passivos", "Ranking", "Estratégia"], "status": "planned", "icon": "🚨", "department": "tecnico", "level": 3, "sub_agents": [
+                {"id": "contra-argumentador-ambiental", "name": "Contra-Argumentador Ambiental", "role": "Analista do Diabo — Técnico", "description": "Ataca análises técnicas ambientais como faria o órgão fiscalizador ou perito adversário. Identifica falhas metodológicas, dados ausentes e interpretações alternativas desfavoráveis.", "tags": ["contra-análise", "perito-adversário", "ambiental", "pontos-fracos-técnicos"], "status": "planned", "icon": "🔥", "department": "tecnico", "level": 4},
+            ]},
         ],
         "administrativo": [
             {"id": "controlador-juridico", "name": "Controlador Jurídico", "role": "Controle e Distribuição de Prazos", "description": "Anota, acompanha e distribui prazos judiciais e extrajudiciais. Cria tarefas no Trello.", "tags": ["Prazos", "Trello", "Judicial", "Extrajudicial", "Distribuição"], "status": "planned", "icon": "📋", "department": "administrativo", "level": 0},
@@ -269,6 +277,7 @@ def get_automations():
         {"id": "check-comercial", "name": "Check de Execução Comercial", "type_label": "Automação · Cron · Coordenador Comercial", "description": "Verificação de progresso nos boards Novos Negócios. Compara com briefing da manhã, identifica movimentações e follow-ups pendentes. Propõe ações.", "tags": ["Novos Negócios", "Trello", "Follow-up", "15h/18h"], "status": "planned", "icon": "🔄", "agent_id": "coordenador-comercial", "trigger_type": "cron", "trigger_config": {"cron": "0 15,18 * * 1-5", "boards": ["698e0e318ec5969402a1b2a5", "698e0d2afa67614e223e358e"]}},
         {"id": "verificador-compromissos", "name": "Verificador de Compromissos Pessoais", "type_label": "Automação · Cron · WhatsApp + GCal", "description": "Verifica compromissos pessoais recorrentes (terapia, barbearia) via WhatsApp e Google Calendar. Confirma se mensagens de confirmação foram enviadas e reporta ao painel.", "tags": ["WhatsApp", "Google Calendar", "Todoist", "Pessoal", "6h"], "status": "active", "icon": "🔍", "agent_id": "verificador-compromissos", "trigger_type": "cron", "trigger_config": {"cron": "0 6 * * *", "compromissos": [{"tipo": "terapia", "contato": "Bruna de Oliveira", "jid": "554188887092@s.whatsapp.net"}, {"tipo": "corte-cabelo", "contato": "Bravos Barbearia", "jid": "554797035509@s.whatsapp.net"}]}},
         {"id": "reordenar-rituais-todoist", "name": "Reordenação de Rituais Todoist", "type_label": "Automação · Cron · Vercel + Todoist API", "description": "Reordena subtarefas dos rituais Matinal e Noturno no Todoist diariamente à 00:01. Corrige bug de reordenação ao completar tarefas recorrentes. Roda via Vercel Cron independente do Claude Code.", "tags": ["Todoist", "Vercel Cron", "Rituais", "00:01"], "status": "active", "icon": "🔄", "trigger_type": "cron", "trigger_config": {"cron": "1 0 * * *", "endpoint": "/api/cron/reordenar-rituais", "matinal_tasks": 9, "noturno_tasks": 9}},
+        {"id": "revisor-trello-diario", "name": "Revisor Diário de Questões Trello", "type_label": "Automação · Cron · Trello → Obsidian", "description": "Varre todos os boards Trello das últimas 24h, extrai comentários, movimentações e checklists relevantes, e documenta questões novas nas fichas de caso correspondentes no Obsidian. Cards sem ficha são listados em relatório para revisão humana.", "tags": ["Trello", "Obsidian", "Fichas de Caso", "Cron", "19h"], "status": "prototype", "icon": "🔄", "agent_id": "secretaria-executiva", "trigger_type": "cron", "trigger_config": {"cron": "0 19 * * 1-5", "script": ".claude/skills/revisor-trello-diario/revisor.py", "dry_run_flag": "--dry-run", "board_filter_flag": "--board"}},
     ]
 
 

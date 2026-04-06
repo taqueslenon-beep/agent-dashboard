@@ -1,15 +1,15 @@
 {
   "_meta": {
-    "generated_at": "2026-04-06T14:04:38.096677",
+    "generated_at": "2026-04-06T14:41:59.735392",
     "generator": "sync-registry.py",
     "vault": "/Users/lenontaques/Documents/Obsidian do Lenon"
   },
   "stats": {
-    "habilidades_ativas": 6,
-    "habilidades_construcao": 2,
+    "habilidades_ativas": 5,
+    "habilidades_construcao": 3,
     "habilidades_total": 8,
     "agentes_total": 18,
-    "automacoes_total": 6,
+    "automacoes_total": 7,
     "mcps_total": 8,
     "mcps_connected": 8
   },
@@ -109,8 +109,8 @@
     },
     {
       "id": "revisor-trello-diario",
-      "name": "Revisor Trello Diario",
-      "type_label": "Habilidade · Geral",
+      "name": "Revisor Trello Diário",
+      "type_label": "Automação · Cron · Gabinete CEO",
       "description": "Revisor diário automático de questões e discussões nos cards do Trello. Coleta toda atividade das últimas 24h (comentários, atualizações, checklists, movimentações) e insere as questões novas nas fich...",
       "tags": [
         "Trello",
@@ -119,8 +119,8 @@
         "Auto-sync",
         "19h"
       ],
-      "status": "active",
-      "icon": "⚙",
+      "status": "prototype",
+      "icon": "🔄",
       "path": ".claude/skills/revisor-trello-diario/SKILL.md",
       "department": "tecnico",
       "passos": 6,
@@ -337,7 +337,25 @@
         "status": "planned",
         "icon": "🎯",
         "department": "juridico",
-        "level": 3
+        "level": 3,
+        "sub_agents": [
+          {
+            "id": "contra-argumentador-juridico",
+            "name": "Contra-Argumentador Jurídico",
+            "role": "Advogado do Diabo — Jurídico",
+            "description": "Ataca teses e petições como faria a parte contrária. Identifica pontos fracos, jurisprudência adversa e lacunas argumentativas antes da audiência.",
+            "tags": [
+              "contra-argumentação",
+              "pontos-fracos",
+              "parte-contrária",
+              "estratégia-adversarial"
+            ],
+            "status": "planned",
+            "icon": "⚔️",
+            "department": "juridico",
+            "level": 4
+          }
+        ]
       }
     ],
     "tecnico": [
@@ -404,7 +422,25 @@
         "status": "planned",
         "icon": "🚨",
         "department": "tecnico",
-        "level": 3
+        "level": 3,
+        "sub_agents": [
+          {
+            "id": "contra-argumentador-ambiental",
+            "name": "Contra-Argumentador Ambiental",
+            "role": "Analista do Diabo — Técnico",
+            "description": "Ataca análises técnicas ambientais como faria o órgão fiscalizador ou perito adversário. Identifica falhas metodológicas, dados ausentes e interpretações alternativas desfavoráveis.",
+            "tags": [
+              "contra-análise",
+              "perito-adversário",
+              "ambiental",
+              "pontos-fracos-técnicos"
+            ],
+            "status": "planned",
+            "icon": "🔥",
+            "department": "tecnico",
+            "level": 4
+          }
+        ]
       }
     ],
     "administrativo": [
@@ -668,6 +704,29 @@
         "endpoint": "/api/cron/reordenar-rituais",
         "matinal_tasks": 9,
         "noturno_tasks": 9
+      }
+    },
+    {
+      "id": "revisor-trello-diario",
+      "name": "Revisor Diário de Questões Trello",
+      "type_label": "Automação · Cron · Trello → Obsidian",
+      "description": "Varre todos os boards Trello das últimas 24h, extrai comentários, movimentações e checklists relevantes, e documenta questões novas nas fichas de caso correspondentes no Obsidian. Cards sem ficha são listados em relatório para revisão humana.",
+      "tags": [
+        "Trello",
+        "Obsidian",
+        "Fichas de Caso",
+        "Cron",
+        "19h"
+      ],
+      "status": "prototype",
+      "icon": "🔄",
+      "agent_id": "secretaria-executiva",
+      "trigger_type": "cron",
+      "trigger_config": {
+        "cron": "0 19 * * 1-5",
+        "script": ".claude/skills/revisor-trello-diario/revisor.py",
+        "dry_run_flag": "--dry-run",
+        "board_filter_flag": "--board"
       }
     }
   ],
