@@ -1,0 +1,298 @@
+{
+  "_meta": {
+    "generated_at": "2026-04-06T00:00:47.673320",
+    "generator": "sync-registry.py",
+    "vault": "/Users/lenontaques/Documents/Obsidian do Lenon"
+  },
+  "stats": {
+    "habilidades_ativas": 4,
+    "habilidades_construcao": 1,
+    "habilidades_total": 5,
+    "agentes_total": 8,
+    "automacoes_total": 2
+  },
+  "skills": [
+    {
+      "id": "assessor-comunicacao",
+      "name": "Assessor de Comunicação",
+      "type_label": "Habilidade · Agente de Comunicação",
+      "description": "Assessor de Comunicação integrado ao Obsidian",
+      "tags": [
+        "Slack",
+        "WhatsApp",
+        "Email",
+        "Trello",
+        "Instagram"
+      ],
+      "status": "active",
+      "icon": "💬",
+      "path": ".claude/skills/assessor-comunicacao/SKILL.md",
+      "department": "tecnico",
+      "passos": 5,
+      "tem_codigo": false
+    },
+    {
+      "id": "digitalizador-documentos",
+      "name": "Digitalizador de Documentos",
+      "type_label": "Habilidade · Agente de Processamento de Imagem",
+      "description": "Digitalizador de documentos estilo CamScanner",
+      "tags": [
+        "Escâner",
+        "150 DPI",
+        "Auto/Cor/PB",
+        "Multi-página"
+      ],
+      "status": "active",
+      "icon": "📷",
+      "path": ".claude/skills/digitalizador-documentos/SKILL.md",
+      "department": "geral",
+      "passos": 6,
+      "tem_codigo": true
+    },
+    {
+      "id": "extrator-car",
+      "name": "Extrator CAR (SICAR)",
+      "type_label": "Habilidade · Dept. Técnico — Estagiário Técnico",
+      "description": "Extrator de dados do Cadastro Ambiental Rural (CAR/SICAR)",
+      "tags": [
+        "CAR/SICAR",
+        "Shapefiles",
+        "GeoPandas",
+        "Alertas",
+        "Lote"
+      ],
+      "status": "prototype",
+      "icon": "🌍",
+      "path": ".claude/skills/extrator-car/SKILL.md",
+      "department": "tecnico",
+      "passos": 8,
+      "tem_codigo": true
+    },
+    {
+      "id": "redacao-juridica",
+      "name": "Redação Jurídica",
+      "type_label": "Habilidade · Agente de Escrita Legal",
+      "description": "Redação jurídica integrada ao Obsidian do escritório Taques Advogados",
+      "tags": [
+        "CRARC",
+        "Teses Amb.",
+        "Teses Penais",
+        ".docx"
+      ],
+      "status": "active",
+      "icon": "⚖",
+      "path": ".claude/skills/redacao-juridica/SKILL.md",
+      "department": "juridico",
+      "passos": 7,
+      "tem_codigo": false
+    },
+    {
+      "id": "separador-de-pdfs",
+      "name": "Separador de PDFs",
+      "type_label": "Habilidade · Agente de Processamento Documental",
+      "description": "Separador universal de PDFs grandes em PDFs menores organizados cronologicamente, com índice em Markdown",
+      "tags": [
+        "Divisão PDF",
+        "Cronológico",
+        "NotebookLM",
+        "Índice.md"
+      ],
+      "status": "active",
+      "icon": "📄",
+      "path": ".claude/skills/separador-de-pdfs/SKILL.md",
+      "department": "geral",
+      "passos": 5,
+      "tem_codigo": false
+    }
+  ],
+  "agents": {
+    "juridico": [
+      {
+        "id": "estagiario-juridico",
+        "name": "Agente 0 — Estagiário Jurídico",
+        "function": "agente_estagiario()",
+        "role": "Extração e Coleta",
+        "description": "Extrai autos de processos dos sistemas judiciais. Sub-agentes: ext_eproc() [Beta], ext_sgpe() [Em Construção].",
+        "tags": [
+          "EPROC",
+          "SGPe",
+          "PROJUDI",
+          "ESAJ"
+        ],
+        "status": "prototype",
+        "icon": "🎓",
+        "sub_agents": [
+          {
+            "name": "Extrator EPROC",
+            "status": "planned"
+          },
+          {
+            "name": "Extrator SGPE",
+            "status": "prototype"
+          }
+        ]
+      },
+      {
+        "id": "advogado-junior",
+        "name": "Agente 1 — Advogado Júnior",
+        "function": "agente_junior()",
+        "role": "Análise e Separação",
+        "description": "Separa e classifica peças processuais. Sub-agentes: sep_admin(), sep_eproc(), sep_projudi().",
+        "tags": [
+          "Proc. Admin.",
+          "EPROC",
+          "PROJUDI"
+        ],
+        "status": "planned",
+        "icon": "🔍"
+      },
+      {
+        "id": "advogado-pleno",
+        "name": "Agente 2 — Advogado Pleno",
+        "function": "agente_pleno()",
+        "role": "Redação e Argumentação",
+        "description": "Redige peças completas. Sub-agentes: fatos(), fundamentos(), pedidos(), resumo(), finais().",
+        "tags": [
+          "Fatos",
+          "Fundamentos",
+          "Pedidos",
+          "Resumo"
+        ],
+        "status": "planned",
+        "icon": "✍"
+      },
+      {
+        "id": "advogado-senior",
+        "name": "Agente 3 — Advogado Sênior",
+        "function": "agente_senior()",
+        "role": "Estratégia e Jurisprudência",
+        "description": "Estratégia processual e jurisprudência. Sub-agentes: juris.dominante(), juris.vanguarda().",
+        "tags": [
+          "Estratégia",
+          "Juris. Dominante",
+          "Juris. Vanguarda"
+        ],
+        "status": "planned",
+        "icon": "🎯"
+      }
+    ],
+    "tecnico": [
+      {
+        "id": "estagiario-tecnico",
+        "name": "Agente 0 — Estagiário Técnico",
+        "function": "estagiario_tecnico()",
+        "role": "Extração de Dados Ambientais",
+        "description": "Coleta dados das bases ambientais e fundiárias. Orquestra skills de extração: CAR, INCRA, MapBiomas, IMA-SC, IBAMA.",
+        "tags": [
+          "CAR",
+          "INCRA",
+          "MapBiomas",
+          "IMA-SC",
+          "IBAMA"
+        ],
+        "status": "prototype",
+        "icon": "🧪",
+        "sub_agents": [
+          {
+            "name": "Extrator CAR",
+            "status": "prototype"
+          },
+          {
+            "name": "Extrator INCRA",
+            "status": "planned"
+          },
+          {
+            "name": "Extrator MapBiomas",
+            "status": "planned"
+          },
+          {
+            "name": "Extrator IMA-SC",
+            "status": "planned"
+          },
+          {
+            "name": "Extrator Embargos IBAMA",
+            "status": "planned"
+          },
+          {
+            "name": "Extrator Alertas",
+            "status": "planned"
+          }
+        ]
+      },
+      {
+        "id": "analista-junior",
+        "name": "Agente 1 — Analista MA Júnior",
+        "function": "analista_junior()",
+        "role": "Organização e Cruzamento",
+        "description": "Tabula dados extraídos, cruza matrícula × CAR × INCRA, detecta inconsistências básicas.",
+        "tags": [
+          "Tabulação",
+          "Matrícula×CAR",
+          "Matrícula×INCRA",
+          "Shapefiles"
+        ],
+        "status": "planned",
+        "icon": "📊"
+      },
+      {
+        "id": "analista-pleno",
+        "name": "Agente 2 — Analista MA Pleno",
+        "function": "analista_pleno()",
+        "role": "Análise Integrada e Relatórios",
+        "description": "Análise de APP e Reserva Legal, geração de mapas temáticos, relatórios técnicos por propriedade.",
+        "tags": [
+          "APP",
+          "Reserva Legal",
+          "Mapas",
+          "Relatórios"
+        ],
+        "status": "planned",
+        "icon": "🗺"
+      },
+      {
+        "id": "analista-senior",
+        "name": "Agente 3 — Analista MA Sênior",
+        "function": "analista_senior()",
+        "role": "Diagnóstico Estratégico",
+        "description": "Score de risco ambiental, consolidação de passivos, ranking de propriedades por criticidade.",
+        "tags": [
+          "Score Risco",
+          "Passivos",
+          "Ranking",
+          "Estratégia"
+        ],
+        "status": "planned",
+        "icon": "🚨"
+      }
+    ]
+  },
+  "automations": [
+    {
+      "id": "monitor-iat",
+      "name": "Monitor de Protocolos IAT",
+      "type_label": "Automação · Cron + Playwright + Supabase",
+      "description": "Monitora 38+ protocolos no IAT. Agendamento → Playwright → Compara Supabase → Alerta Slack.",
+      "tags": [
+        "Playwright",
+        "Supabase",
+        "Cron",
+        "Slack"
+      ],
+      "status": "prototype",
+      "icon": "🔔"
+    },
+    {
+      "id": "doc-obsidian",
+      "name": "Documentação Automática Obsidian",
+      "type_label": "Gatilho · Documentação de Sessão",
+      "description": "Documenta sessões e decisões no Obsidian ao final de cada interação. Metadados YAML padronizados.",
+      "tags": [
+        "Gatilhos",
+        "Obsidian",
+        "Sessões"
+      ],
+      "status": "active",
+      "icon": "📝"
+    }
+  ]
+}

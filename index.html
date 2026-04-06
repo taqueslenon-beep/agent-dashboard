@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taques Agents — Painel de Orquestração</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    /* Paleta Taques Advogados */
+    --preto: #0A0908;
+    --verde: #223631;
+    --verde-claro: #2d4a42;
+    --verde-hover: #1a2b27;
+    --bege-medio: #D6CCC1;
+    --bege-claro: #EAE0D5;
+    --bege-fundo: #F5F0EB;
+
+    /* Derivados funcionais */
+    --bg-primary: #0A0908;
+    --bg-secondary: #111110;
+    --bg-card: #161614;
+    --bg-elevated: #1c1c19;
+    --border: #2a2a26;
+    --border-light: #3a3a35;
+    --text-primary: var(--bege-claro);
+    --text-secondary: #a8a099;
+    --text-muted: #6e6860;
+
+    /* Acentos funcionais (sóbrios) */
+    --accent-green: #4a8c6f;
+    --accent-green-soft: rgba(74,140,111,0.15);
+    --accent-orange: #c4944a;
+    --accent-orange-soft: rgba(196,148,74,0.15);
+    --accent-red: #b85450;
+    --accent-red-soft: rgba(184,84,80,0.12);
+    --accent-blue: #6b8fa3;
+    --accent-blue-soft: rgba(107,143,163,0.15);
+    --accent-purple: #8b7ea3;
+    --accent-purple-soft: rgba(139,126,163,0.15);
+    --accent-cyan: #5a9e8f;
+    --accent-cyan-soft: rgba(90,158,143,0.12);
+
+    --shadow: 0 2px 8px rgba(0,0,0,0.3);
+    --radius: 8px;
+    --radius-sm: 5px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== CABEÇALHO ===== */
+  .header {
+    background: var(--verde);
+    padding: 14px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .logo-mark {
+    width: 30px; height: 30px; border: 2px solid var(--bege-medio);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 12px; color: var(--bege-claro); letter-spacing: 1px;
+  }
+  .logo-text {
+    font-size: 15px; font-weight: 600; color: var(--bege-claro);
+    letter-spacing: 0.5px;
+  }
+  .logo-sub {
+    font-size: 10px; color: var(--bege-medio); opacity: 0.8;
+    letter-spacing: 0.3px; font-weight: 400;
+  }
+  .header-badge {
+    font-size: 9px; padding: 2px 8px; border-radius: 3px;
+    background: rgba(234,224,213,0.1); color: var(--bege-medio);
+    border: 1px solid rgba(234,224,213,0.2); font-weight: 500;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .header-right { display: flex; align-items: center; gap: 10px; }
+  .header-stat {
+    display: flex; align-items: center; gap: 5px;
+    padding: 3px 10px; background: rgba(234,224,213,0.08);
+    border: 1px solid rgba(234,224,213,0.15); border-radius: 4px;
+    font-size: 11px; color: var(--bege-medio);
+  }
+  .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .dot.green { background: var(--accent-green); }
+  .dot.orange { background: var(--accent-orange); }
+  .dot.blue { background: var(--accent-blue); }
+
+  /* ===== ABAS ===== */
+  .tabs {
+    display: flex; background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border); padding: 0 28px;
+  }
+  .tab {
+    padding: 10px 18px; font-size: 12px; color: var(--text-muted);
+    cursor: pointer; border-bottom: 2px solid transparent;
+    transition: all 0.2s; user-select: none; font-weight: 500;
+    letter-spacing: 0.2px;
+  }
+  .tab:hover { color: var(--text-secondary); }
+  .tab.active { color: var(--bege-claro); border-bottom-color: var(--bege-medio); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .main { padding: 24px 28px; }
+
+  /* ===== MÉTRICAS ===== */
+  .metrics {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px; margin-bottom: 28px;
+  }
+  .metric {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px; transition: border-color 0.2s;
+  }
+  .metric:hover { border-color: var(--border-light); }
+  .metric-label {
+    font-size: 10px; color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: 0.6px; margin-bottom: 6px; font-weight: 500;
+  }
+  .metric-value { font-size: 28px; font-weight: 700; letter-spacing: -1px; color: var(--bege-claro); }
+  .metric-detail { font-size: 11px; color: var(--text-secondary); margin-top: 3px; }
+
+  /* ===== TÍTULOS ===== */
+  .section-title {
+    font-size: 14px; font-weight: 600; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px; color: var(--bege-claro);
+    letter-spacing: 0.2px;
+  }
+  .badge {
+    font-size: 9px; padding: 2px 8px; border-radius: 3px; font-weight: 500;
+    letter-spacing: 0.4px; text-transform: uppercase;
+  }
+
+  /* ===== BANNER PROTOCOLO ===== */
+  .protocol-banner {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px; margin-bottom: 28px;
+    display: flex; gap: 32px; flex-wrap: wrap;
+  }
+  .protocol-col { flex: 1; min-width: 220px; }
+  .protocol-col h3 {
+    font-size: 12px; font-weight: 600; margin-bottom: 8px;
+    color: var(--bege-medio); letter-spacing: 0.3px;
+  }
+  .protocol-col p { font-size: 12px; color: var(--text-secondary); line-height: 1.7; }
+  .protocol-stack { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .protocol-chip {
+    font-size: 9px; padding: 4px 10px; border-radius: 3px;
+    font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase;
+  }
+  .chip-mcp { background: var(--accent-green-soft); color: var(--accent-green); border: 1px solid rgba(74,140,111,0.25); }
+  .chip-a2a { background: var(--accent-orange-soft); color: var(--accent-orange); border: 1px solid rgba(196,148,74,0.25); }
+  .chip-agui { background: var(--accent-purple-soft); color: var(--accent-purple); border: 1px solid rgba(139,126,163,0.25); }
+
+  /* ===== CONTÊINER DE GRAFO ===== */
+  .graph-container {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px; margin-bottom: 24px; overflow: hidden;
+  }
+  .graph-title {
+    font-size: 11px; font-weight: 600; margin-bottom: 16px; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.6px;
+  }
+  .dep-graph-wrap { overflow-x: auto; padding: 8px 0; }
+
+  /* ===== CARTÕES DE AGENTE ===== */
+  .agent-list {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 12px; margin-bottom: 24px;
+  }
+  .agent-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px; cursor: pointer;
+    transition: all 0.2s; position: relative; overflow: hidden;
+  }
+  .agent-card::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%;
+  }
+  .agent-card:hover { border-color: var(--border-light); box-shadow: var(--shadow); }
+  .agent-card.expanded .card-details { display: block; }
+  .agent-card[data-status="active"]::before { background: var(--accent-green); }
+  .agent-card[data-status="planned"]::before { background: var(--accent-orange); }
+  .agent-card[data-status="prototype"]::before { background: var(--accent-blue); }
+
+  .card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+  .card-icon {
+    width: 34px; height: 34px; border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+  }
+  .card-icon.skill { background: var(--accent-green-soft); }
+  .card-icon.agent { background: var(--accent-purple-soft); }
+  .card-icon.integration { background: var(--accent-cyan-soft); }
+  .card-icon.automation { background: var(--accent-orange-soft); }
+
+  .card-status {
+    font-size: 9px; padding: 2px 8px; border-radius: 3px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.4px;
+  }
+  .status-active { background: var(--accent-green-soft); color: var(--accent-green); border: 1px solid rgba(74,140,111,0.3); }
+  .status-planned { background: var(--accent-orange-soft); color: var(--accent-orange); border: 1px solid rgba(196,148,74,0.3); }
+  .status-prototype { background: var(--accent-blue-soft); color: var(--accent-blue); border: 1px solid rgba(107,143,163,0.3); }
+
+  .card-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; color: var(--bege-claro); }
+  .card-type { font-size: 10px; color: var(--text-muted); letter-spacing: 0.3px; margin-bottom: 8px; }
+  .card-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 10px; }
+  .card-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .tag {
+    font-size: 10px; padding: 2px 7px; border-radius: 3px;
+    background: var(--bg-elevated); color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+  .card-details {
+    display: none; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border);
+    font-size: 12px; color: var(--text-secondary);
+  }
+  .card-details h4 {
+    font-size: 10px; color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: 0.5px; margin: 10px 0 6px; font-weight: 600;
+  }
+  .card-details h4:first-child { margin-top: 0; }
+  .card-details ul { padding-left: 14px; margin-bottom: 6px; }
+  .card-details li { margin-bottom: 3px; font-size: 11px; }
+  .card-details .path {
+    font-family: 'SF Mono', 'Fira Code', monospace; font-size: 10px;
+    padding: 3px 7px; background: var(--bg-primary); border-radius: 3px;
+    display: inline-block; margin-top: 3px; word-break: break-all; color: var(--text-muted);
+  }
+
+  /* ===== FLUXO DE EVENTOS ===== */
+  .event-stream-container {
+    display: grid; grid-template-columns: 1fr 340px; gap: 14px; margin-bottom: 24px;
+  }
+  @media (max-width: 900px) { .event-stream-container { grid-template-columns: 1fr; } }
+
+  .event-panel {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); display: flex; flex-direction: column; max-height: 520px;
+  }
+  .event-panel-header {
+    padding: 12px 16px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .event-panel-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
+  .event-panel-body {
+    flex: 1; overflow-y: auto; padding: 8px;
+    font-family: 'SF Mono', 'Fira Code', 'Inter', monospace; font-size: 11px;
+  }
+
+  .event-item {
+    display: flex; align-items: flex-start; gap: 8px; padding: 5px 8px;
+    border-radius: 3px; margin-bottom: 1px; animation: fadeIn 0.3s ease;
+  }
+  .event-item:hover { background: var(--bg-elevated); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: translateY(0); } }
+
+  .event-dot { width: 7px; height: 7px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+  .event-dot.lifecycle { background: var(--accent-green); }
+  .event-dot.text { background: var(--accent-blue); }
+  .event-dot.tool { background: var(--accent-orange); }
+  .event-dot.state { background: var(--accent-purple); }
+  .event-dot.reasoning { background: var(--accent-cyan); }
+  .event-dot.activity { background: var(--bege-medio); }
+  .event-dot.error { background: var(--accent-red); }
+  .event-dot.custom { background: var(--accent-orange); }
+
+  .event-time { color: var(--text-muted); white-space: nowrap; min-width: 55px; }
+  .event-type { font-weight: 600; white-space: nowrap; }
+  .event-type.lifecycle { color: var(--accent-green); }
+  .event-type.text { color: var(--accent-blue); }
+  .event-type.tool { color: var(--accent-orange); }
+  .event-type.state { color: var(--accent-purple); }
+  .event-type.reasoning { color: var(--accent-cyan); }
+  .event-type.activity { color: var(--bege-medio); }
+  .event-type.error { color: var(--accent-red); }
+  .event-type.custom { color: var(--accent-orange); }
+  .event-payload { color: var(--text-muted); word-break: break-all; }
+
+  /* ===== PAINEL DE ESTADO ===== */
+  .state-panel {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); display: flex; flex-direction: column; max-height: 520px;
+  }
+  .state-tabs { display: flex; border-bottom: 1px solid var(--border); }
+  .state-tab {
+    flex: 1; padding: 8px; font-size: 10px; text-align: center; cursor: pointer;
+    color: var(--text-muted); border-bottom: 2px solid transparent; transition: all 0.2s;
+    font-weight: 500; letter-spacing: 0.3px;
+  }
+  .state-tab.active { color: var(--bege-claro); border-bottom-color: var(--bege-medio); }
+  .state-body {
+    flex: 1; overflow-y: auto; padding: 12px;
+    font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px;
+  }
+  .state-body pre { white-space: pre-wrap; word-break: break-all; color: var(--text-secondary); }
+
+  /* ===== PASSOS DE RACIOCÍNIO ===== */
+  .thinking-container {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); margin-bottom: 24px;
+  }
+  .thinking-header { padding: 14px 18px; border-bottom: 1px solid var(--border); }
+  .thinking-header-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
+  .thinking-body { padding: 18px; }
+
+  .thinking-step { display: flex; gap: 12px; margin-bottom: 18px; position: relative; }
+  .thinking-step::before {
+    content: ''; position: absolute; left: 14px; top: 34px; bottom: -18px;
+    width: 1px; background: var(--border);
+  }
+  .thinking-step:last-child::before { display: none; }
+
+  .step-icon {
+    width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; font-size: 13px; flex-shrink: 0; z-index: 1;
+  }
+  .step-icon.start { background: var(--accent-green-soft); border: 1.5px solid var(--accent-green); }
+  .step-icon.reason { background: var(--accent-cyan-soft); border: 1.5px solid var(--accent-cyan); }
+  .step-icon.tool { background: var(--accent-orange-soft); border: 1.5px solid var(--accent-orange); }
+  .step-icon.text { background: var(--accent-blue-soft); border: 1.5px solid var(--accent-blue); }
+  .step-icon.interrupt { background: var(--accent-red-soft); border: 1.5px solid var(--accent-red); }
+  .step-icon.end { background: var(--accent-purple-soft); border: 1.5px solid var(--accent-purple); }
+
+  .step-content { flex: 1; }
+  .step-label { font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+  .step-title { font-size: 13px; font-weight: 600; margin: 2px 0; color: var(--bege-claro); }
+  .step-desc { font-size: 11px; color: var(--text-secondary); }
+  .step-time { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+  .step-payload {
+    margin-top: 6px; padding: 8px; background: var(--bg-primary); border-radius: 4px;
+    font-family: 'SF Mono','Fira Code',monospace; font-size: 10px; color: var(--text-muted);
+    max-height: 70px; overflow-y: auto; border: 1px solid var(--border);
+  }
+
+  /* ===== INTERRUPÇÃO (HITL) ===== */
+  .interrupt-card {
+    background: var(--accent-red-soft); border: 1px solid rgba(184,84,80,0.25);
+    border-radius: var(--radius); padding: 18px; margin-bottom: 16px;
+  }
+  .interrupt-title { font-size: 13px; font-weight: 600; color: var(--accent-red); margin-bottom: 6px; }
+  .interrupt-desc { font-size: 12px; color: var(--text-secondary); margin-bottom: 14px; line-height: 1.6; }
+  .interrupt-actions { display: flex; gap: 8px; }
+  .btn {
+    padding: 7px 18px; border-radius: 4px; font-size: 12px; font-weight: 600;
+    cursor: pointer; border: 1px solid; transition: all 0.2s; font-family: inherit;
+  }
+  .btn-approve { background: var(--accent-green-soft); color: var(--accent-green); border-color: rgba(74,140,111,0.3); }
+  .btn-approve:hover { background: rgba(74,140,111,0.25); }
+  .btn-reject { background: var(--accent-red-soft); color: var(--accent-red); border-color: rgba(184,84,80,0.3); }
+  .btn-reject:hover { background: rgba(184,84,80,0.2); }
+  .btn-edit { background: var(--accent-blue-soft); color: var(--accent-blue); border-color: rgba(107,143,163,0.3); }
+  .btn-edit:hover { background: rgba(107,143,163,0.25); }
+  .btn-primary { background: var(--verde); color: var(--bege-claro); border-color: var(--verde-claro); }
+  .btn-primary:hover { background: var(--verde-claro); }
+
+  /* ===== FLUXO VISUAL ===== */
+  .flow-container {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px; margin-bottom: 14px; overflow-x: auto;
+  }
+  .flow-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .flow-name { font-size: 15px; font-weight: 600; color: var(--bege-claro); }
+  .flow-nodes { display: flex; align-items: center; gap: 0; flex-wrap: nowrap; min-width: fit-content; }
+  .flow-node {
+    background: var(--bg-primary); border: 1.5px solid var(--border);
+    border-radius: var(--radius); padding: 12px 16px; min-width: 140px; text-align: center; transition: all 0.2s;
+  }
+  .flow-node:hover { border-color: var(--bege-medio); }
+  .flow-node.start { border-color: var(--accent-green); }
+  .flow-node.agent-0 { border-color: var(--accent-cyan); }
+  .flow-node.agent-1 { border-color: var(--accent-red); }
+  .flow-node.agent-2 { border-color: var(--accent-orange); }
+  .flow-node.agent-3 { border-color: var(--accent-purple); }
+  .flow-node.decision { border-color: var(--accent-orange); border-style: dashed; }
+  .flow-node.end { border-color: var(--bege-medio); }
+  .flow-node-label { font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; font-weight: 600; }
+  .flow-node-name { font-size: 13px; font-weight: 600; color: var(--bege-claro); }
+  .flow-node-sub { font-size: 10px; color: var(--text-secondary); margin-top: 2px; }
+  .flow-arrow {
+    display: flex; align-items: center; justify-content: center; width: 44px; flex-shrink: 0; position: relative;
+  }
+  .flow-arrow::before { content: ''; width: 30px; height: 1.5px; background: var(--border-light); }
+  .flow-arrow::after {
+    content: ''; width: 0; height: 0; border-left: 6px solid var(--border-light);
+    border-top: 3.5px solid transparent; border-bottom: 3.5px solid transparent; position: absolute; right: 5px;
+  }
+  .flow-arrow .arrow-label { position: absolute; top: -13px; font-size: 9px; color: var(--text-muted); white-space: nowrap; }
+
+  /* ===== TABELA ===== */
+  .int-table { width: 100%; border-collapse: collapse; }
+  .int-table th {
+    text-align: left; font-size: 10px; color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: 0.5px; padding: 10px 14px; border-bottom: 1px solid var(--border);
+    background: var(--bg-secondary); font-weight: 600;
+  }
+  .int-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 12px; }
+  .int-table tr:hover { background: var(--bg-elevated); }
+  .int-table .name { font-weight: 600; color: var(--bege-claro); }
+  .int-table .mono { font-family: 'SF Mono','Fira Code',monospace; font-size: 10px; color: var(--text-muted); }
+
+  /* ===== LINHA DO TEMPO ===== */
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 1px; background: var(--border); }
+  .timeline-item { position: relative; margin-bottom: 22px; }
+  .timeline-dot { position: absolute; left: -24px; top: 3px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid; }
+  .timeline-dot.green { border-color: var(--accent-green); background: var(--accent-green-soft); }
+  .timeline-dot.orange { border-color: var(--accent-orange); background: var(--accent-orange-soft); }
+  .timeline-dot.blue { border-color: var(--accent-blue); background: var(--accent-blue-soft); }
+  .timeline-dot.purple { border-color: var(--accent-purple); background: var(--accent-purple-soft); }
+  .timeline-title { font-size: 13px; font-weight: 600; color: var(--bege-claro); }
+  .timeline-desc { font-size: 12px; color: var(--text-secondary); margin-top: 3px; line-height: 1.6; }
+  .timeline-date { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+  /* ===== LEGENDA DE EVENTOS ===== */
+  .event-legend { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 16px; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-secondary); }
+
+  /* ===== CONTROLES ===== */
+  .controls-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  .control-select {
+    background: var(--bg-elevated); color: var(--text-primary); border: 1px solid var(--border);
+    border-radius: 4px; padding: 7px 12px; font-size: 12px; cursor: pointer; font-family: inherit;
+  }
+  .control-select option { background: var(--bg-secondary); }
+
+  /* ===== TEMA CLARO ===== */
+  [data-theme="light"] {
+    --bg-primary: #F5F0EB;
+    --bg-secondary: #EAE0D5;
+    --bg-card: #FFFFFF;
+    --bg-elevated: #F0EBE5;
+    --border: #D6CCC1;
+    --border-light: #C4B9AD;
+    --text-primary: #0A0908;
+    --text-secondary: #4A453F;
+    --text-muted: #8A8279;
+    --shadow: 0 2px 8px rgba(10,9,8,0.08);
+
+    --accent-green: #2d6b4f;
+    --accent-green-soft: rgba(45,107,79,0.1);
+    --accent-orange: #9e7535;
+    --accent-orange-soft: rgba(158,117,53,0.1);
+    --accent-red: #a04340;
+    --accent-red-soft: rgba(160,67,64,0.08);
+    --accent-blue: #4a7389;
+    --accent-blue-soft: rgba(74,115,137,0.1);
+    --accent-purple: #6b5e83;
+    --accent-purple-soft: rgba(107,94,131,0.1);
+    --accent-cyan: #3d7f72;
+    --accent-cyan-soft: rgba(61,127,114,0.08);
+  }
+
+  [data-theme="light"] .header {
+    background: var(--verde);
+  }
+
+  [data-theme="light"] .header-badge {
+    background: rgba(234,224,213,0.15);
+    border-color: rgba(234,224,213,0.25);
+  }
+
+  [data-theme="light"] .header-stat {
+    background: rgba(234,224,213,0.12);
+    border-color: rgba(234,224,213,0.2);
+  }
+
+  [data-theme="light"] .logo-mark,
+  [data-theme="light"] .logo-text,
+  [data-theme="light"] .logo-sub,
+  [data-theme="light"] .header-badge,
+  [data-theme="light"] .header-stat {
+    color: var(--bege-claro);
+  }
+
+  [data-theme="light"] .tabs {
+    background: #FFFFFF;
+    border-bottom-color: var(--border);
+  }
+
+  [data-theme="light"] .tab.active {
+    color: var(--preto);
+    border-bottom-color: var(--verde);
+  }
+  [data-theme="light"] .tab:hover { color: var(--preto); }
+
+  [data-theme="light"] .metric-value,
+  [data-theme="light"] .card-name,
+  [data-theme="light"] .flow-node-name,
+  [data-theme="light"] .timeline-title,
+  [data-theme="light"] .step-title,
+  [data-theme="light"] .flow-name,
+  [data-theme="light"] .int-table .name {
+    color: var(--preto);
+  }
+
+  [data-theme="light"] .state-tab.active {
+    color: var(--preto);
+    border-bottom-color: var(--verde);
+  }
+
+  [data-theme="light"] .protocol-col h3 {
+    color: var(--verde);
+  }
+
+  [data-theme="light"] .section-title {
+    color: var(--preto);
+  }
+
+  [data-theme="light"] .control-select {
+    background: #FFFFFF;
+    color: var(--preto);
+    border-color: var(--border);
+  }
+  [data-theme="light"] .control-select option {
+    background: #FFFFFF;
+  }
+
+  [data-theme="light"] .step-payload,
+  [data-theme="light"] .card-details .path {
+    background: var(--bg-secondary);
+    border-color: var(--border);
+  }
+
+  [data-theme="light"] .tag {
+    background: var(--bg-secondary);
+    border-color: var(--border);
+    color: var(--text-secondary);
+  }
+
+  [data-theme="light"] .int-table th {
+    background: var(--bg-secondary);
+  }
+
+  [data-theme="light"] .flow-node {
+    background: #FFFFFF;
+  }
+
+  [data-theme="light"] .event-item:hover {
+    background: var(--bg-secondary);
+  }
+
+  [data-theme="light"] .btn-primary {
+    background: var(--verde);
+    color: var(--bege-claro);
+  }
+
+  /* ===== BOTÃO TOGGLE TEMA ===== */
+  .theme-toggle {
+    background: rgba(234,224,213,0.1);
+    border: 1px solid rgba(234,224,213,0.2);
+    border-radius: 4px;
+    padding: 4px 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--bege-medio);
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .theme-toggle:hover {
+    background: rgba(234,224,213,0.18);
+  }
+  .theme-toggle-icon { font-size: 14px; }
+
+  /* Transição suave entre temas */
+  body, .header, .tabs, .tab, .metric, .agent-card, .event-panel, .state-panel,
+  .graph-container, .flow-container, .thinking-container, .protocol-banner,
+  .interrupt-card, .int-table th, .int-table td, .flow-node, .tag, .step-payload,
+  .control-select, .btn {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+
+  /* ===== SVG no tema claro ===== */
+  .graph-container svg,
+  .dep-graph-wrap svg {
+    transition: filter 0.3s ease;
+  }
+  [data-theme="light"] .graph-container svg,
+  [data-theme="light"] .dep-graph-wrap svg {
+    filter: invert(0.88) hue-rotate(180deg) saturate(1.2) contrast(0.95);
+  }
+
+  /* ===== RESPONSIVO ===== */
+  @media (max-width: 768px) {
+    .header { padding: 10px 16px; flex-direction: column; gap: 8px; }
+    .main { padding: 16px; }
+    .agent-list { grid-template-columns: 1fr; }
+    .metrics { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- CABEÇALHO -->
+<div class="header">
+  <div class="header-left">
+    <div class="logo">
+      <div class="logo-mark">TA</div>
+      <div>
+        <div class="logo-text">TAQUES AGENTS</div>
+        <div class="logo-sub">Painel de Orquestração de Agentes</div>
+      </div>
+    </div>
+    <span class="header-badge">AG-UI Protocol v0.1</span>
+  </div>
+  <div class="header-right">
+    <div class="header-stat"><span class="dot green"></span> <span id="stat-skills">—</span> Habilidades</div>
+    <div class="header-stat"><span class="dot orange"></span> <span id="stat-agents">—</span> Agentes</div>
+    <div class="header-stat"><span class="dot blue"></span> 2 Automações</div>
+    <div class="header-stat"><span class="dot blue"></span> 9 Integrações</div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Alternar tema claro/escuro">
+      <span class="theme-toggle-icon" id="theme-icon">☀️</span>
+      <span id="theme-label">Claro</span>
+    </button>
+  </div>
+</div>
+
+<!-- ABAS -->
+<div class="tabs">
+  <div class="tab active" data-tab="overview">Visão Geral</div>
+  <div class="tab" data-tab="event-stream">Fluxo de Eventos</div>
+  <div class="tab" data-tab="skills">Habilidades</div>
+  <div class="tab" data-tab="agents">Agentes</div>
+  <div class="tab" data-tab="automations">Automações</div>
+  <div class="tab" data-tab="graph">Grafo de Orquestração</div>
+  <div class="tab" data-tab="flows">Fluxos de Trabalho</div>
+  <div class="tab" data-tab="integrations">Integrações</div>
+  <div class="tab" data-tab="roadmap">Linha do Tempo</div>
+</div>
+
+<!-- ========== VISÃO GERAL ========== -->
+<div class="tab-content active" id="tab-overview">
+<div class="main">
+  <div class="protocol-banner">
+    <div class="protocol-col">
+      <h3>Pilha de Protocolos Agênticos</h3>
+      <p>Taques Agents implementa os 3 pilares do ecossistema agêntico moderno, unificando a comunicação entre agentes, ferramentas e usuários.</p>
+      <div class="protocol-stack" style="margin-top:12px">
+        <span class="protocol-chip chip-mcp">MCP &middot; Agente &harr; Ferramentas</span>
+        <span class="protocol-chip chip-a2a">A2A &middot; Agente &harr; Agente</span>
+        <span class="protocol-chip chip-agui">AG-UI &middot; Agente &harr; Usuário</span>
+      </div>
+    </div>
+    <div class="protocol-col">
+      <h3>Eventos AG-UI Suportados</h3>
+      <p>16 tipos de eventos padrão: ciclo de vida, transmissão de texto, chamadas de ferramenta, instantâneos/deltas de estado (RFC 6902), passos de raciocínio, rastreamento de atividade, interrupções (HITL), eventos personalizados.</p>
+    </div>
+    <div class="protocol-col">
+      <h3>Transporte</h3>
+      <p>Agnóstico de protocolo. Suporta SSE, WebSockets e binário HTTP. Estado sincronizado via JSON Patch (RFC 6902). SDKs: TypeScript, Python, Go.</p>
+    </div>
+  </div>
+
+  <div class="metrics">
+    <div class="metric">
+      <div class="metric-label">Habilidades Ativas</div>
+      <div class="metric-value" id="metric-skills">—</div>
+      <div class="metric-detail" id="metric-skills-detail">Carregando...</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Agentes Planejados</div>
+      <div class="metric-value" id="metric-agents">—</div>
+      <div class="metric-detail" id="metric-agents-detail">Carregando...</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Automações</div>
+      <div class="metric-value">2</div>
+      <div class="metric-detail">Monitor IAT, Doc. Obsidian</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Sub-Agentes</div>
+      <div class="metric-value">14</div>
+      <div class="metric-detail">Extratores, Separadores, Redatores</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Servidores MCP</div>
+      <div class="metric-value">9</div>
+      <div class="metric-detail">Todoist, Trello, Slack, Gmail, Agenda, WA, Supa, EPROC, NLM</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Tipos de Evento<br><span style="font-size:8px;opacity:0.6">Event Types</span></div>
+      <div class="metric-value">16</div>
+      <div class="metric-detail">Ciclo de vida, Texto, Ferramenta, Estado, Raciocínio</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Fluxos de Trabalho</div>
+      <div class="metric-value">3</div>
+      <div class="metric-detail">Simples, Médio, Complexo</div>
+    </div>
+  </div>
+
+  <!-- Arquitetura SVG -->
+  <div class="graph-container">
+    <div class="graph-title">Arquitetura Geral — Pilha de Protocolos AG-UI</div>
+    <div class="dep-graph-wrap">
+      <svg viewBox="0 0 1100 580" xmlns="http://www.w3.org/2000/svg" style="max-width:1100px;width:100%;">
+        <defs>
+          <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1c1c19" stroke-width="0.5"/>
+          </pattern>
+          <marker id="arr" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#2a2a26"/></marker>
+          <marker id="arrV" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#223631"/></marker>
+          <marker id="arrB" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#D6CCC1"/></marker>
+        </defs>
+        <rect width="1100" height="580" fill="#161614" rx="8"/>
+        <rect width="1100" height="580" fill="url(#grid)"/>
+
+        <!-- Rótulo AG-UI -->
+        <rect x="15" y="10" width="100" height="20" rx="3" fill="rgba(139,126,163,0.12)" stroke="#8b7ea3" stroke-width="0.7"/>
+        <text x="65" y="24" text-anchor="middle" fill="#8b7ea3" font-family="Inter,sans-serif" font-size="8" font-weight="700" letter-spacing="0.5">CAMADA AG-UI</text>
+
+        <!-- Usuário -->
+        <rect x="460" y="15" width="180" height="38" rx="4" fill="rgba(74,140,111,0.12)" stroke="#4a8c6f" stroke-width="1.5"/>
+        <text x="550" y="39" text-anchor="middle" fill="#4a8c6f" font-family="Inter,sans-serif" font-size="12" font-weight="600">Lenon (Usuário)</text>
+
+        <!-- Fluxo de Eventos AG-UI -->
+        <rect x="380" y="68" width="340" height="26" rx="4" fill="rgba(139,126,163,0.08)" stroke="#8b7ea3" stroke-width="0.8" stroke-dasharray="4,2"/>
+        <text x="550" y="86" text-anchor="middle" fill="#8b7ea3" font-family="Inter,sans-serif" font-size="9" font-weight="600" letter-spacing="0.3">Fluxo de Eventos AG-UI (SSE / WebSocket)</text>
+        <line x1="550" y1="53" x2="550" y2="68" stroke="#8b7ea3" stroke-width="1" marker-end="url(#arr)"/>
+
+        <!-- Orquestrador -->
+        <rect x="390" y="108" width="320" height="48" rx="6" fill="rgba(34,54,49,0.4)" stroke="#223631" stroke-width="1.5"/>
+        <text x="550" y="132" text-anchor="middle" fill="#D6CCC1" font-family="Inter,sans-serif" font-size="13" font-weight="700">Claude Code — Orquestrador</text>
+        <text x="550" y="148" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="8">INÍCIO &rarr; ETAPA &rarr; FERRAMENTA &rarr; ESTADO &rarr; FIM</text>
+        <line x1="550" y1="94" x2="550" y2="108" stroke="#223631" stroke-width="1" marker-end="url(#arrV)"/>
+
+        <!-- Rótulo A2A -->
+        <rect x="15" y="120" width="90" height="20" rx="3" fill="rgba(196,148,74,0.12)" stroke="#c4944a" stroke-width="0.7"/>
+        <text x="60" y="134" text-anchor="middle" fill="#c4944a" font-family="Inter,sans-serif" font-size="8" font-weight="700" letter-spacing="0.5">CAMADA A2A</text>
+
+        <!-- Habilidades -->
+        <text x="30" y="192" fill="#6e6860" font-family="Inter,sans-serif" font-size="9" font-weight="600" letter-spacing="0.8">HABILIDADES (ATIVAS)</text>
+
+        <rect x="30" y="202" width="230" height="52" rx="6" fill="rgba(74,140,111,0.06)" stroke="#4a8c6f" stroke-width="0.8"/>
+        <text x="145" y="222" text-anchor="middle" fill="#EAE0D5" font-family="Inter,sans-serif" font-size="11" font-weight="600">Assessor de Comunicação</text>
+        <text x="145" y="243" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="9">Slack / WhatsApp / Email / Trello</text>
+
+        <rect x="280" y="202" width="230" height="52" rx="6" fill="rgba(74,140,111,0.06)" stroke="#4a8c6f" stroke-width="0.8"/>
+        <text x="395" y="222" text-anchor="middle" fill="#EAE0D5" font-family="Inter,sans-serif" font-size="11" font-weight="600">Redação Jurídica</text>
+        <text x="395" y="243" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="9">CRARC / Banco de Teses</text>
+
+        <rect x="530" y="202" width="230" height="52" rx="6" fill="rgba(74,140,111,0.06)" stroke="#4a8c6f" stroke-width="0.8"/>
+        <text x="645" y="222" text-anchor="middle" fill="#EAE0D5" font-family="Inter,sans-serif" font-size="11" font-weight="600">Separador de PDFs</text>
+        <text x="645" y="243" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="9">Divisão / Índice / NotebookLM</text>
+
+        <rect x="780" y="202" width="230" height="52" rx="6" fill="rgba(74,140,111,0.06)" stroke="#4a8c6f" stroke-width="0.8"/>
+        <text x="895" y="222" text-anchor="middle" fill="#EAE0D5" font-family="Inter,sans-serif" font-size="11" font-weight="600">Digitalizador de Docs</text>
+        <text x="895" y="243" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="9">Escâner / 150dpi</text>
+
+        <line x1="450" y1="156" x2="145" y2="202" stroke="#2a2a26" stroke-width="0.8" marker-end="url(#arr)"/>
+        <line x1="490" y1="156" x2="395" y2="202" stroke="#2a2a26" stroke-width="0.8" marker-end="url(#arr)"/>
+        <line x1="610" y1="156" x2="645" y2="202" stroke="#2a2a26" stroke-width="0.8" marker-end="url(#arr)"/>
+        <line x1="660" y1="156" x2="895" y2="202" stroke="#2a2a26" stroke-width="0.8" marker-end="url(#arr)"/>
+
+        <!-- Agentes -->
+        <text x="30" y="296" fill="#6e6860" font-family="Inter,sans-serif" font-size="9" font-weight="600" letter-spacing="0.8">AGENTES JURÍDICOS (PLANEJADOS — A2A)</text>
+
+        <rect x="30" y="306" width="230" height="52" rx="6" fill="rgba(196,148,74,0.06)" stroke="#c4944a" stroke-width="0.8" stroke-dasharray="5,3"/>
+        <text x="145" y="326" text-anchor="middle" fill="#EAE0D5" font-family="Inter,sans-serif" font-size="11" font-weight="600">agente_estagiario()</text>
+        <text x="145" y="347" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="9">ext_eproc() · ext_sgpe() · ext_esaj()</text>
+
+        <rect x="280" y="306" width="230" height="52" rx="6" fill="rgba(196,148,74,0.06)" stroke="#c4944a" stroke-width="0.8" stroke-dasharray="5,3"/>
+        <text x="395" y="326" text-anchor="middle" fill="#EAE0D5" font-family="Inter,sans-serif" font-size="11" font-weight="600">agente_junior()</text>
+        <text x="395" y="347" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="9">sep_admin() · sep_eproc() · sep_projudi()</text>
+
+        <rect x="530" y="306" width="230" height="52" rx="6" fill="rgba(196,148,74,0.06)" stroke="#c4944a" stroke-width="0.8" stroke-dasharray="5,3"/>
+        <text x="645" y="326" text-anchor="middle" fill="#EAE0D5" font-family="Inter,sans-serif" font-size="11" font-weight="600">agente_pleno()</text>
+        <text x="645" y="347" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="9">fatos() · fundament() · pedidos() · resumo()</text>
+
+        <rect x="780" y="306" width="230" height="52" rx="6" fill="rgba(196,148,74,0.06)" stroke="#c4944a" stroke-width="0.8" stroke-dasharray="5,3"/>
+        <text x="895" y="326" text-anchor="middle" fill="#EAE0D5" font-family="Inter,sans-serif" font-size="11" font-weight="600">agente_senior()</text>
+        <text x="895" y="347" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="9">juris.dominante() · juris.vanguarda()</text>
+
+        <line x1="260" y1="332" x2="280" y2="332" stroke="#c4944a" stroke-width="1" marker-end="url(#arr)"/>
+        <line x1="510" y1="332" x2="530" y2="332" stroke="#c4944a" stroke-width="1" marker-end="url(#arr)"/>
+        <line x1="760" y1="332" x2="780" y2="332" stroke="#c4944a" stroke-width="1" marker-end="url(#arr)"/>
+        <line x1="550" y1="156" x2="550" y2="296" stroke="#223631" stroke-width="0.8" stroke-dasharray="4,3" marker-end="url(#arrV)"/>
+
+        <!-- Rótulo MCP -->
+        <rect x="15" y="385" width="100" height="20" rx="3" fill="rgba(74,140,111,0.12)" stroke="#4a8c6f" stroke-width="0.7"/>
+        <text x="65" y="399" text-anchor="middle" fill="#4a8c6f" font-family="Inter,sans-serif" font-size="8" font-weight="700" letter-spacing="0.5">CAMADA MCP</text>
+
+        <!-- Integrações MCP -->
+        <text x="30" y="425" fill="#6e6860" font-family="Inter,sans-serif" font-size="9" font-weight="600" letter-spacing="0.8">INTEGRAÇÕES MCP (FERRAMENTAS E DADOS)</text>
+        <g transform="translate(30,435)"><rect width="110" height="32" rx="4" fill="rgba(34,54,49,0.2)" stroke="#223631" stroke-width="0.8"/><text x="55" y="21" text-anchor="middle" fill="#D6CCC1" font-family="Inter,sans-serif" font-size="10" font-weight="600">Todoist</text></g>
+        <g transform="translate(155,435)"><rect width="110" height="32" rx="4" fill="rgba(34,54,49,0.2)" stroke="#223631" stroke-width="0.8"/><text x="55" y="21" text-anchor="middle" fill="#D6CCC1" font-family="Inter,sans-serif" font-size="10" font-weight="600">Trello</text></g>
+        <g transform="translate(280,435)"><rect width="110" height="32" rx="4" fill="rgba(34,54,49,0.2)" stroke="#223631" stroke-width="0.8"/><text x="55" y="21" text-anchor="middle" fill="#D6CCC1" font-family="Inter,sans-serif" font-size="10" font-weight="600">Slack</text></g>
+        <g transform="translate(405,435)"><rect width="110" height="32" rx="4" fill="rgba(34,54,49,0.2)" stroke="#223631" stroke-width="0.8"/><text x="55" y="21" text-anchor="middle" fill="#D6CCC1" font-family="Inter,sans-serif" font-size="10" font-weight="600">Gmail</text></g>
+        <g transform="translate(530,435)"><rect width="110" height="32" rx="4" fill="rgba(34,54,49,0.2)" stroke="#223631" stroke-width="0.8"/><text x="55" y="21" text-anchor="middle" fill="#D6CCC1" font-family="Inter,sans-serif" font-size="10" font-weight="600">Agenda</text></g>
+        <g transform="translate(655,435)"><rect width="110" height="32" rx="4" fill="rgba(34,54,49,0.2)" stroke="#223631" stroke-width="0.8"/><text x="55" y="21" text-anchor="middle" fill="#D6CCC1" font-family="Inter,sans-serif" font-size="10" font-weight="600">WhatsApp</text></g>
+        <g transform="translate(780,435)"><rect width="110" height="32" rx="4" fill="rgba(34,54,49,0.2)" stroke="#223631" stroke-width="0.8"/><text x="55" y="21" text-anchor="middle" fill="#D6CCC1" font-family="Inter,sans-serif" font-size="10" font-weight="600">Supabase</text></g>
+        <g transform="translate(905,435)"><rect width="110" height="32" rx="4" fill="rgba(34,54,49,0.2)" stroke="#223631" stroke-width="0.8"/><text x="55" y="21" text-anchor="middle" fill="#D6CCC1" font-family="Inter,sans-serif" font-size="10" font-weight="600">EPROC</text></g>
+        <g transform="translate(30,475)"><rect width="110" height="32" rx="4" fill="rgba(34,54,49,0.2)" stroke="#223631" stroke-width="0.8"/><text x="55" y="21" text-anchor="middle" fill="#D6CCC1" font-family="Inter,sans-serif" font-size="10" font-weight="600">NotebookLM</text></g>
+
+        <!-- Armazéns de dados -->
+        <text x="30" y="505" fill="#6e6860" font-family="Inter,sans-serif" font-size="9" font-weight="600" letter-spacing="0.8">ARMAZÉNS DE DADOS</text>
+        <g transform="translate(30,514)"><rect width="155" height="26" rx="3" fill="#111110" stroke="#2a2a26" stroke-width="0.8"/><text x="77" y="18" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="9">Obsidian Vault</text></g>
+        <g transform="translate(200,514)"><rect width="155" height="26" rx="3" fill="#111110" stroke="#2a2a26" stroke-width="0.8"/><text x="77" y="18" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="9">Supabase (PostgreSQL)</text></g>
+        <g transform="translate(370,514)"><rect width="155" height="26" rx="3" fill="#111110" stroke="#2a2a26" stroke-width="0.8"/><text x="77" y="18" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="9">Google Drive</text></g>
+        <g transform="translate(540,514)"><rect width="155" height="26" rx="3" fill="#111110" stroke="#2a2a26" stroke-width="0.8"/><text x="77" y="18" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="9">OneDrive</text></g>
+        <g transform="translate(710,514)"><rect width="155" height="26" rx="3" fill="#111110" stroke="#2a2a26" stroke-width="0.8"/><text x="77" y="18" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="9">NotebookLM</text></g>
+      </svg>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ========== FLUXO DE EVENTOS ========== -->
+<div class="tab-content" id="tab-event-stream">
+<div class="main">
+  <div class="section-title">Fluxo de Eventos AG-UI <span class="badge" style="background:var(--accent-purple-soft);color:var(--accent-purple);border:1px solid rgba(139,126,163,0.25)">Simulação ao vivo</span></div>
+
+  <div class="event-legend">
+    <div class="legend-item"><span class="event-dot lifecycle"></span> Ciclo de vida</div>
+    <div class="legend-item"><span class="event-dot text"></span> Mensagem de texto</div>
+    <div class="legend-item"><span class="event-dot tool"></span> Chamada de ferramenta</div>
+    <div class="legend-item"><span class="event-dot state"></span> Gestão de estado</div>
+    <div class="legend-item"><span class="event-dot reasoning"></span> Raciocínio</div>
+    <div class="legend-item"><span class="event-dot activity"></span> Atividade</div>
+    <div class="legend-item"><span class="event-dot error"></span> Erro / Interrupção</div>
+    <div class="legend-item"><span class="event-dot custom"></span> Personalizado</div>
+  </div>
+
+  <div class="controls-bar">
+    <select class="control-select" id="scenario-select">
+      <option value="redacao">Cenário: Redação Jurídica (Petição Ambiental)</option>
+      <option value="separacao">Cenário: Separação de PDF (Autos EPROC)</option>
+      <option value="comunicacao">Cenário: Assessor de Comunicação (Slack)</option>
+      <option value="full-pipeline">Cenário: Pipeline Completo (4 agentes)</option>
+    </select>
+    <button class="btn btn-primary" id="btn-run" onclick="runSimulation()">&#9654; Executar</button>
+    <button class="btn btn-reject" id="btn-stop" onclick="stopSimulation()" style="display:none">&#9632; Parar</button>
+    <span id="run-status" style="font-size:11px;color:var(--text-muted)"></span>
+  </div>
+
+  <div class="event-stream-container">
+    <div class="event-panel">
+      <div class="event-panel-header">
+        <span class="event-panel-title">Fluxo de Eventos<br><span style="font-size:8px;opacity:0.6;font-weight:400">Event Stream</span></span>
+        <span id="event-count" style="font-size:10px;color:var(--text-muted)">0 eventos</span>
+      </div>
+      <div class="event-panel-body" id="event-stream"></div>
+    </div>
+    <div class="state-panel">
+      <div class="state-tabs">
+        <div class="state-tab active" data-stab="state" onclick="switchStateTab(this)">Instantâneo<br><span style="font-size:8px;opacity:0.6">State Snapshot</span></div>
+        <div class="state-tab" data-stab="thinking" onclick="switchStateTab(this)">Raciocínio<br><span style="font-size:8px;opacity:0.6">Thinking</span></div>
+        <div class="state-tab" data-stab="interrupt" onclick="switchStateTab(this)">Interrupções<br><span style="font-size:8px;opacity:0.6">Interrupts</span></div>
+      </div>
+      <div class="state-body" id="state-content">
+        <pre id="state-json">{
+  "idExecucao": null,
+  "idConversa": "conversa_taques_001",
+  "situacao": "inativo",
+  "agenteAtual": null,
+  "etapaAtual": null,
+  "ferramentaAtiva": null,
+  "progresso": 0,
+  "resultado": null
+}</pre>
+      </div>
+      <div class="state-body" id="thinking-content" style="display:none"></div>
+      <div class="state-body" id="interrupt-content" style="display:none">
+        <div style="color:var(--text-muted);font-size:11px;text-align:center;padding:40px 0">Nenhuma interrupção ativa</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="thinking-container">
+    <div class="thinking-header">
+      <span class="thinking-header-title">Rastro de Execução — Passos de Raciocínio e Chamadas de Ferramentas<br><span style="font-size:8px;opacity:0.6;font-weight:400">Execution Trace — Thinking Steps & Tool Calls</span></span>
+    </div>
+    <div class="thinking-body" id="thinking-steps">
+      <div style="color:var(--text-muted);font-size:12px;text-align:center;padding:30px">Execute uma simulação para visualizar os passos de raciocínio</div>
+    </div>
+  </div>
+
+  <div class="section-title">Humano no Circuito (HITL)<br><span style="font-size:9px;color:var(--text-muted);font-weight:400;margin-left:4px">Human-in-the-Loop Interrupts</span></div>
+  <div class="interrupt-card" id="hitl-demo">
+    <div class="interrupt-title">Interrupção: Aprovação de Peça Jurídica</div>
+    <div class="interrupt-desc">agente_pleno() finalizou a redação da petição ambiental. agente_senior() detectou jurisprudência divergente no STJ. A execução foi pausada aguardando decisão humana.</div>
+    <div style="font-family:'SF Mono','Fira Code',monospace;font-size:10px;color:var(--text-muted);padding:10px;background:var(--bg-primary);border-radius:4px;margin-bottom:14px;border:1px solid var(--border)">
+      { "tipo": "INTERRUPCAO", "tipoInterrupcao": "aprovacao", "agenteId": "agente_senior", "razao": "jurisprudencia_divergente", "dados": { "tese": "responsabilidade_objetiva_ambiental", "tribunal": "STJ", "risco": "medio" } }
+    </div>
+    <div class="interrupt-actions">
+      <button class="btn btn-approve" onclick="resolveInterrupt('approve')">&#x2713; Aprovar</button>
+      <button class="btn btn-edit" onclick="resolveInterrupt('edit')">&#x270f; Editar</button>
+      <button class="btn btn-reject" onclick="resolveInterrupt('reject')">&#x2717; Rejeitar</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ========== HABILIDADES (dinâmico via registry.json) ========== -->
+<div class="tab-content" id="tab-skills">
+<div class="main">
+  <div class="section-title">Habilidades Ativas <span class="badge status-active">Produção</span></div>
+  <div class="agent-list" id="skills-list">
+    <div style="padding:40px;text-align:center;opacity:0.5">Carregando habilidades...</div>
+  </div>
+</div>
+</div>
+
+<!-- ========== AGENTES (dinâmico via registry.json) ========== -->
+<div class="tab-content" id="tab-agents">
+<div class="main" id="agents-container">
+  <div style="padding:40px;text-align:center;opacity:0.5">Carregando agentes...</div>
+</div>
+</div>
+
+<!-- ========== AUTOMAÇÕES ========== -->
+<div class="tab-content" id="tab-automations">
+<div class="main">
+  <div class="section-title">Automações <span class="badge status-prototype">Em desenvolvimento</span></div>
+  <div class="agent-list">
+    <div class="agent-card" data-status="prototype">
+      <div class="card-header"><div class="card-icon automation">&#x1f514;</div><span class="card-status status-prototype">Prioridade</span></div>
+      <div class="card-name">Monitor de Protocolos IAT</div>
+      <div class="card-type">Automação &middot; Cron + Playwright + Supabase</div>
+      <div class="card-desc">Monitora 38+ protocolos no IAT. Agendamento &rarr; Playwright &rarr; Compara Supabase &rarr; Alerta Slack.</div>
+      <div class="card-tags"><span class="tag">Playwright</span><span class="tag">Supabase</span><span class="tag">Cron</span><span class="tag">Slack</span></div>
+    </div>
+    <div class="agent-card" data-status="active">
+      <div class="card-header"><div class="card-icon automation">&#x1f4dd;</div><span class="card-status status-active">Ativa</span></div>
+      <div class="card-name">Documentação Automática Obsidian</div>
+      <div class="card-type">Gatilho &middot; Documentação de Sessão<br><span style="font-size:8px;opacity:0.6">Hook</span></div>
+      <div class="card-desc">Documenta sessões e decisões no Obsidian ao final de cada interação. Metadados YAML padronizados.</div>
+      <div class="card-tags"><span class="tag">Gatilhos</span><span class="tag">Obsidian</span><span class="tag">Sessões</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ========== GRAFO DE ORQUESTRAÇÃO ========== -->
+<div class="tab-content" id="tab-graph">
+<div class="main">
+  <div class="graph-container">
+    <div class="graph-title">Orquestração de Agentes Jurídicos — Visualização de Grafo<br><span style="font-size:8px;opacity:0.6;letter-spacing:0.3px">LangGraph View</span></div>
+    <div class="dep-graph-wrap">
+      <svg viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg" style="max-width:1000px;width:100%;">
+        <defs>
+          <pattern id="grid2" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1c1c19" stroke-width="0.5"/></pattern>
+          <marker id="a1" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#D6CCC1"/></marker>
+          <marker id="a2" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#c4944a"/></marker>
+          <marker id="a3" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#4a8c6f"/></marker>
+          <marker id="a4" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#b85450"/></marker>
+        </defs>
+        <rect width="1000" height="700" fill="#0A0908" rx="8"/>
+        <rect width="1000" height="700" fill="url(#grid2)"/>
+
+        <rect x="410" y="20" width="180" height="40" rx="4" fill="rgba(74,140,111,0.15)" stroke="#4a8c6f" stroke-width="1.5"/>
+        <text x="500" y="45" text-anchor="middle" fill="#4a8c6f" font-family="Inter,sans-serif" font-size="12" font-weight="700">__inicio__</text>
+        <text x="500" y="78" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="9">Demanda jurídica recebida</text>
+
+        <rect x="390" y="90" width="220" height="44" rx="6" fill="rgba(34,54,49,0.3)" stroke="#223631" stroke-width="1.5"/>
+        <text x="500" y="117" text-anchor="middle" fill="#D6CCC1" font-family="Inter,sans-serif" font-size="12" font-weight="600">triagem()</text>
+        <line x1="500" y1="60" x2="500" y2="90" stroke="#4a8c6f" stroke-width="1.2" marker-end="url(#a3)"/>
+        <text x="500" y="150" text-anchor="middle" fill="#c4944a" font-family="Inter,sans-serif" font-size="9" font-style="italic">roteamento_por_complexidade</text>
+
+        <rect x="50" y="180" width="200" height="65" rx="6" fill="rgba(90,158,143,0.06)" stroke="#5a9e8f" stroke-width="1.2"/>
+        <text x="150" y="205" text-anchor="middle" fill="#5a9e8f" font-family="Inter,sans-serif" font-size="11" font-weight="700">agente_estagiario()</text>
+        <text x="150" y="222" text-anchor="middle" fill="#a8a099" font-family="Inter,sans-serif" font-size="9">Extração e Coleta</text>
+        <text x="150" y="236" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="8">EPROC | SGPe | ESAJ</text>
+
+        <rect x="20" y="265" width="90" height="24" rx="3" fill="#111110" stroke="#5a9e8f" stroke-width="0.5"/>
+        <text x="65" y="281" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="8">ext_eproc()</text>
+        <rect x="120" y="265" width="90" height="24" rx="3" fill="#111110" stroke="#5a9e8f" stroke-width="0.5"/>
+        <text x="165" y="281" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="8">ext_sgpe()</text>
+        <rect x="220" y="265" width="90" height="24" rx="3" fill="#111110" stroke="#5a9e8f" stroke-width="0.4" stroke-dasharray="3,2"/>
+        <text x="265" y="281" text-anchor="middle" fill="#3a3a35" font-family="Inter,sans-serif" font-size="8">ext_esaj()</text>
+        <line x1="65" y1="245" x2="65" y2="265" stroke="#5a9e8f" stroke-width="0.5"/>
+        <line x1="165" y1="245" x2="165" y2="265" stroke="#5a9e8f" stroke-width="0.5"/>
+
+        <rect x="400" y="180" width="200" height="65" rx="6" fill="rgba(184,84,80,0.06)" stroke="#b85450" stroke-width="1.2"/>
+        <text x="500" y="205" text-anchor="middle" fill="#b85450" font-family="Inter,sans-serif" font-size="11" font-weight="700">agente_junior()</text>
+        <text x="500" y="222" text-anchor="middle" fill="#a8a099" font-family="Inter,sans-serif" font-size="9">Análise e Separação</text>
+
+        <rect x="380" y="265" width="90" height="24" rx="3" fill="#111110" stroke="#b85450" stroke-width="0.5"/>
+        <text x="425" y="281" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="8">sep_admin()</text>
+        <rect x="480" y="265" width="90" height="24" rx="3" fill="#111110" stroke="#b85450" stroke-width="0.5"/>
+        <text x="525" y="281" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="8">sep_eproc()</text>
+        <line x1="425" y1="245" x2="425" y2="265" stroke="#b85450" stroke-width="0.5"/>
+        <line x1="525" y1="245" x2="525" y2="265" stroke="#b85450" stroke-width="0.5"/>
+
+        <line x1="250" y1="212" x2="400" y2="212" stroke="#D6CCC1" stroke-width="1.2" marker-end="url(#a1)"/>
+        <text x="325" y="205" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="8">autos_extraidos</text>
+
+        <path d="M 390 117 C 280 117, 180 165, 150 180" fill="none" stroke="#D6CCC1" stroke-width="1" marker-end="url(#a1)"/>
+
+        <rect x="400" y="340" width="200" height="65" rx="6" fill="rgba(196,148,74,0.06)" stroke="#c4944a" stroke-width="1.2"/>
+        <text x="500" y="365" text-anchor="middle" fill="#c4944a" font-family="Inter,sans-serif" font-size="11" font-weight="700">agente_pleno()</text>
+        <text x="500" y="382" text-anchor="middle" fill="#a8a099" font-family="Inter,sans-serif" font-size="9">Redação e Argumentação</text>
+        <text x="500" y="396" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="8">Fatos | Fund. | Pedidos | Resumo</text>
+
+        <rect x="320" y="420" width="72" height="24" rx="3" fill="#111110" stroke="#c4944a" stroke-width="0.5"/>
+        <text x="356" y="436" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="7">fatos()</text>
+        <rect x="398" y="420" width="72" height="24" rx="3" fill="#111110" stroke="#c4944a" stroke-width="0.5"/>
+        <text x="434" y="436" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="7">fundament()</text>
+        <rect x="476" y="420" width="72" height="24" rx="3" fill="#111110" stroke="#c4944a" stroke-width="0.5"/>
+        <text x="512" y="436" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="7">pedidos()</text>
+        <rect x="554" y="420" width="72" height="24" rx="3" fill="#111110" stroke="#c4944a" stroke-width="0.5"/>
+        <text x="590" y="436" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="7">resumo()</text>
+        <rect x="632" y="420" width="72" height="24" rx="3" fill="#111110" stroke="#c4944a" stroke-width="0.5"/>
+        <text x="668" y="436" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="7">finais()</text>
+        <line x1="356" y1="405" x2="356" y2="420" stroke="#c4944a" stroke-width="0.5"/>
+        <line x1="434" y1="405" x2="434" y2="420" stroke="#c4944a" stroke-width="0.5"/>
+        <line x1="512" y1="405" x2="512" y2="420" stroke="#c4944a" stroke-width="0.5"/>
+        <line x1="590" y1="405" x2="590" y2="420" stroke="#c4944a" stroke-width="0.5"/>
+        <line x1="668" y1="405" x2="668" y2="420" stroke="#c4944a" stroke-width="0.5"/>
+
+        <line x1="500" y1="289" x2="500" y2="340" stroke="#D6CCC1" stroke-width="1.2" marker-end="url(#a1)"/>
+        <text x="520" y="318" fill="#6e6860" font-family="Inter,sans-serif" font-size="8">pecas_separadas</text>
+
+        <rect x="750" y="340" width="200" height="65" rx="6" fill="rgba(139,126,163,0.06)" stroke="#8b7ea3" stroke-width="1.2"/>
+        <text x="850" y="365" text-anchor="middle" fill="#8b7ea3" font-family="Inter,sans-serif" font-size="11" font-weight="700">agente_senior()</text>
+        <text x="850" y="382" text-anchor="middle" fill="#a8a099" font-family="Inter,sans-serif" font-size="9">Estratégia e Jurisprudência</text>
+
+        <rect x="730" y="420" width="100" height="24" rx="3" fill="#111110" stroke="#8b7ea3" stroke-width="0.5"/>
+        <text x="780" y="436" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="7">juris_domin()</text>
+        <rect x="840" y="420" width="100" height="24" rx="3" fill="#111110" stroke="#8b7ea3" stroke-width="0.5"/>
+        <text x="890" y="436" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="7">juris_vang()</text>
+        <line x1="780" y1="405" x2="780" y2="420" stroke="#8b7ea3" stroke-width="0.5"/>
+        <line x1="890" y1="405" x2="890" y2="420" stroke="#8b7ea3" stroke-width="0.5"/>
+
+        <line x1="600" y1="372" x2="750" y2="372" stroke="#D6CCC1" stroke-width="1.2" marker-end="url(#a1)"/>
+        <text x="675" y="365" text-anchor="middle" fill="#6e6860" font-family="Inter,sans-serif" font-size="8">peca_redigida</text>
+
+        <path d="M 610 117 C 800 117, 900 280, 850 340" fill="none" stroke="#c4944a" stroke-width="0.8" stroke-dasharray="5,3" marker-end="url(#a2)"/>
+        <text x="800" y="230" fill="#c4944a" font-family="Inter,sans-serif" font-size="8" font-style="italic">fluxo_complexo</text>
+
+        <rect x="400" y="500" width="200" height="45" rx="6" fill="rgba(184,84,80,0.06)" stroke="#b85450" stroke-width="1.2"/>
+        <text x="500" y="527" text-anchor="middle" fill="#b85450" font-family="Inter,sans-serif" font-size="11" font-weight="600">controle_qualidade()</text>
+
+        <line x1="500" y1="444" x2="500" y2="500" stroke="#c4944a" stroke-width="1" marker-end="url(#a2)"/>
+        <path d="M 850 405 C 850 480, 600 500, 600 520" fill="none" stroke="#8b7ea3" stroke-width="0.8" marker-end="url(#a1)"/>
+
+        <path d="M 400 522 C 250 522, 200 440, 300 380 L 400 370" fill="none" stroke="#b85450" stroke-width="0.8" stroke-dasharray="4,3" marker-end="url(#a4)"/>
+        <text x="230" y="450" fill="#b85450" font-family="Inter,sans-serif" font-size="8" font-style="italic">reprovar</text>
+
+        <rect x="410" y="590" width="180" height="40" rx="4" fill="rgba(214,204,193,0.1)" stroke="#D6CCC1" stroke-width="1.5"/>
+        <text x="500" y="615" text-anchor="middle" fill="#D6CCC1" font-family="Inter,sans-serif" font-size="12" font-weight="700">__fim__</text>
+        <line x1="500" y1="545" x2="500" y2="590" stroke="#4a8c6f" stroke-width="1.2" marker-end="url(#a3)"/>
+        <text x="525" y="572" fill="#4a8c6f" font-family="Inter,sans-serif" font-size="8">aprovado</text>
+
+        <rect x="20" y="600" width="190" height="56" rx="4" fill="#111110" stroke="#2a2a26"/>
+        <text x="30" y="616" fill="#6e6860" font-family="Inter,sans-serif" font-size="9" font-weight="600">LEGENDA</text>
+        <line x1="30" y1="628" x2="55" y2="628" stroke="#D6CCC1" stroke-width="1.5"/>
+        <text x="62" y="632" fill="#6e6860" font-family="Inter,sans-serif" font-size="8">Fluxo de dados</text>
+        <line x1="30" y1="642" x2="55" y2="642" stroke="#c4944a" stroke-width="1" stroke-dasharray="5,3"/>
+        <text x="62" y="646" fill="#6e6860" font-family="Inter,sans-serif" font-size="8">Aresta condicional</text>
+        <line x1="115" y1="628" x2="140" y2="628" stroke="#b85450" stroke-width="0.8" stroke-dasharray="4,3"/>
+        <text x="147" y="632" fill="#6e6860" font-family="Inter,sans-serif" font-size="8">Ciclo de retorno</text>
+      </svg>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ========== FLUXOS DE TRABALHO ========== -->
+<div class="tab-content" id="tab-flows">
+<div class="main">
+  <div class="flow-container">
+    <div class="flow-header">
+      <div><div class="flow-name">Fluxo Simples</div><div style="font-size:11px;color:var(--text-secondary);margin-top:3px">Baixa complexidade</div></div>
+      <span class="badge status-active">Baixa</span>
+    </div>
+    <div class="flow-nodes">
+      <div class="flow-node start"><div class="flow-node-label">Entrada</div><div class="flow-node-name">Demanda</div><div class="flow-node-sub">briefing + docs</div></div>
+      <div class="flow-arrow"></div>
+      <div class="flow-node agent-0"><div class="flow-node-label">Agente 0</div><div class="flow-node-name">Estagiário</div><div class="flow-node-sub">extrai autos</div></div>
+      <div class="flow-arrow"><span class="arrow-label">autos</span></div>
+      <div class="flow-node agent-1"><div class="flow-node-label">Agente 1</div><div class="flow-node-name">Júnior</div><div class="flow-node-sub">separa peças</div></div>
+      <div class="flow-arrow"><span class="arrow-label">peças</span></div>
+      <div class="flow-node agent-2"><div class="flow-node-label">Agente 2</div><div class="flow-node-name">Pleno</div><div class="flow-node-sub">redige</div></div>
+      <div class="flow-arrow"></div>
+      <div class="flow-node end"><div class="flow-node-label">Saída</div><div class="flow-node-name">Peça Final</div><div class="flow-node-sub">.docx + checklist</div></div>
+    </div>
+  </div>
+  <div class="flow-container">
+    <div class="flow-header">
+      <div><div class="flow-name">Fluxo Médio</div><div style="font-size:11px;color:var(--text-secondary);margin-top:3px">Média complexidade — jurisprudência necessária</div></div>
+      <span class="badge status-planned">Média</span>
+    </div>
+    <div class="flow-nodes">
+      <div class="flow-node start"><div class="flow-node-label">Entrada</div><div class="flow-node-name">Demanda</div></div>
+      <div class="flow-arrow"></div>
+      <div class="flow-node agent-0"><div class="flow-node-label">Agente 0</div><div class="flow-node-name">Estagiário</div></div>
+      <div class="flow-arrow"></div>
+      <div class="flow-node agent-1"><div class="flow-node-label">Agente 1</div><div class="flow-node-name">Júnior</div></div>
+      <div class="flow-arrow"></div>
+      <div class="flow-node agent-2"><div class="flow-node-label">Agente 2</div><div class="flow-node-name">Pleno</div><div class="flow-node-sub">redação completa</div></div>
+      <div class="flow-arrow"></div>
+      <div class="flow-node agent-3"><div class="flow-node-label">Agente 3</div><div class="flow-node-name">Sênior</div><div class="flow-node-sub">valida juris.</div></div>
+      <div class="flow-arrow"></div>
+      <div class="flow-node end"><div class="flow-node-label">Saída</div><div class="flow-node-name">Peça Final</div></div>
+    </div>
+  </div>
+  <div class="flow-container">
+    <div class="flow-header">
+      <div><div class="flow-name">Fluxo Complexo</div><div style="font-size:11px;color:var(--text-secondary);margin-top:3px">Alta complexidade — estratégia primeiro, ciclo de revisão</div></div>
+      <span class="badge" style="background:var(--accent-red-soft);color:var(--accent-red);border:1px solid rgba(184,84,80,0.25)">Alta</span>
+    </div>
+    <div class="flow-nodes">
+      <div class="flow-node start"><div class="flow-node-label">Entrada</div><div class="flow-node-name">Demanda</div></div>
+      <div class="flow-arrow"></div>
+      <div class="flow-node agent-3"><div class="flow-node-label">Agente 3</div><div class="flow-node-name">Sênior</div><div class="flow-node-sub">define estratégia</div></div>
+      <div class="flow-arrow"></div>
+      <div class="flow-node agent-0"><div class="flow-node-label">Agente 0</div><div class="flow-node-name">Estagiário</div></div>
+      <div class="flow-arrow"></div>
+      <div class="flow-node agent-1"><div class="flow-node-label">Agente 1</div><div class="flow-node-name">Júnior</div><div class="flow-node-sub">separa + analisa</div></div>
+      <div class="flow-arrow"></div>
+      <div class="flow-node agent-2"><div class="flow-node-label">Agente 2</div><div class="flow-node-name">Pleno</div><div class="flow-node-sub">redige c/ estratégia</div></div>
+      <div class="flow-arrow"></div>
+      <div class="flow-node decision"><div class="flow-node-label">CQ</div><div class="flow-node-name">Sênior revisa</div><div class="flow-node-sub">ciclo até aprovar</div></div>
+      <div class="flow-arrow"></div>
+      <div class="flow-node end"><div class="flow-node-label">Saída</div><div class="flow-node-name">Peça Final</div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ========== INTEGRAÇÕES ========== -->
+<div class="tab-content" id="tab-integrations">
+<div class="main">
+  <div class="section-title">Servidores MCP (Agente &harr; Ferramentas)</div>
+  <div class="graph-container" style="padding:0;overflow:hidden">
+    <table class="int-table">
+      <thead><tr><th>Servidor</th><th>Tipo</th><th>Ferramentas</th><th>Situação</th><th>Usado por</th><th>Eventos AG-UI</th></tr></thead>
+      <tbody>
+        <tr><td class="name">Todoist</td><td><span class="mono">@doist/todoist-ai v8.5</span></td><td>30+</td><td><span class="card-status status-active">Ativo</span></td><td>Gestão de tarefas, GTD</td><td><span class="mono">CHAMADA_FERRAMENTA, DELTA_ESTADO</span></td></tr>
+        <tr><td class="name">Trello</td><td><span class="mono">MCP personalizado</span></td><td>15</td><td><span class="card-status status-active">Ativo</span></td><td>Pipeline de clientes</td><td><span class="mono">CHAMADA_FERRAMENTA, PERSONALIZADO</span></td></tr>
+        <tr><td class="name">Slack</td><td><span class="mono">MCP conector</span></td><td>12</td><td><span class="card-status status-active">Ativo</span></td><td>Assessor de Comunicação</td><td><span class="mono">CHAMADA_FERRAMENTA, INTERRUPÇÃO</span></td></tr>
+        <tr><td class="name">Gmail</td><td><span class="mono">MCP conector</span></td><td>8</td><td><span class="card-status status-active">Ativo</span></td><td>Assessor de Comunicação</td><td><span class="mono">CHAMADA_FERRAMENTA, INTERRUPÇÃO</span></td></tr>
+        <tr><td class="name">Agenda Google</td><td><span class="mono">MCP conector</span></td><td>9</td><td><span class="card-status status-active">Ativo</span></td><td>Prazos, reuniões</td><td><span class="mono">CHAMADA_FERRAMENTA, ATIVIDADE</span></td></tr>
+        <tr><td class="name">WhatsApp (GOWA)</td><td><span class="mono">MCP SSE :8080</span></td><td>20+</td><td><span class="card-status status-active">Ativo</span></td><td>Assessor de Comunicação</td><td><span class="mono">CHAMADA_FERRAMENTA, INTERRUPÇÃO</span></td></tr>
+        <tr><td class="name">Supabase</td><td><span class="mono">MCP oficial</span></td><td>25+</td><td><span class="card-status status-active">Ativo</span></td><td>Painel, dados do escritório</td><td><span class="mono">CHAMADA_FERRAMENTA, INSTANTÂNEO</span></td></tr>
+        <tr><td class="name">EPROC-TJSC</td><td><span class="mono">Python personalizado</span></td><td>~5</td><td><span class="card-status status-prototype">Beta</span></td><td>agente_estagiario() › ext_eproc()</td><td><span class="mono">CHAMADA_FERRAMENTA, ATIVIDADE</span></td></tr>
+        <tr><td class="name">SGPE-SC</td><td><span class="mono">Python personalizado</span></td><td>~3</td><td><span class="card-status" style="background:var(--accent-orange-soft);color:var(--accent-orange)">Em Construção</span></td><td>agente_estagiario() › ext_sgpe()</td><td><span class="mono">CHAMADA_FERRAMENTA, ATIVIDADE</span></td></tr>
+        <tr><td class="name">NotebookLM</td><td><span class="mono">notebooklm-mcp-cli v0.5.16</span></td><td>38</td><td><span class="card-status status-active">Ativo</span></td><td>Pesquisa, studio, fontes</td><td><span class="mono">CHAMADA_FERRAMENTA, ATIVIDADE</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-title" style="margin-top:20px">Gatilhos (Automação de Sessão)<br><span style="font-size:9px;color:var(--text-muted);font-weight:400;margin-left:4px">Hooks</span></div>
+  <div class="agent-list">
+    <div class="agent-card" data-status="active">
+      <div class="card-header"><div class="card-icon automation">&#x26a1;</div><span class="card-status status-active">Ativo</span></div>
+      <div class="card-name">Gatilho de Início de Sessão</div>
+      <div class="card-type">Gatilho &middot; Haiku &middot; 5s<br><span style="font-size:8px;opacity:0.6">SessionStart Hook</span></div>
+      <div class="card-desc">Carrega contexto Trello ao iniciar sessão. Emite evento personalizado com ferramentas disponíveis.</div>
+      <div class="card-tags"><span class="tag">Trello</span><span class="tag">Automático</span></div>
+    </div>
+    <div class="agent-card" data-status="active">
+      <div class="card-header"><div class="card-icon automation">&#x26a1;</div><span class="card-status status-active">Ativo</span></div>
+      <div class="card-name">Gatilho de Fim de Resposta</div>
+      <div class="card-type">Gatilho &middot; Haiku &middot; 10s<br><span style="font-size:8px;opacity:0.6">Stop Hook</span></div>
+      <div class="card-desc">Verifica tarefas significativas e lembra de atualizar Trello.</div>
+      <div class="card-tags"><span class="tag">Trello</span><span class="tag">Pós-resposta</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ========== LINHA DO TEMPO ========== -->
+<div class="tab-content" id="tab-roadmap">
+<div class="main">
+  <div class="section-title">Linha do Tempo de Desenvolvimento</div>
+  <div class="graph-container">
+    <div class="timeline">
+      <div class="timeline-item"><div class="timeline-dot green"></div><div class="timeline-title">Habilidades de Produção (v1)</div><div class="timeline-desc">Assessor, Redação, Separador, Digitalizador — todas ativas e em uso diário.</div><div class="timeline-date">Concluído — Março 2026</div></div>
+      <div class="timeline-item"><div class="timeline-dot green"></div><div class="timeline-title">Integrações MCP (9 servidores)</div><div class="timeline-desc">Todoist, Trello, Slack, Gmail, Agenda, WhatsApp, Supabase, EPROC, NotebookLM.</div><div class="timeline-date">Concluído — Abril 2026</div></div>
+      <div class="timeline-item"><div class="timeline-dot green"></div><div class="timeline-title">Painel Taques (v2) + Supabase</div><div class="timeline-desc">React 19 + Next.js 16. 189 casos, 145 prazos, 38 protocolos. Migração do Streamlit concluída.</div><div class="timeline-date">Concluído — Março 2026</div></div>
+      <div class="timeline-item"><div class="timeline-dot green"></div><div class="timeline-title">Painel AG-UI de Orquestração (v0.1)</div><div class="timeline-desc">Protótipo de visualização com fluxo de eventos, passos de raciocínio, interrupções HITL, instantâneos de estado.</div><div class="timeline-date">Concluído — Abril 2026</div></div>
+      <div class="timeline-item"><div class="timeline-dot orange"></div><div class="timeline-title">Monitor de Protocolos IAT</div><div class="timeline-desc">Agente autônomo: Playwright + agendamento + Supabase + Slack. 38+ protocolos administrativos.</div><div class="timeline-date">Prioridade crítica — T2 2026</div></div>
+      <div class="timeline-item"><div class="timeline-dot orange"></div><div class="timeline-title">agente_estagiario() — Agente 0</div><div class="timeline-desc">ext_eproc() em Beta, ext_sgpe() em construção (Playwright headless, seletores fase 1 mapeados). Próximo: mapear página interna + testar fluxo completo.</div><div class="timeline-date">Em Construção — Abril 2026</div></div>
+      <div class="timeline-item"><div class="timeline-dot blue"></div><div class="timeline-title">agente_junior() — Agente 1</div><div class="timeline-desc">Evolução do Separador de PDFs para agente autônomo com classificação por aprendizado de máquina.</div><div class="timeline-date">Planejado — T3 2026</div></div>
+      <div class="timeline-item"><div class="timeline-dot purple"></div><div class="timeline-title">Protocolo AG-UI v1.0 (Orientado a Eventos)</div><div class="timeline-desc">Implementação real de SSE, JSON Patch (RFC 6902), integração com SDK @ag-ui/core.</div><div class="timeline-date">Planejado — T3 2026</div></div>
+      <div class="timeline-item"><div class="timeline-dot purple"></div><div class="timeline-title">Agentes 2+3 + Orquestração Completa</div><div class="timeline-desc">Pipeline de ponta a ponta com A2A entre agentes. Roteamento estilo LangGraph e ciclos de retorno.</div><div class="timeline-date">Visão — T4 2026 / 2027</div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+// Troca de abas
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+function switchStateTab(el) {
+  document.querySelectorAll('.state-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const tab = el.dataset.stab;
+  document.getElementById('state-content').style.display = tab === 'state' ? 'block' : 'none';
+  document.getElementById('thinking-content').style.display = tab === 'thinking' ? 'block' : 'none';
+  document.getElementById('interrupt-content').style.display = tab === 'interrupt' ? 'block' : 'none';
+}
+
+let simRunning = false, simTimeout = null, eventCount = 0;
+
+const SCENARIOS = {
+  redacao: [
+    { type: 'INÍCIO_EXECUÇÃO', cat: 'lifecycle', payload: '{ idExecucao: "exec_redacao_001", idConversa: "conv_001" }' },
+    { type: 'INSTANTÂNEO_ESTADO', cat: 'state', payload: '{ situacao: "executando", agente: "redacao_juridica", modo: "elaboracao" }' },
+    { type: 'ETAPA_INICIADA', cat: 'lifecycle', payload: '{ idEtapa: "etapa_1", nome: "Esqueleto da Peça" }' },
+    { type: 'INÍCIO_RACIOCÍNIO', cat: 'reasoning', payload: '{ idMensagem: "r1" }' },
+    { type: 'CONTEÚDO_RACIOCÍNIO', cat: 'reasoning', payload: '{ delta: "Analisando tipo processual: petição inicial ambiental..." }' },
+    { type: 'CONTEÚDO_RACIOCÍNIO', cat: 'reasoning', payload: '{ delta: "Matéria: dano ambiental — responsabilidade objetiva (art. 14 Lei 6938/81)" }' },
+    { type: 'CONTEÚDO_RACIOCÍNIO', cat: 'reasoning', payload: '{ delta: "Selecionando teses: resp_objetiva, inversao_onus, principio_precaucao" }' },
+    { type: 'FIM_RACIOCÍNIO', cat: 'reasoning', payload: '{}' },
+    { type: 'ETAPA_FINALIZADA', cat: 'lifecycle', payload: '{ idEtapa: "etapa_1", resultado: "esqueleto_gerado" }' },
+    { type: 'DELTA_ESTADO', cat: 'state', payload: '[ { op: "replace", path: "/etapaAtual", value: "teses_crarc" } ]' },
+    { type: 'ETAPA_INICIADA', cat: 'lifecycle', payload: '{ idEtapa: "etapa_2", nome: "Teses com CRARC" }' },
+    { type: 'INÍCIO_CHAMADA_FERRAMENTA', cat: 'tool', payload: '{ idChamada: "cf_1", ferramenta: "obsidian_ler", args: "banco-de-teses/ambiental/" }' },
+    { type: 'FIM_CHAMADA_FERRAMENTA', cat: 'tool', payload: '{ idChamada: "cf_1", resultado: "36 teses ambientais carregadas" }' },
+    { type: 'INÍCIO_MENSAGEM_TEXTO', cat: 'text', payload: '{ idMensagem: "msg_1", papel: "assistente" }' },
+    { type: 'CONTEÚDO_MENSAGEM', cat: 'text', payload: '{ delta: "## DOS FATOS\\n\\nTrata-se de ação civil pública..." }' },
+    { type: 'CONTEÚDO_MENSAGEM', cat: 'text', payload: '{ delta: "## DA FUNDAMENTAÇÃO JURÍDICA\\n\\nA responsabilidade civil ambiental..." }' },
+    { type: 'CONTEÚDO_MENSAGEM', cat: 'text', payload: '{ delta: "## DOS PEDIDOS\\n\\nAnte o exposto, requer-se..." }' },
+    { type: 'FIM_MENSAGEM_TEXTO', cat: 'text', payload: '{ idMensagem: "msg_1" }' },
+    { type: 'ETAPA_FINALIZADA', cat: 'lifecycle', payload: '{ idEtapa: "etapa_2", resultado: "teses_aplicadas" }' },
+    { type: 'INSTANTÂNEO_ATIVIDADE', cat: 'activity', payload: '{ conteudo: "Gerando .docx com formatação Dupincel 11.5pt..." }' },
+    { type: 'INÍCIO_CHAMADA_FERRAMENTA', cat: 'tool', payload: '{ idChamada: "cf_2", ferramenta: "exportar_docx" }' },
+    { type: 'FIM_CHAMADA_FERRAMENTA', cat: 'tool', payload: '{ idChamada: "cf_2", resultado: "peticao_ambiental_2026.docx" }' },
+    { type: 'DELTA_ESTADO', cat: 'state', payload: '[ { op: "replace", path: "/progresso", value: 100 }, { op: "add", path: "/resultado", value: "peticao_ambiental_2026.docx" } ]' },
+    { type: 'FIM_EXECUÇÃO', cat: 'lifecycle', payload: '{ idExecucao: "exec_redacao_001", resultado: "sucesso" }' },
+  ],
+  separacao: [
+    { type: 'INÍCIO_EXECUÇÃO', cat: 'lifecycle', payload: '{ idExecucao: "exec_sep_001", idConversa: "conv_002" }' },
+    { type: 'ETAPA_INICIADA', cat: 'lifecycle', payload: '{ idEtapa: "e1", nome: "Leitura do PDF" }' },
+    { type: 'INÍCIO_CHAMADA_FERRAMENTA', cat: 'tool', payload: '{ idChamada: "cf_1", ferramenta: "pdftotext" }' },
+    { type: 'FIM_CHAMADA_FERRAMENTA', cat: 'tool', payload: '{ idChamada: "cf_1", resultado: "342 páginas extraídas" }' },
+    { type: 'ETAPA_FINALIZADA', cat: 'lifecycle', payload: '{ idEtapa: "e1" }' },
+    { type: 'ETAPA_INICIADA', cat: 'lifecycle', payload: '{ idEtapa: "e2", nome: "Identificação de Documentos" }' },
+    { type: 'INÍCIO_RACIOCÍNIO', cat: 'reasoning', payload: '{}' },
+    { type: 'CONTEÚDO_RACIOCÍNIO', cat: 'reasoning', payload: '{ delta: "Identificando fronteiras entre documentos..." }' },
+    { type: 'CONTEÚDO_RACIOCÍNIO', cat: 'reasoning', payload: '{ delta: "47 documentos distintos encontrados" }' },
+    { type: 'FIM_RACIOCÍNIO', cat: 'reasoning', payload: '{}' },
+    { type: 'INSTANTÂNEO_ATIVIDADE', cat: 'activity', payload: '{ conteudo: "Separando doc 1/47: Petição Inicial (pp. 1-15)" }' },
+    { type: 'DELTA_ATIVIDADE', cat: 'activity', payload: '{ conteudo: "Separando doc 12/47: Laudo Pericial (pp. 89-124)" }' },
+    { type: 'DELTA_ATIVIDADE', cat: 'activity', payload: '{ conteudo: "Separando doc 47/47: Despacho Final (pp. 338-342)" }' },
+    { type: 'ETAPA_FINALIZADA', cat: 'lifecycle', payload: '{ idEtapa: "e2" }' },
+    { type: 'INÍCIO_CHAMADA_FERRAMENTA', cat: 'tool', payload: '{ idChamada: "cf_2", ferramenta: "escrever_indice_md" }' },
+    { type: 'FIM_CHAMADA_FERRAMENTA', cat: 'tool', payload: '{ idChamada: "cf_2", resultado: "000_INDICE.md gerado com 47 entradas" }' },
+    { type: 'DELTA_ESTADO', cat: 'state', payload: '[ { op: "replace", path: "/progresso", value: 100 } ]' },
+    { type: 'FIM_EXECUÇÃO', cat: 'lifecycle', payload: '{ idExecucao: "exec_sep_001", resultado: "47 PDFs + índice" }' },
+  ],
+  comunicacao: [
+    { type: 'INÍCIO_EXECUÇÃO', cat: 'lifecycle', payload: '{ idExecucao: "exec_com_001", idConversa: "conv_003" }' },
+    { type: 'INSTANTÂNEO_ESTADO', cat: 'state', payload: '{ agente: "assessor_comunicacao", modo: "delegacao", canal: "slack" }' },
+    { type: 'INÍCIO_RACIOCÍNIO', cat: 'reasoning', payload: '{}' },
+    { type: 'CONTEÚDO_RACIOCÍNIO', cat: 'reasoning', payload: '{ delta: "Canal: Slack. Aplicando tom direto, sem Pessoal." }' },
+    { type: 'CONTEÚDO_RACIOCÍNIO', cat: 'reasoning', payload: '{ delta: "Estrutura: CPS (Contexto-Problema-Solução)" }' },
+    { type: 'FIM_RACIOCÍNIO', cat: 'reasoning', payload: '{}' },
+    { type: 'INÍCIO_MENSAGEM_TEXTO', cat: 'text', payload: '{ idMensagem: "msg_1", papel: "assistente" }' },
+    { type: 'CONTEÚDO_MENSAGEM', cat: 'text', payload: '{ delta: "Protocolo IAT 19.123.456-7 atualizado com novo despacho..." }' },
+    { type: 'FIM_MENSAGEM_TEXTO', cat: 'text', payload: '{ idMensagem: "msg_1" }' },
+    { type: 'INTERRUPÇÃO', cat: 'error', payload: '{ tipo: "aprovacao", razao: "envio_mensagem_slack", acao: "aprovar_antes_de_enviar" }' },
+    { type: 'PERSONALIZADO', cat: 'custom', payload: '{ nome: "usuario_aprovou", valor: true }' },
+    { type: 'INÍCIO_CHAMADA_FERRAMENTA', cat: 'tool', payload: '{ idChamada: "cf_1", ferramenta: "slack_enviar_mensagem" }' },
+    { type: 'FIM_CHAMADA_FERRAMENTA', cat: 'tool', payload: '{ idChamada: "cf_1", resultado: "mensagem enviada #geral" }' },
+    { type: 'FIM_EXECUÇÃO', cat: 'lifecycle', payload: '{ idExecucao: "exec_com_001", resultado: "mensagem_enviada" }' },
+  ],
+  'full-pipeline': [
+    { type: 'INÍCIO_EXECUÇÃO', cat: 'lifecycle', payload: '{ idExecucao: "exec_completa_001", idConversa: "conv_004", fluxo: "complexo" }' },
+    { type: 'INSTANTÂNEO_ESTADO', cat: 'state', payload: '{ pipeline: "complexo", agentes: ["senior","estagiario","junior","pleno","senior"] }' },
+    { type: 'ETAPA_INICIADA', cat: 'lifecycle', payload: '{ idEtapa: "e0", nome: "agente_senior(): Definir Estratégia" }' },
+    { type: 'INÍCIO_RACIOCÍNIO', cat: 'reasoning', payload: '{ agente: "agente_senior()" }' },
+    { type: 'CONTEÚDO_RACIOCÍNIO', cat: 'reasoning', payload: '{ delta: "Caso complexo: múltiplos réus, dano ambiental difuso" }' },
+    { type: 'CONTEÚDO_RACIOCÍNIO', cat: 'reasoning', payload: '{ delta: "Estratégia: responsabilidade solidária + inversão ônus probandi" }' },
+    { type: 'FIM_RACIOCÍNIO', cat: 'reasoning', payload: '{}' },
+    { type: 'ETAPA_FINALIZADA', cat: 'lifecycle', payload: '{ idEtapa: "e0" }' },
+    { type: 'ETAPA_INICIADA', cat: 'lifecycle', payload: '{ idEtapa: "e1", nome: "agente_estagiario(): Extração" }' },
+    { type: 'INÍCIO_CHAMADA_FERRAMENTA', cat: 'tool', payload: '{ idChamada: "cf_1", ferramenta: "ext_eproc()", agente: "agente_estagiario" }' },
+    { type: 'INSTANTÂNEO_ATIVIDADE', cat: 'activity', payload: '{ conteudo: "Baixando autos EPROC processo 5012345-67.2026.8.24.0023" }' },
+    { type: 'FIM_CHAMADA_FERRAMENTA', cat: 'tool', payload: '{ idChamada: "cf_1", resultado: "512 páginas extraídas" }' },
+    { type: 'ETAPA_FINALIZADA', cat: 'lifecycle', payload: '{ idEtapa: "e1" }' },
+    { type: 'ETAPA_INICIADA', cat: 'lifecycle', payload: '{ idEtapa: "e2", nome: "agente_junior(): Separação" }' },
+    { type: 'INÍCIO_CHAMADA_FERRAMENTA', cat: 'tool', payload: '{ idChamada: "cf_2", ferramenta: "sep_eproc", agente: "junior" }' },
+    { type: 'DELTA_ATIVIDADE', cat: 'activity', payload: '{ conteudo: "63 peças identificadas e separadas" }' },
+    { type: 'FIM_CHAMADA_FERRAMENTA', cat: 'tool', payload: '{ idChamada: "cf_2", resultado: "63 PDFs separados" }' },
+    { type: 'ETAPA_FINALIZADA', cat: 'lifecycle', payload: '{ idEtapa: "e2" }' },
+    { type: 'DELTA_ESTADO', cat: 'state', payload: '[ { op: "replace", path: "/agenteAtual", value: "pleno" } ]' },
+    { type: 'ETAPA_INICIADA', cat: 'lifecycle', payload: '{ idEtapa: "e3", nome: "agente_pleno(): Redação com Estratégia" }' },
+    { type: 'INÍCIO_MENSAGEM_TEXTO', cat: 'text', payload: '{ idMensagem: "msg_1", papel: "assistente" }' },
+    { type: 'CONTEÚDO_MENSAGEM', cat: 'text', payload: '{ delta: "Redigindo fatos com base em 63 peças separadas..." }' },
+    { type: 'CONTEÚDO_MENSAGEM', cat: 'text', payload: '{ delta: "Aplicando teses: responsabilidade solidária ambiental..." }' },
+    { type: 'FIM_MENSAGEM_TEXTO', cat: 'text', payload: '{ idMensagem: "msg_1" }' },
+    { type: 'ETAPA_FINALIZADA', cat: 'lifecycle', payload: '{ idEtapa: "e3" }' },
+    { type: 'ETAPA_INICIADA', cat: 'lifecycle', payload: '{ idEtapa: "e4", nome: "agente_senior(): Revisão e CQ" }' },
+    { type: 'INTERRUPÇÃO', cat: 'error', payload: '{ tipo: "aprovacao", agente: "senior", razao: "jurisprudencia_divergente_STJ" }' },
+    { type: 'PERSONALIZADO', cat: 'custom', payload: '{ nome: "decisao_usuario", valor: "aprovar_com_edicao" }' },
+    { type: 'ETAPA_FINALIZADA', cat: 'lifecycle', payload: '{ idEtapa: "e4", resultado: "aprovado_com_ajustes" }' },
+    { type: 'INÍCIO_CHAMADA_FERRAMENTA', cat: 'tool', payload: '{ idChamada: "cf_3", ferramenta: "exportar_docx" }' },
+    { type: 'FIM_CHAMADA_FERRAMENTA', cat: 'tool', payload: '{ idChamada: "cf_3", resultado: "peticao_final_2026.docx" }' },
+    { type: 'DELTA_ESTADO', cat: 'state', payload: '[ { op: "replace", path: "/situacao", value: "concluido" }, { op: "replace", path: "/progresso", value: 100 } ]' },
+    { type: 'FIM_EXECUÇÃO', cat: 'lifecycle', payload: '{ idExecucao: "exec_completa_001", resultado: "peca_finalizada" }' },
+  ]
+};
+
+function addEvent(type, cat, payload) {
+  const stream = document.getElementById('event-stream');
+  eventCount++;
+  document.getElementById('event-count').textContent = eventCount + ' eventos';
+  const time = new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit', second:'2-digit', fractionalSecondDigits:2 });
+  const item = document.createElement('div');
+  item.className = 'event-item';
+  item.innerHTML = `<span class="event-dot ${cat}"></span><span class="event-time">${time}</span><span class="event-type ${cat}">${type}</span><span class="event-payload">${payload}</span>`;
+  stream.appendChild(item);
+  stream.scrollTop = stream.scrollHeight;
+}
+
+function addThinkingStep(icon, label, title, desc, payload) {
+  const container = document.getElementById('thinking-steps');
+  if (container.querySelector('div[style]')) container.innerHTML = '';
+  const step = document.createElement('div');
+  step.className = 'thinking-step';
+  step.innerHTML = `
+    <div class="step-icon ${icon}"></div>
+    <div class="step-content">
+      <div class="step-label">${label}</div>
+      <div class="step-title">${title}</div>
+      <div class="step-desc">${desc}</div>
+      <div class="step-time">${new Date().toLocaleTimeString('pt-BR')}</div>
+      ${payload ? `<div class="step-payload">${payload}</div>` : ''}
+    </div>`;
+  container.appendChild(step);
+  container.scrollTop = container.scrollHeight;
+}
+
+function updateState(key, value) {
+  const el = document.getElementById('state-json');
+  try {
+    const state = JSON.parse(el.textContent);
+    if (typeof key === 'object') Object.assign(state, key);
+    else state[key] = value;
+    el.textContent = JSON.stringify(state, null, 2);
+  } catch(e) { el.textContent = JSON.stringify({ [key]: value }, null, 2); }
+}
+
+function runSimulation() {
+  if (simRunning) return;
+  simRunning = true;
+  document.getElementById('btn-run').style.display = 'none';
+  document.getElementById('btn-stop').style.display = 'inline-block';
+  document.getElementById('event-stream').innerHTML = '';
+  document.getElementById('thinking-steps').innerHTML = '';
+  eventCount = 0;
+  document.getElementById('state-json').textContent = JSON.stringify({ idExecucao: null, idConversa: "conversa_taques_001", situacao: "inativo", agenteAtual: null, etapaAtual: null, ferramentaAtiva: null, progresso: 0, resultado: null }, null, 2);
+
+  const scenario = document.getElementById('scenario-select').value;
+  const events = SCENARIOS[scenario] || SCENARIOS.redacao;
+  let i = 0;
+
+  function next() {
+    if (!simRunning || i >= events.length) {
+      simRunning = false;
+      document.getElementById('btn-run').style.display = 'inline-block';
+      document.getElementById('btn-stop').style.display = 'none';
+      document.getElementById('run-status').textContent = 'Execução finalizada';
+      return;
+    }
+    const ev = events[i];
+    addEvent(ev.type, ev.cat, ev.payload);
+
+    if (ev.type.includes('INÍCIO_EXECUÇÃO')) {
+      updateState({ situacao: 'executando', progresso: 0 });
+      addThinkingStep('start', 'Ciclo de vida', 'Execução Iniciada', 'Nova execução de agente iniciada', ev.payload);
+      document.getElementById('run-status').textContent = 'Executando...';
+    } else if (ev.type === 'ETAPA_INICIADA') {
+      const name = ev.payload.match(/nome: "([^"]+)"/)?.[1] || 'Etapa';
+      updateState('etapaAtual', name);
+      addThinkingStep('text', 'Etapa', name, 'Etapa iniciada', null);
+    } else if (ev.type.includes('CONTEÚDO_RACIOCÍNIO')) {
+      const delta = ev.payload.match(/delta: "([^"]+)"/)?.[1] || '';
+      addThinkingStep('reason', 'Raciocínio', 'Pensando...', delta, null);
+      document.getElementById('thinking-content').innerHTML += `<div style="color:var(--accent-cyan);margin-bottom:4px">${delta}</div>`;
+    } else if (ev.type.includes('INÍCIO_CHAMADA_FERRAMENTA')) {
+      const tool = ev.payload.match(/ferramenta: "([^"]+)"/)?.[1] || 'ferramenta';
+      updateState('ferramentaAtiva', tool);
+      addThinkingStep('tool', 'Chamada de ferramenta', tool, 'Ferramenta invocada', ev.payload);
+    } else if (ev.type.includes('FIM_CHAMADA_FERRAMENTA')) {
+      updateState('ferramentaAtiva', null);
+    } else if (ev.type.includes('ESTADO')) {
+      addThinkingStep('text', 'Estado', 'Estado atualizado', 'JSON Patch RFC 6902', ev.payload);
+    } else if (ev.type === 'INTERRUPÇÃO') {
+      addThinkingStep('interrupt', 'Interrupção HITL', 'Aguardando decisão humana', 'Execução pausada', ev.payload);
+      document.getElementById('interrupt-content').innerHTML = `<div class="interrupt-card"><div class="interrupt-title">Interrupção Ativa</div><div style="font-family:monospace;font-size:10px;color:var(--text-muted)">${ev.payload}</div></div>`;
+    } else if (ev.type.includes('FIM_EXECUÇÃO')) {
+      updateState({ situacao: 'concluido', progresso: 100 });
+      addThinkingStep('end', 'Ciclo de vida', 'Execução Finalizada', 'Execução concluída com sucesso', ev.payload);
+      document.getElementById('run-status').textContent = 'Concluído';
+    }
+
+    const progress = Math.round(((i + 1) / events.length) * 100);
+    if (!ev.type.includes('FIM_EXECUÇÃO')) updateState('progresso', progress);
+
+    i++;
+    simTimeout = setTimeout(next, 400 + Math.random() * 600);
+  }
+  next();
+}
+
+function stopSimulation() {
+  simRunning = false;
+  clearTimeout(simTimeout);
+  document.getElementById('btn-run').style.display = 'inline-block';
+  document.getElementById('btn-stop').style.display = 'none';
+  document.getElementById('run-status').textContent = 'Parado pelo usuário';
+  updateState('situacao', 'parado');
+}
+
+function resolveInterrupt(action) {
+  const el = document.getElementById('hitl-demo');
+  if (action === 'approve') {
+    el.innerHTML = '<div style="color:var(--accent-green);font-size:13px;font-weight:600;padding:20px;text-align:center">&#x2713; Interrupção resolvida: APROVADO<br><span style="font-size:11px;color:var(--text-secondary);font-weight:400">Execução retomada. Pipeline continua.</span></div>';
+  } else if (action === 'reject') {
+    el.innerHTML = '<div style="color:var(--accent-red);font-size:13px;font-weight:600;padding:20px;text-align:center">&#x2717; Interrupção resolvida: REJEITADO<br><span style="font-size:11px;color:var(--text-secondary);font-weight:400">agente_pleno() notificado para revisão. Ciclo de retorno ativado.</span></div>';
+  } else {
+    el.innerHTML = '<div style="color:var(--accent-blue);font-size:13px;font-weight:600;padding:20px;text-align:center">&#x270f; Interrupção resolvida: EDITAR<br><span style="font-size:11px;color:var(--text-secondary);font-weight:400">Direcionamento de agente ativado. Usuário pode redirecionar execução.</span></div>';
+  }
+}
+
+// ===== TOGGLE TEMA CLARO/ESCURO =====
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('taques-theme', next);
+  updateThemeButton(next);
+}
+
+function updateThemeButton(theme) {
+  const icon = document.getElementById('theme-icon');
+  const label = document.getElementById('theme-label');
+  if (theme === 'light') {
+    icon.textContent = '🌙';
+    label.textContent = 'Escuro';
+  } else {
+    icon.textContent = '☀️';
+    label.textContent = 'Claro';
+  }
+}
+
+// Carregar tema salvo ao iniciar
+(function() {
+  const saved = localStorage.getItem('taques-theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    updateThemeButton(saved);
+  }
+})();
+</script>
+
+<!-- ========== RENDERIZAÇÃO DINÂMICA via registry.json ========== -->
+<script>
+(function() {
+  const STATUS_LABELS = {
+    active: { label: 'Ativa', css: 'status-active' },
+    prototype: { label: 'Em Construção', css: 'status-prototype' },
+    planned: { label: 'Planejado', css: 'status-planned' },
+  };
+
+  function statusBadge(status) {
+    const s = STATUS_LABELS[status] || STATUS_LABELS.planned;
+    return `<span class="card-status ${s.css}">${s.label}</span>`;
+  }
+
+  function tagsHTML(tags) {
+    return tags.map(t => `<span class="tag">${t}</span>`).join('');
+  }
+
+  // ── Render Skills ──
+  function renderSkills(skills) {
+    const container = document.getElementById('skills-list');
+    if (!container) return;
+
+    container.innerHTML = skills.map(s => `
+      <div class="agent-card" data-status="${s.status}" onclick="this.classList.toggle('expanded')">
+        <div class="card-header">
+          <div class="card-icon skill">${s.icon}</div>
+          ${statusBadge(s.status)}
+        </div>
+        <div class="card-name">${s.name}</div>
+        <div class="card-type">${s.type_label}</div>
+        <div class="card-desc">${s.description}</div>
+        <div class="card-tags">${tagsHTML(s.tags)}</div>
+        <div class="card-details">
+          <h4>Info</h4>
+          <ul>
+            ${s.passos ? `<li>Pipeline: ${s.passos} passos</li>` : ''}
+            ${s.tem_codigo ? '<li>Inclui código Python embutido</li>' : ''}
+            <li>Departamento: ${s.department === 'tecnico' ? 'Técnico' : s.department === 'juridico' ? 'Jurídico' : 'Geral'}</li>
+          </ul>
+          <h4>Caminho</h4><span class="path">${s.path}</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ── Render Agents ──
+  function renderAgentSection(title, badge, agents) {
+    let html = `<div class="section-title" style="margin-top:24px">${title} <span class="badge ${badge.css}">${badge.label}</span></div>`;
+    html += '<div class="agent-list">';
+
+    for (const a of agents) {
+      let detailsHTML = '';
+      if (a.sub_agents && a.sub_agents.length > 0) {
+        const subList = a.sub_agents.map(sa => {
+          const sStatus = sa.status === 'prototype'
+            ? '<span style="color:var(--accent-orange)">[Em Construção]</span>'
+            : sa.status === 'active'
+              ? '<span style="color:var(--accent-green)">[Ativo]</span>'
+              : '<span style="opacity:0.5">[Planejado]</span>';
+          return `<li><strong>${sa.name}</strong> ${sStatus}</li>`;
+        }).join('');
+        detailsHTML = `<div class="card-details"><h4>Sub-agentes / Skills</h4><ul>${subList}</ul></div>`;
+      }
+
+      html += `
+        <div class="agent-card" data-status="${a.status}" onclick="this.classList.toggle('expanded')">
+          <div class="card-header">
+            <div class="card-icon agent">${a.icon}</div>
+            ${statusBadge(a.status)}
+          </div>
+          <div class="card-name">${a.name}</div>
+          <div class="card-type">${a.function} &middot; ${a.role}</div>
+          <div class="card-desc">${a.description}</div>
+          <div class="card-tags">${tagsHTML(a.tags)}</div>
+          ${detailsHTML}
+        </div>`;
+    }
+
+    html += '</div>';
+    return html;
+  }
+
+  function renderAgents(agents) {
+    const container = document.getElementById('agents-container');
+    if (!container) return;
+
+    let html = '';
+    if (agents.juridico && agents.juridico.length > 0) {
+      html += renderAgentSection('Dept. Jurídico — Agentes',
+        { css: 'status-planned', label: 'Planejado' }, agents.juridico);
+    }
+    if (agents.tecnico && agents.tecnico.length > 0) {
+      html += renderAgentSection('Dept. Técnico — Agentes',
+        { css: 'status-prototype', label: 'Em Desenvolvimento' }, agents.tecnico);
+    }
+    container.innerHTML = html;
+  }
+
+  // ── Update Stats ──
+  function updateStats(registry) {
+    const stats = registry.stats;
+    const skills = registry.skills;
+    const agents = registry.agents;
+
+    // Header
+    const elStatSkills = document.getElementById('stat-skills');
+    const elStatAgents = document.getElementById('stat-agents');
+    if (elStatSkills) elStatSkills.textContent = stats.habilidades_total;
+    if (elStatAgents) elStatAgents.textContent = stats.agentes_total;
+
+    // Métricas
+    const elMetricSkills = document.getElementById('metric-skills');
+    const elMetricSkillsDetail = document.getElementById('metric-skills-detail');
+    if (elMetricSkills) elMetricSkills.textContent = stats.habilidades_total;
+    if (elMetricSkillsDetail) {
+      elMetricSkillsDetail.textContent = skills.map(s => s.name.split(' ')[0]).join(', ');
+    }
+
+    const elMetricAgents = document.getElementById('metric-agents');
+    const elMetricAgentsDetail = document.getElementById('metric-agents-detail');
+    if (elMetricAgents) elMetricAgents.textContent = stats.agentes_total;
+    if (elMetricAgentsDetail) {
+      const jCount = (agents.juridico || []).length;
+      const tCount = (agents.tecnico || []).length;
+      elMetricAgentsDetail.textContent = `Jurídico: ${jCount} — Técnico: ${tCount}`;
+    }
+  }
+
+  // ── Load & Render ──
+  function loadRegistry() {
+    fetch('./registry.json?t=' + Date.now())
+      .then(r => r.json())
+      .then(registry => {
+        renderSkills(registry.skills);
+        renderAgents(registry.agents);
+        updateStats(registry);
+        console.log('[AG-UI] Registry carregado:', registry._meta.generated_at);
+      })
+      .catch(err => {
+        console.error('[AG-UI] Erro ao carregar registry.json:', err);
+        const el = document.getElementById('skills-list');
+        if (el) el.innerHTML = '<div style="padding:40px;text-align:center;color:var(--accent-orange)">Erro ao carregar registry.json. Execute: python3 sync-registry.py</div>';
+      });
+  }
+
+  // Carregar ao iniciar
+  loadRegistry();
+
+  // Auto-refresh a cada 30s (para captar mudanças sem reload manual)
+  setInterval(loadRegistry, 30000);
+})();
+</script>
+</body>
+</html>
