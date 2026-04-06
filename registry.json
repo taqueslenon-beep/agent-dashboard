@@ -1,13 +1,13 @@
 {
   "_meta": {
-    "generated_at": "2026-04-06T14:41:59.735392",
+    "generated_at": "2026-04-06T15:58:44.760582",
     "generator": "sync-registry.py",
     "vault": "/Users/lenontaques/Documents/Obsidian do Lenon"
   },
   "stats": {
-    "habilidades_ativas": 5,
+    "habilidades_ativas": 6,
     "habilidades_construcao": 3,
-    "habilidades_total": 8,
+    "habilidades_total": 9,
     "agentes_total": 18,
     "automacoes_total": 7,
     "mcps_total": 8,
@@ -86,6 +86,25 @@
       "icon": "🏛",
       "path": ".claude/skills/extrator-eproc/SKILL.md",
       "department": "juridico",
+      "passos": 7,
+      "tem_codigo": false
+    },
+    {
+      "id": "Padronizador de Agenda Google Calendar",
+      "name": "Padronizador De Agenda Google Calendar",
+      "type_label": "Habilidade · Geral",
+      "description": "Padroniza titulos de todos os eventos da semana no Google Calendar seguindo o guia documentado no Obsidian. Aplica emojis, separadores, prefixo PRE-AGENDADO e tom de pele. Roda diariamente a meia-noit...",
+      "tags": [
+        "Google Calendar",
+        "Automacao",
+        "Cron",
+        "Padronizacao",
+        "Agenda"
+      ],
+      "status": "active",
+      "icon": "⚙",
+      "path": ".claude/skills/padronizador-agenda/SKILL.md",
+      "department": "geral",
       "passos": 7,
       "tem_codigo": false
     },
