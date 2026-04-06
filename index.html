@@ -620,10 +620,10 @@
     <span class="header-badge">AG-UI Protocol v0.1</span>
   </div>
   <div class="header-right">
-    <div class="header-stat"><span class="dot green"></span> <span id="stat-skills">—</span> Habilidades</div>
+    <div class="header-stat"><span class="dot green"></span> <span id="stat-skills-active">—</span>/<span id="stat-skills">—</span> Skills</div>
     <div class="header-stat"><span class="dot orange"></span> <span id="stat-agents">—</span> Agentes</div>
-    <div class="header-stat"><span class="dot blue"></span> 2 Automações</div>
-    <div class="header-stat"><span class="dot blue"></span> 9 Integrações</div>
+    <div class="header-stat"><span class="dot blue"></span> <span id="stat-automations-active">—</span>/<span id="stat-automations-total">—</span> Automações</div>
+    <div class="header-stat" id="stat-mcps-header"><span class="dot" id="dot-mcps"></span> <span id="stat-mcps-connected">—</span>/<span id="stat-mcps-total">—</span> MCPs</div>
     <button class="theme-toggle" onclick="toggleTheme()" title="Alternar tema claro/escuro">
       <span class="theme-toggle-icon" id="theme-icon">☀️</span>
       <span id="theme-label">Claro</span>
@@ -669,29 +669,29 @@
 
   <div class="metrics">
     <div class="metric">
-      <div class="metric-label">Habilidades Ativas</div>
+      <div class="metric-label">Skills Ativas</div>
       <div class="metric-value" id="metric-skills">—</div>
       <div class="metric-detail" id="metric-skills-detail">Carregando...</div>
     </div>
     <div class="metric">
-      <div class="metric-label">Agentes Planejados</div>
+      <div class="metric-label">Agentes Totais</div>
       <div class="metric-value" id="metric-agents">—</div>
       <div class="metric-detail" id="metric-agents-detail">Carregando...</div>
     </div>
     <div class="metric">
       <div class="metric-label">Automações</div>
-      <div class="metric-value">2</div>
-      <div class="metric-detail">Monitor IAT, Doc. Obsidian</div>
+      <div class="metric-value" id="metric-automations-total">—</div>
+      <div class="metric-detail" id="metric-automations-detail">Carregando...</div>
     </div>
     <div class="metric">
       <div class="metric-label">Sub-Agentes</div>
       <div class="metric-value">14</div>
       <div class="metric-detail">Extratores, Separadores, Redatores</div>
     </div>
-    <div class="metric">
-      <div class="metric-label">Servidores MCP</div>
-      <div class="metric-value">9</div>
-      <div class="metric-detail">Todoist, Trello, Slack, Gmail, Agenda, WA, Supa, EPROC, NLM</div>
+    <div class="metric" id="metric-mcps-card">
+      <div class="metric-label">Servidores MCP <span id="metric-mcps-alert"></span></div>
+      <div class="metric-value" id="metric-mcps-connected">—</div>
+      <div class="metric-detail" id="metric-mcps-detail">Carregando...</div>
     </div>
     <div class="metric">
       <div class="metric-label">Tipos de Evento<br><span style="font-size:8px;opacity:0.6">Event Types</span></div>
@@ -1576,30 +1576,77 @@ function updateThemeButton(theme) {
   // ── Update Stats ──
   function updateStats(registry) {
     const stats = registry.stats;
-    const skills = registry.skills;
+    const skills = registry.skills || [];
     const agents = registry.agents;
+    const mcps = registry.mcps || [];
+    const automations = registry.automations || [];
 
-    // Header
-    const elStatSkills = document.getElementById('stat-skills');
-    const elStatAgents = document.getElementById('stat-agents');
-    if (elStatSkills) elStatSkills.textContent = stats.habilidades_total;
-    if (elStatAgents) elStatAgents.textContent = stats.agentes_total;
+    // ── Calcular MCPs ──
+    const mcpTotal = mcps.length || stats.mcps_total || 0;
+    const mcpConnected = mcps.filter(m => m.status === 'connected').length || stats.mcps_connected || 0;
+    const mcpDisconnected = mcpTotal - mcpConnected;
+    const disconnectedList = mcps.filter(m => m.status !== 'connected').map(m => m.name);
 
-    // Métricas
-    const elMetricSkills = document.getElementById('metric-skills');
-    const elMetricSkillsDetail = document.getElementById('metric-skills-detail');
-    if (elMetricSkills) elMetricSkills.textContent = stats.habilidades_total;
-    if (elMetricSkillsDetail) {
-      elMetricSkillsDetail.textContent = skills.map(s => s.name.split(' ')[0]).join(', ');
+    // ── Calcular Automações ──
+    const autoTotal = automations.length || stats.automacoes_total || 0;
+    const autoActive = automations.filter(a => a.status === 'active').length;
+
+    // ── Calcular Skills ──
+    const skillsAtivas = stats.habilidades_ativas || skills.filter(s => s.status === 'active').length;
+    const skillsTotal = stats.habilidades_total || skills.length;
+
+    // ── Header ──
+    const el = id => document.getElementById(id);
+    if (el('stat-skills-active')) el('stat-skills-active').textContent = skillsAtivas;
+    if (el('stat-skills')) el('stat-skills').textContent = skillsTotal;
+    if (el('stat-agents')) el('stat-agents').textContent = stats.agentes_total;
+    if (el('stat-automations-active')) el('stat-automations-active').textContent = autoActive;
+    if (el('stat-automations-total')) el('stat-automations-total').textContent = autoTotal;
+    if (el('stat-mcps-connected')) el('stat-mcps-connected').textContent = mcpConnected;
+    if (el('stat-mcps-total')) el('stat-mcps-total').textContent = mcpTotal;
+
+    // Dot de MCPs no header: vermelho se há desconectados
+    const dotMcps = el('dot-mcps');
+    if (dotMcps) {
+      dotMcps.style.background = mcpDisconnected > 0 ? 'var(--accent-red)' : 'var(--accent-green)';
     }
 
-    const elMetricAgents = document.getElementById('metric-agents');
-    const elMetricAgentsDetail = document.getElementById('metric-agents-detail');
-    if (elMetricAgents) elMetricAgents.textContent = stats.agentes_total;
-    if (elMetricAgentsDetail) {
+    // ── Métricas ──
+    // Skills
+    if (el('metric-skills')) el('metric-skills').textContent = skillsAtivas;
+    if (el('metric-skills-detail')) {
+      el('metric-skills-detail').textContent =
+        `${skillsAtivas} ativas de ${skillsTotal} total`;
+    }
+
+    // Agentes
+    if (el('metric-agents')) el('metric-agents').textContent = stats.agentes_total;
+    if (el('metric-agents-detail')) {
       const jCount = (agents.juridico || []).length;
       const tCount = (agents.tecnico || []).length;
-      elMetricAgentsDetail.textContent = `Jurídico: ${jCount} — Técnico: ${tCount}`;
+      el('metric-agents-detail').textContent = `Jurídico: ${jCount} — Técnico: ${tCount}`;
+    }
+
+    // Automações
+    if (el('metric-automations-total')) el('metric-automations-total').textContent = autoTotal;
+    if (el('metric-automations-detail')) {
+      el('metric-automations-detail').textContent = `${autoActive} ativas de ${autoTotal} total`;
+    }
+
+    // MCPs — card com alerta vermelho se desconectado
+    const mcpCard = el('metric-mcps-card');
+    if (el('metric-mcps-connected')) el('metric-mcps-connected').textContent = `${mcpConnected}/${mcpTotal}`;
+    if (el('metric-mcps-detail')) {
+      if (mcpDisconnected > 0) {
+        el('metric-mcps-detail').innerHTML =
+          `<span style="color:var(--accent-red);font-weight:600">⚠ ${disconnectedList.join(', ')} desconectado${mcpDisconnected > 1 ? 's' : ''}</span>`;
+        if (mcpCard) mcpCard.style.borderColor = 'var(--accent-red)';
+        if (el('metric-mcps-alert')) el('metric-mcps-alert').innerHTML =
+          `<span style="color:var(--accent-red);font-size:9px;font-weight:600;margin-left:4px">● ${mcpDisconnected} offline</span>`;
+      } else {
+        el('metric-mcps-detail').textContent = `Todos conectados`;
+        if (mcpCard) mcpCard.style.borderColor = '';
+      }
     }
   }
 
