@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grafo LangGraph — Agente 0 › ext_eproc() | Taques Agents</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --preto: #0A0908;
+    --verde: #223631;
+    --verde-claro: #2d4a42;
+    --verde-hover: #1a2b27;
+    --bege-medio: #D6CCC1;
+    --bege-claro: #EAE0D5;
+    --bege-fundo: #F5F0EB;
+
+    --bg-primary: #0A0908;
+    --bg-secondary: #111110;
+    --bg-card: #161614;
+    --bg-elevated: #1c1c19;
+    --border: #2a2a26;
+    --border-light: #3a3a35;
+    --text-primary: var(--bege-claro);
+    --text-secondary: #a8a099;
+    --text-muted: #6e6860;
+
+    --accent-green: #4a8c6f;
+    --accent-green-soft: rgba(74,140,111,0.15);
+    --accent-orange: #c4944a;
+    --accent-orange-soft: rgba(196,148,74,0.15);
+    --accent-red: #b85450;
+    --accent-red-soft: rgba(184,84,80,0.12);
+    --accent-blue: #6b8fa3;
+    --accent-blue-soft: rgba(107,143,163,0.15);
+    --accent-purple: #8b7ea3;
+    --accent-purple-soft: rgba(139,126,163,0.15);
+    --accent-cyan: #5a9e8f;
+    --accent-cyan-soft: rgba(90,158,143,0.12);
+    --accent-yellow: #c9a84c;
+    --accent-yellow-soft: rgba(201,168,76,0.12);
+
+    --shadow: 0 2px 8px rgba(0,0,0,0.3);
+    --radius: 8px;
+  }
+
+  [data-theme="light"] {
+    --bg-primary: #F5F0EB;
+    --bg-secondary: #EAE0D5;
+    --bg-card: #FFFFFF;
+    --bg-elevated: #F0EBE5;
+    --border: #D6CCC1;
+    --border-light: #C4B9AD;
+    --text-primary: #0A0908;
+    --text-secondary: #4A453F;
+    --text-muted: #8A8279;
+    --shadow: 0 2px 8px rgba(10,9,8,0.08);
+    --accent-green: #2d6b4f;
+    --accent-green-soft: rgba(45,107,79,0.1);
+    --accent-orange: #9e7535;
+    --accent-orange-soft: rgba(158,117,53,0.1);
+    --accent-red: #a04340;
+    --accent-red-soft: rgba(160,67,64,0.08);
+    --accent-blue: #4a7389;
+    --accent-blue-soft: rgba(74,115,137,0.1);
+    --accent-purple: #6b5e83;
+    --accent-purple-soft: rgba(107,94,131,0.1);
+    --accent-cyan: #3d7f72;
+    --accent-cyan-soft: rgba(61,127,114,0.08);
+    --accent-yellow: #9e7e2e;
+    --accent-yellow-soft: rgba(158,126,46,0.1);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    height: 100vh; overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    background: var(--verde);
+    padding: 10px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: fixed; top:0; left:0; right:0; z-index:100;
+  }
+  .header-left { display:flex; align-items:center; gap:12px; }
+  .logo-mark {
+    width:28px; height:28px; border:2px solid var(--bege-medio);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:11px; color:var(--bege-claro); letter-spacing:1px;
+  }
+  .logo-text { font-size:13px; font-weight:600; color:var(--bege-claro); letter-spacing:0.5px; }
+  .logo-sub { font-size:9px; color:var(--bege-medio); opacity:0.8; }
+  .header-badge {
+    font-size:8px; padding:2px 7px; border-radius:3px;
+    background:rgba(234,224,213,0.1); color:var(--bege-medio);
+    border:1px solid rgba(234,224,213,0.2); font-weight:500;
+    letter-spacing:0.5px; text-transform:uppercase;
+  }
+  .header-right { display:flex; align-items:center; gap:8px; }
+  .header-btn {
+    background:rgba(234,224,213,0.1); border:1px solid rgba(234,224,213,0.2);
+    border-radius:4px; padding:4px 10px; cursor:pointer;
+    display:flex; align-items:center; gap:5px;
+    font-size:10px; color:var(--bege-medio); font-family:inherit; transition:all 0.2s;
+  }
+  .header-btn:hover { background:rgba(234,224,213,0.18); }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    position:fixed; top:48px; left:0; bottom:0; width:260px;
+    background:var(--bg-secondary); border-right:1px solid var(--border);
+    overflow-y:auto; padding:16px; z-index:50;
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+  .sidebar-title {
+    font-size:9px; font-weight:600; text-transform:uppercase;
+    letter-spacing:0.6px; color:var(--text-muted); margin-bottom:12px;
+  }
+  .node-list { list-style:none; }
+  .node-item {
+    display:flex; align-items:flex-start; gap:8px; padding:8px 10px;
+    border-radius:6px; margin-bottom:2px; cursor:pointer; transition:all 0.2s;
+    border:1px solid transparent;
+  }
+  .node-item:hover { background:var(--bg-elevated); border-color:var(--border); }
+  .node-item.active { background:var(--bg-elevated); border-color:var(--border-light); }
+  .node-num {
+    width:20px; height:20px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:9px; font-weight:700; flex-shrink:0;
+  }
+  .node-num.start { background:var(--accent-green-soft); color:var(--accent-green); border:1px solid var(--accent-green); }
+  .node-num.action { background:var(--accent-blue-soft); color:var(--accent-blue); border:1px solid var(--accent-blue); }
+  .node-num.decision { background:var(--accent-orange-soft); color:var(--accent-orange); border:1px solid var(--accent-orange); }
+  .node-num.system { background:var(--accent-cyan-soft); color:var(--accent-cyan); border:1px solid var(--accent-cyan); }
+  .node-num.error { background:var(--accent-red-soft); color:var(--accent-red); border:1px solid var(--accent-red); }
+  .node-num.router { background:var(--accent-purple-soft); color:var(--accent-purple); border:1px solid var(--accent-purple); }
+  .node-num.end { background:var(--accent-yellow-soft); color:var(--accent-yellow); border:1px solid var(--accent-yellow); }
+  .node-info { flex:1; min-width:0; }
+  .node-name { font-size:11px; font-weight:600; color:var(--text-primary); line-height:1.3; }
+  .node-type { font-size:9px; color:var(--text-muted); letter-spacing:0.3px; }
+  .node-risks { display:flex; gap:3px; margin-top:3px; }
+  .risk-tag {
+    font-size:8px; padding:1px 5px; border-radius:2px;
+    background:var(--accent-red-soft); color:var(--accent-red);
+    border:1px solid rgba(184,84,80,0.2); font-weight:600;
+  }
+
+  .phase-divider {
+    font-size:9px; font-weight:700; text-transform:uppercase;
+    letter-spacing:0.6px; color:var(--verde); padding:12px 10px 6px;
+    border-top:1px solid var(--border); margin-top:8px;
+  }
+  .phase-divider:first-child { border-top:none; margin-top:0; }
+  [data-theme="light"] .phase-divider { color:var(--verde); }
+
+  /* ===== CANVAS ===== */
+  .canvas {
+    position:fixed; top:48px; left:260px; right:0; bottom:0;
+    overflow:hidden; cursor:grab;
+  }
+  .canvas:active { cursor:grabbing; }
+  .canvas-inner {
+    transform-origin: 0 0;
+    position:absolute; top:0; left:0;
+    width:2000px; height:2600px;
+  }
+
+  /* ===== GRAPH SVG ===== */
+  .graph-svg { width:100%; height:100%; }
+  .graph-svg text { font-family:'Inter',sans-serif; }
+
+  /* Phase backgrounds */
+  .phase-bg { rx:12; opacity:0.5; }
+
+  /* Nodes */
+  .g-node { cursor:pointer; }
+  .g-node:hover .node-box { filter:brightness(1.15); }
+  .node-box { transition:filter 0.2s; }
+
+  /* Edges */
+  .edge-line { fill:none; stroke-width:1.5; }
+  .edge-yes { stroke:var(--accent-green); }
+  .edge-no { stroke:var(--accent-orange); stroke-dasharray:6,3; }
+  .edge-flow { stroke:var(--border-light); }
+  .edge-loop { stroke:var(--accent-red); stroke-dasharray:5,4; }
+  .edge-label {
+    font-size:9px; font-weight:600; fill:var(--text-muted);
+  }
+
+  /* ===== DETAIL PANEL ===== */
+  .detail-panel {
+    position:fixed; top:48px; right:0; bottom:0; width:320px;
+    background:var(--bg-secondary); border-left:1px solid var(--border);
+    overflow-y:auto; padding:20px; z-index:50;
+    transform:translateX(100%); transition:transform 0.3s ease, background-color 0.3s;
+  }
+  .detail-panel.open { transform:translateX(0); }
+  .detail-close {
+    position:absolute; top:10px; right:10px; background:none; border:none;
+    color:var(--text-muted); font-size:18px; cursor:pointer;
+  }
+  .detail-title { font-size:15px; font-weight:700; margin-bottom:4px; }
+  .detail-type { font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:14px; }
+  .detail-section {
+    font-size:10px; color:var(--text-muted); text-transform:uppercase;
+    letter-spacing:0.5px; font-weight:600; margin:14px 0 6px;
+  }
+  .detail-text { font-size:12px; color:var(--text-secondary); line-height:1.7; }
+  .detail-code {
+    font-family:'SF Mono','Fira Code',monospace; font-size:10px;
+    background:var(--bg-primary); border:1px solid var(--border);
+    border-radius:4px; padding:10px; margin-top:6px;
+    color:var(--text-muted); overflow-x:auto; white-space:pre; line-height:1.6;
+  }
+  .detail-risks { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+  .detail-risk {
+    font-size:10px; padding:4px 10px; border-radius:4px;
+    background:var(--accent-red-soft); color:var(--accent-red);
+    border:1px solid rgba(184,84,80,0.2);
+  }
+  .detail-risk b { font-weight:700; }
+  .detail-connections { margin-top:6px; }
+  .detail-conn {
+    font-size:11px; color:var(--text-secondary); padding:3px 0;
+    display:flex; align-items:center; gap:6px;
+  }
+  .detail-conn .arrow { color:var(--accent-green); font-weight:700; }
+  .detail-conn .arrow.no { color:var(--accent-orange); }
+  .detail-conn .arrow.loop { color:var(--accent-red); }
+
+  /* ===== ZOOM CONTROLS ===== */
+  .zoom-controls {
+    position:fixed; bottom:20px; right:20px; display:flex;
+    gap:4px; z-index:60;
+  }
+  .zoom-btn {
+    width:36px; height:36px; border-radius:6px;
+    background:var(--bg-card); border:1px solid var(--border);
+    color:var(--text-primary); font-size:16px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:all 0.2s; font-family:inherit;
+  }
+  .zoom-btn:hover { background:var(--bg-elevated); border-color:var(--border-light); }
+  .zoom-label {
+    min-width:44px; height:36px; border-radius:6px;
+    background:var(--bg-card); border:1px solid var(--border);
+    color:var(--text-muted); font-size:10px; font-weight:600;
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  /* ===== MINIMAP ===== */
+  .minimap {
+    position:fixed; bottom:20px; left:270px;
+    width:180px; height:140px;
+    background:var(--bg-card); border:1px solid var(--border);
+    border-radius:6px; overflow:hidden; z-index:60;
+    box-shadow: var(--shadow);
+  }
+  .minimap svg { width:100%; height:100%; }
+  .minimap-viewport {
+    fill:rgba(74,140,111,0.15); stroke:var(--accent-green); stroke-width:1.5;
+  }
+
+  /* ===== LEGEND ===== */
+  .legend {
+    position:fixed; bottom:20px; left:460px;
+    background:var(--bg-card); border:1px solid var(--border);
+    border-radius:6px; padding:10px 14px; z-index:60;
+    display:flex; gap:14px; flex-wrap:wrap;
+    box-shadow: var(--shadow);
+  }
+  .legend-item { display:flex; align-items:center; gap:5px; font-size:10px; color:var(--text-secondary); }
+  .legend-line { width:20px; height:2px; border-radius:1px; }
+  .legend-line.flow { background:var(--border-light); }
+  .legend-line.yes { background:var(--accent-green); }
+  .legend-line.no { background:var(--accent-orange); border-style:dashed; height:0; border-top:2px dashed var(--accent-orange); }
+  .legend-line.loop { background:var(--accent-red); border-style:dashed; height:0; border-top:2px dashed var(--accent-red); }
+  .legend-dot { width:10px; height:10px; border-radius:50%; }
+  .legend-dot.start { background:var(--accent-green); }
+  .legend-dot.action { background:var(--accent-blue); }
+  .legend-dot.decision { background:var(--accent-orange); }
+  .legend-dot.system { background:var(--accent-cyan); }
+  .legend-dot.error { background:var(--accent-red); }
+  .legend-dot.router { background:var(--accent-purple); }
+  .legend-dot.end { background:var(--accent-yellow); }
+
+  /* SVG theme adaptation */
+  [data-theme="light"] .canvas-inner svg { }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="logo-mark">TA</div>
+    <div>
+      <div class="logo-text">AGENTE 0 › EXT_EPROC()</div>
+      <div class="logo-sub">agente_estagiario() › Sub-agente de Extração · LangGraph View</div>
+    </div>
+    <span class="header-badge">20 nós · 13 riscos</span>
+  </div>
+  <div class="header-right">
+    <button class="header-btn" onclick="fitToScreen()">⊞ Ajustar</button>
+    <button class="header-btn" onclick="toggleTheme()" id="theme-btn">☀️ Claro</button>
+    <a class="header-btn" href="index.html" style="text-decoration:none">← Painel</a>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-title">Nós do Grafo · Graph Nodes</div>
+
+  <div class="phase-divider">Fase 1 — Identificação</div>
+  <ul class="node-list">
+    <li class="node-item" data-node="1" onclick="selectNode(1)">
+      <span class="node-num start">1</span>
+      <div class="node-info">
+        <div class="node-name">__inicio__</div>
+        <div class="node-type">Receber solicitação</div>
+      </div>
+    </li>
+    <li class="node-item" data-node="2" onclick="selectNode(2)">
+      <span class="node-num decision">2</span>
+      <div class="node-info">
+        <div class="node-name">numero_fornecido()</div>
+        <div class="node-type">Decisão condicional</div>
+      </div>
+    </li>
+    <li class="node-item" data-node="3" onclick="selectNode(3)">
+      <span class="node-num system">3</span>
+      <div class="node-info">
+        <div class="node-name">buscar_bases()</div>
+        <div class="node-type">MCP: Supabase, Trello, Slack...</div>
+      </div>
+    </li>
+    <li class="node-item" data-node="4" onclick="selectNode(4)">
+      <span class="node-num decision">4</span>
+      <div class="node-info">
+        <div class="node-name">validar_numero()</div>
+        <div class="node-type">Decisão condicional</div>
+      </div>
+    </li>
+  </ul>
+
+  <div class="phase-divider">Fase 2 — Roteamento</div>
+  <ul class="node-list">
+    <li class="node-item" data-node="5" onclick="selectNode(5)">
+      <span class="node-num action">5</span>
+      <div class="node-info">
+        <div class="node-name">parsear_cnj()</div>
+        <div class="node-type">Extrair tribunal e instância</div>
+      </div>
+    </li>
+    <li class="node-item" data-node="6" onclick="selectNode(6)">
+      <span class="node-num router">6</span>
+      <div class="node-info">
+        <div class="node-name">router_tribunal()</div>
+        <div class="node-type">Roteamento condicional</div>
+        <div class="node-risks"><span class="risk-tag">R10</span><span class="risk-tag">R11</span></div>
+      </div>
+    </li>
+  </ul>
+
+  <div class="phase-divider">Fase 3 — Autenticação</div>
+  <ul class="node-list">
+    <li class="node-item" data-node="7" onclick="selectNode(7)">
+      <span class="node-num system">7</span>
+      <div class="node-info">
+        <div class="node-name">autenticar_eproc()</div>
+        <div class="node-type">Certificado A1 + Playwright</div>
+        <div class="node-risks"><span class="risk-tag">R1</span><span class="risk-tag">R2</span><span class="risk-tag">R12</span></div>
+      </div>
+    </li>
+    <li class="node-item" data-node="8" onclick="selectNode(8)">
+      <span class="node-num action">8</span>
+      <div class="node-info">
+        <div class="node-name">localizar_processo()</div>
+        <div class="node-type">Busca por número no E-Proc</div>
+        <div class="node-risks"><span class="risk-tag">R5</span><span class="risk-tag">R9</span></div>
+      </div>
+    </li>
+    <li class="node-item" data-node="9" onclick="selectNode(9)">
+      <span class="node-num decision">9</span>
+      <div class="node-info">
+        <div class="node-name">habilitado()</div>
+        <div class="node-type">Decisão: já somos procuradores?</div>
+      </div>
+    </li>
+  </ul>
+
+  <div class="phase-divider">Fase 4 — Acesso</div>
+  <ul class="node-list">
+    <li class="node-item" data-node="10" onclick="selectNode(10)">
+      <span class="node-num action">10</span>
+      <div class="node-info">
+        <div class="node-name">solicitar_acesso()</div>
+        <div class="node-type">Navegar até solicitar acesso</div>
+        <div class="node-risks"><span class="risk-tag">R3</span></div>
+      </div>
+    </li>
+    <li class="node-item" data-node="11" onclick="selectNode(11)">
+      <span class="node-num error">11</span>
+      <div class="node-info">
+        <div class="node-name">resolver_captcha()</div>
+        <div class="node-type">⚠ Ponto crítico</div>
+        <div class="node-risks"><span class="risk-tag">R4</span></div>
+      </div>
+    </li>
+    <li class="node-item" data-node="12" onclick="selectNode(12)">
+      <span class="node-num decision">12</span>
+      <div class="node-info">
+        <div class="node-name">captcha_ok()</div>
+        <div class="node-type">Retry máx 3x</div>
+      </div>
+    </li>
+    <li class="node-item" data-node="13" onclick="selectNode(13)">
+      <span class="node-num system">13</span>
+      <div class="node-info">
+        <div class="node-name">confirmar_acesso()</div>
+        <div class="node-type">Verificar liberação</div>
+      </div>
+    </li>
+  </ul>
+
+  <div class="phase-divider">Fase 5 — Download</div>
+  <ul class="node-list">
+    <li class="node-item" data-node="14" onclick="selectNode(14)">
+      <span class="node-num action">14</span>
+      <div class="node-info">
+        <div class="node-name">iniciar_download()</div>
+        <div class="node-type">Clicar "Download Completo"</div>
+        <div class="node-risks"><span class="risk-tag">R3</span></div>
+      </div>
+    </li>
+    <li class="node-item" data-node="15" onclick="selectNode(15)">
+      <span class="node-num system">15</span>
+      <div class="node-info">
+        <div class="node-name">polling_geracao()</div>
+        <div class="node-type">Aguardar até 10min</div>
+        <div class="node-risks"><span class="risk-tag">R6</span><span class="risk-tag">R9</span></div>
+      </div>
+    </li>
+    <li class="node-item" data-node="16" onclick="selectNode(16)">
+      <span class="node-num decision">16</span>
+      <div class="node-info">
+        <div class="node-name">arquivo_pronto()</div>
+        <div class="node-type">Timeout ou sucesso?</div>
+      </div>
+    </li>
+    <li class="node-item" data-node="17" onclick="selectNode(17)">
+      <span class="node-num action">17</span>
+      <div class="node-info">
+        <div class="node-name">baixar_pdf()</div>
+        <div class="node-type">ZIP ou partes individuais</div>
+        <div class="node-risks"><span class="risk-tag">R7</span><span class="risk-tag">R8</span><span class="risk-tag">R13</span></div>
+      </div>
+    </li>
+  </ul>
+
+  <div class="phase-divider">Fase 6 — Finalização</div>
+  <ul class="node-list">
+    <li class="node-item" data-node="18" onclick="selectNode(18)">
+      <span class="node-num action">18</span>
+      <div class="node-info">
+        <div class="node-name">organizar_arquivos()</div>
+        <div class="node-type">Mover para Drive/OneDrive</div>
+      </div>
+    </li>
+    <li class="node-item" data-node="19" onclick="selectNode(19)">
+      <span class="node-num decision">19</span>
+      <div class="node-info">
+        <div class="node-name">mais_processos()</div>
+        <div class="node-type">Loop de lote</div>
+        <div class="node-risks"><span class="risk-tag">R7</span></div>
+      </div>
+    </li>
+    <li class="node-item" data-node="20" onclick="selectNode(20)">
+      <span class="node-num end">20</span>
+      <div class="node-info">
+        <div class="node-name">__fim__</div>
+        <div class="node-type">Relatório final</div>
+      </div>
+    </li>
+  </ul>
+</div>
+
+<!-- CANVAS -->
+<div class="canvas" id="canvas">
+  <div class="canvas-inner" id="canvas-inner">
+    <svg class="graph-svg" viewBox="0 0 1400 2400" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrow-flow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L8,3 L0,6" fill="var(--border-light)"/>
+        </marker>
+        <marker id="arrow-yes" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L8,3 L0,6" fill="var(--accent-green)"/>
+        </marker>
+        <marker id="arrow-no" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L8,3 L0,6" fill="var(--accent-orange)"/>
+        </marker>
+        <marker id="arrow-loop" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L8,3 L0,6" fill="var(--accent-red)"/>
+        </marker>
+      </defs>
+
+      <!-- ====== FASE 1: IDENTIFICAÇÃO ====== -->
+      <rect x="40" y="20" width="660" height="380" rx="12" fill="var(--accent-green-soft)" stroke="var(--accent-green)" stroke-width="0.5" opacity="0.4"/>
+      <text x="60" y="50" font-size="10" font-weight="700" fill="var(--accent-green)" letter-spacing="1" text-transform="uppercase">FASE 1 — IDENTIFICAÇÃO DO PROCESSO</text>
+
+      <!-- Node 1: __inicio__ -->
+      <g class="g-node" data-id="1" onclick="selectNode(1)">
+        <rect class="node-box" x="280" y="70" width="180" height="48" rx="24" fill="var(--accent-green)" stroke="var(--accent-green)" stroke-width="2"/>
+        <text x="370" y="90" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">__inicio__</text>
+        <text x="370" y="106" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.7)">Receber solicitação</text>
+        <circle cx="290" cy="78" r="9" fill="#fff" stroke="var(--accent-green)" stroke-width="1.5"/>
+        <text x="290" y="82" text-anchor="middle" font-size="8" font-weight="700" fill="var(--accent-green)">1</text>
+      </g>
+
+      <!-- Edge 1→2 -->
+      <line x1="370" y1="118" x2="370" y2="155" stroke="var(--border-light)" stroke-width="1.5" marker-end="url(#arrow-flow)"/>
+
+      <!-- Node 2: numero_fornecido() — DIAMOND -->
+      <g class="g-node" data-id="2" onclick="selectNode(2)">
+        <polygon class="node-box" points="370,155 450,195 370,235 290,195" fill="var(--bg-card)" stroke="var(--accent-orange)" stroke-width="2"/>
+        <text x="370" y="192" text-anchor="middle" font-size="10" font-weight="600" fill="var(--text-primary)">número</text>
+        <text x="370" y="205" text-anchor="middle" font-size="10" font-weight="600" fill="var(--text-primary)">fornecido?</text>
+        <circle cx="295" cy="163" r="9" fill="var(--accent-orange)" stroke="var(--accent-orange)" stroke-width="1"/>
+        <text x="295" y="167" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">2</text>
+      </g>
+
+      <!-- Edge 2→YES→5 (direct to parsear) -->
+      <line x1="450" y1="195" x2="540" y2="195" stroke="var(--accent-green)" stroke-width="1.5" marker-end="url(#arrow-yes)"/>
+      <text x="490" y="188" font-size="9" font-weight="600" fill="var(--accent-green)" text-anchor="middle">SIM</text>
+
+      <!-- Edge 2→NO→3 -->
+      <line x1="370" y1="235" x2="370" y2="270" stroke="var(--accent-orange)" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrow-no)"/>
+      <text x="385" y="258" font-size="9" font-weight="600" fill="var(--accent-orange)">NÃO</text>
+
+      <!-- Node 3: buscar_bases() -->
+      <g class="g-node" data-id="3" onclick="selectNode(3)">
+        <rect class="node-box" x="260" y="270" width="220" height="52" rx="6" fill="var(--bg-card)" stroke="var(--accent-cyan)" stroke-width="2"/>
+        <text x="370" y="293" text-anchor="middle" font-size="11" font-weight="600" fill="var(--text-primary)">buscar_bases()</text>
+        <text x="370" y="308" text-anchor="middle" font-size="9" fill="var(--text-muted)">Supabase · Trello · Slack · Drive</text>
+        <circle cx="270" cy="278" r="9" fill="var(--accent-cyan)" stroke="var(--accent-cyan)" stroke-width="1"/>
+        <text x="270" y="282" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">3</text>
+      </g>
+
+      <!-- Edge 3→4 -->
+      <line x1="370" y1="322" x2="370" y2="340" stroke="var(--border-light)" stroke-width="1.5" marker-end="url(#arrow-flow)"/>
+
+      <!-- Node 4: validar_numero() — DIAMOND -->
+      <g class="g-node" data-id="4" onclick="selectNode(4)">
+        <polygon class="node-box" points="370,340 440,370 370,400 300,370" fill="var(--bg-card)" stroke="var(--accent-orange)" stroke-width="2"/>
+        <text x="370" y="367" text-anchor="middle" font-size="9" font-weight="600" fill="var(--text-primary)">válido?</text>
+        <text x="370" y="380" text-anchor="middle" font-size="9" font-weight="600" fill="var(--text-primary)"></text>
+        <circle cx="305" cy="348" r="9" fill="var(--accent-orange)" stroke="var(--accent-orange)" stroke-width="1"/>
+        <text x="305" y="352" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">4</text>
+      </g>
+
+      <!-- Edge 4→YES→5 -->
+      <path d="M440,370 L540,370 L540,490" class="edge-line edge-yes" stroke-width="1.5" marker-end="url(#arrow-yes)"/>
+      <text x="480" y="362" font-size="9" font-weight="600" fill="var(--accent-green)" text-anchor="middle">SIM</text>
+
+      <!-- Edge 4→NO→loop back to 1 -->
+      <path d="M300,370 L200,370 L200,94 L280,94" class="edge-line edge-loop" stroke-width="1.5" stroke-dasharray="5,4" marker-end="url(#arrow-loop)"/>
+      <text x="190" y="230" font-size="9" font-weight="600" fill="var(--accent-red)" text-anchor="end" transform="rotate(-90,190,230)">NÃO → solicitar</text>
+
+      <!-- Bridge: 2 YES → joins at node 5 -->
+      <path d="M540,195 L540,490" class="edge-line" stroke="var(--accent-green)" stroke-width="1.5"/>
+
+      <!-- ====== FASE 2: ROTEAMENTO ====== -->
+      <rect x="40" y="420" width="1320" height="200" rx="12" fill="var(--accent-purple-soft)" stroke="var(--accent-purple)" stroke-width="0.5" opacity="0.4"/>
+      <text x="60" y="450" font-size="10" font-weight="700" fill="var(--accent-purple)" letter-spacing="1">FASE 2 — ROTEAMENTO POR TRIBUNAL</text>
+
+      <!-- Node 5: parsear_cnj() -->
+      <g class="g-node" data-id="5" onclick="selectNode(5)">
+        <rect class="node-box" x="440" y="470" width="200" height="52" rx="6" fill="var(--bg-card)" stroke="var(--accent-blue)" stroke-width="2"/>
+        <text x="540" y="493" text-anchor="middle" font-size="11" font-weight="600" fill="var(--text-primary)">parsear_cnj()</text>
+        <text x="540" y="508" text-anchor="middle" font-size="9" fill="var(--text-muted)">NNNNNNN-DD.AAAA.J.TR.OOOO</text>
+        <circle cx="450" cy="478" r="9" fill="var(--accent-blue)" stroke="var(--accent-blue)" stroke-width="1"/>
+        <text x="450" y="482" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">5</text>
+      </g>
+
+      <!-- Edge 5→6 -->
+      <line x1="540" y1="522" x2="540" y2="548" stroke="var(--border-light)" stroke-width="1.5" marker-end="url(#arrow-flow)"/>
+
+      <!-- Node 6: router_tribunal() — DIAMOND large -->
+      <g class="g-node" data-id="6" onclick="selectNode(6)">
+        <polygon class="node-box" points="540,548 640,588 540,628 440,588" fill="var(--bg-card)" stroke="var(--accent-purple)" stroke-width="2"/>
+        <text x="540" y="584" text-anchor="middle" font-size="10" font-weight="600" fill="var(--text-primary)">router</text>
+        <text x="540" y="597" text-anchor="middle" font-size="10" font-weight="600" fill="var(--text-primary)">tribunal</text>
+        <circle cx="445" cy="556" r="9" fill="var(--accent-purple)" stroke="var(--accent-purple)" stroke-width="1"/>
+        <text x="445" y="560" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">6</text>
+      </g>
+
+      <!-- Tribunal branches from router -->
+      <!-- TJSC 1G -->
+      <g>
+        <rect x="100" y="560" width="110" height="36" rx="4" fill="var(--bg-elevated)" stroke="var(--accent-cyan)" stroke-width="1"/>
+        <text x="155" y="577" text-anchor="middle" font-size="9" font-weight="600" fill="var(--accent-cyan)">TJSC 1ª Inst.</text>
+        <text x="155" y="590" text-anchor="middle" font-size="8" fill="var(--text-muted)">eproc1g.tjsc</text>
+        <line x1="210" y1="578" x2="440" y2="588" stroke="var(--accent-purple)" stroke-width="1" stroke-dasharray="3,2"/>
+      </g>
+      <!-- TJSC 2G -->
+      <g>
+        <rect x="100" y="600" width="110" height="36" rx="4" fill="var(--bg-elevated)" stroke="var(--accent-cyan)" stroke-width="1"/>
+        <text x="155" y="617" text-anchor="middle" font-size="9" font-weight="600" fill="var(--accent-cyan)">TJSC 2ª Inst.</text>
+        <text x="155" y="630" text-anchor="middle" font-size="8" fill="var(--text-muted)">eproc2g.tjsc</text>
+        <line x1="210" y1="618" x2="440" y2="598" stroke="var(--accent-purple)" stroke-width="1" stroke-dasharray="3,2"/>
+      </g>
+      <!-- TRF4 1G -->
+      <g>
+        <rect x="900" y="560" width="110" height="36" rx="4" fill="var(--bg-elevated)" stroke="var(--accent-blue)" stroke-width="1"/>
+        <text x="955" y="577" text-anchor="middle" font-size="9" font-weight="600" fill="var(--accent-blue)">TRF4 1ª Inst.</text>
+        <text x="955" y="590" text-anchor="middle" font-size="8" fill="var(--text-muted)">eproc.trf4</text>
+        <line x1="900" y1="578" x2="640" y2="588" stroke="var(--accent-purple)" stroke-width="1" stroke-dasharray="3,2"/>
+      </g>
+      <!-- TRF4 2G -->
+      <g>
+        <rect x="900" y="600" width="110" height="36" rx="4" fill="var(--bg-elevated)" stroke="var(--accent-blue)" stroke-width="1"/>
+        <text x="955" y="617" text-anchor="middle" font-size="9" font-weight="600" fill="var(--accent-blue)">TRF4 2ª Inst.</text>
+        <text x="955" y="630" text-anchor="middle" font-size="8" fill="var(--text-muted)">eproc.trf4/2g</text>
+        <line x1="900" y1="618" x2="640" y2="598" stroke="var(--accent-purple)" stroke-width="1" stroke-dasharray="3,2"/>
+      </g>
+      <!-- Futuro -->
+      <g>
+        <rect x="1100" y="575" width="110" height="36" rx="4" fill="var(--bg-elevated)" stroke="var(--text-muted)" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="1155" y="592" text-anchor="middle" font-size="9" font-weight="500" fill="var(--text-muted)">Futuro...</text>
+        <text x="1155" y="605" text-anchor="middle" font-size="8" fill="var(--text-muted)">PROJUDI, ESAJ</text>
+        <line x1="1100" y1="593" x2="640" y2="593" stroke="var(--text-muted)" stroke-width="0.8" stroke-dasharray="3,3"/>
+      </g>
+
+      <!-- Edge 6→7 -->
+      <line x1="540" y1="628" x2="540" y2="680" stroke="var(--border-light)" stroke-width="1.5" marker-end="url(#arrow-flow)"/>
+
+      <!-- ====== FASE 3: AUTENTICAÇÃO ====== -->
+      <rect x="40" y="650" width="660" height="350" rx="12" fill="var(--accent-cyan-soft)" stroke="var(--accent-cyan)" stroke-width="0.5" opacity="0.4"/>
+      <text x="60" y="680" font-size="10" font-weight="700" fill="var(--accent-cyan)" letter-spacing="1">FASE 3 — AUTENTICAÇÃO E VERIFICAÇÃO</text>
+
+      <!-- Node 7: autenticar_eproc() -->
+      <g class="g-node" data-id="7" onclick="selectNode(7)">
+        <rect class="node-box" x="430" y="700" width="220" height="52" rx="6" fill="var(--bg-card)" stroke="var(--accent-cyan)" stroke-width="2"/>
+        <text x="540" y="723" text-anchor="middle" font-size="11" font-weight="600" fill="var(--text-primary)">autenticar_eproc()</text>
+        <text x="540" y="738" text-anchor="middle" font-size="9" fill="var(--text-muted)">Cert A1 (.pfx) + Playwright</text>
+        <circle cx="440" cy="708" r="9" fill="var(--accent-cyan)" stroke="var(--accent-cyan)" stroke-width="1"/>
+        <text x="440" y="712" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">7</text>
+        <!-- Risk badges -->
+        <g transform="translate(605,700)">
+          <rect width="24" height="14" rx="2" fill="var(--accent-red-soft)" stroke="var(--accent-red)" stroke-width="0.5"/>
+          <text x="12" y="10" text-anchor="middle" font-size="7" font-weight="700" fill="var(--accent-red)">R1</text>
+        </g>
+        <g transform="translate(632,700)">
+          <rect width="24" height="14" rx="2" fill="var(--accent-red-soft)" stroke="var(--accent-red)" stroke-width="0.5"/>
+          <text x="12" y="10" text-anchor="middle" font-size="7" font-weight="700" fill="var(--accent-red)">R2</text>
+        </g>
+      </g>
+
+      <!-- Edge 7→8 -->
+      <line x1="540" y1="752" x2="540" y2="790" stroke="var(--border-light)" stroke-width="1.5" marker-end="url(#arrow-flow)"/>
+
+      <!-- Node 8: localizar_processo() -->
+      <g class="g-node" data-id="8" onclick="selectNode(8)">
+        <rect class="node-box" x="430" y="790" width="220" height="52" rx="6" fill="var(--bg-card)" stroke="var(--accent-blue)" stroke-width="2"/>
+        <text x="540" y="813" text-anchor="middle" font-size="11" font-weight="600" fill="var(--text-primary)">localizar_processo()</text>
+        <text x="540" y="828" text-anchor="middle" font-size="9" fill="var(--text-muted)">Buscar por número no E-Proc</text>
+        <circle cx="440" cy="798" r="9" fill="var(--accent-blue)" stroke="var(--accent-blue)" stroke-width="1"/>
+        <text x="440" y="802" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">8</text>
+        <g transform="translate(605,790)">
+          <rect width="24" height="14" rx="2" fill="var(--accent-red-soft)" stroke="var(--accent-red)" stroke-width="0.5"/>
+          <text x="12" y="10" text-anchor="middle" font-size="7" font-weight="700" fill="var(--accent-red)">R5</text>
+        </g>
+      </g>
+
+      <!-- Edge 8→9 -->
+      <line x1="540" y1="842" x2="540" y2="880" stroke="var(--border-light)" stroke-width="1.5" marker-end="url(#arrow-flow)"/>
+
+      <!-- Node 9: habilitado() — DIAMOND -->
+      <g class="g-node" data-id="9" onclick="selectNode(9)">
+        <polygon class="node-box" points="540,880 630,920 540,960 450,920" fill="var(--bg-card)" stroke="var(--accent-orange)" stroke-width="2"/>
+        <text x="540" y="917" text-anchor="middle" font-size="10" font-weight="600" fill="var(--text-primary)">habilitado</text>
+        <text x="540" y="930" text-anchor="middle" font-size="10" font-weight="600" fill="var(--text-primary)">?</text>
+        <circle cx="455" cy="888" r="9" fill="var(--accent-orange)" stroke="var(--accent-orange)" stroke-width="1"/>
+        <text x="455" y="892" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">9</text>
+      </g>
+
+      <!-- Edge 9→SIM→14 (skip to download) -->
+      <path d="M630,920 L750,920 L750,1350" class="edge-line edge-yes" stroke-width="1.5" marker-end="url(#arrow-yes)"/>
+      <text x="690" y="912" font-size="9" font-weight="600" fill="var(--accent-green)" text-anchor="middle">SIM</text>
+      <text x="760" y="1140" font-size="9" fill="var(--accent-green)" font-weight="500" transform="rotate(-90,760,1140)">pular para download</text>
+
+      <!-- Edge 9→NÃO→10 -->
+      <line x1="540" y1="960" x2="540" y2="1040" stroke="var(--accent-orange)" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrow-no)"/>
+      <text x="555" y="1000" font-size="9" font-weight="600" fill="var(--accent-orange)">NÃO</text>
+
+      <!-- ====== FASE 4: ACESSO ====== -->
+      <rect x="40" y="1010" width="660" height="310" rx="12" fill="var(--accent-red-soft)" stroke="var(--accent-red)" stroke-width="0.5" opacity="0.5"/>
+      <text x="60" y="1040" font-size="10" font-weight="700" fill="var(--accent-red)" letter-spacing="1">FASE 4 — SOLICITAÇÃO DE ACESSO (CAPTCHA)</text>
+
+      <!-- Node 10: solicitar_acesso() -->
+      <g class="g-node" data-id="10" onclick="selectNode(10)">
+        <rect class="node-box" x="430" y="1060" width="220" height="52" rx="6" fill="var(--bg-card)" stroke="var(--accent-blue)" stroke-width="2"/>
+        <text x="540" y="1083" text-anchor="middle" font-size="11" font-weight="600" fill="var(--text-primary)">solicitar_acesso()</text>
+        <text x="540" y="1098" text-anchor="middle" font-size="9" fill="var(--text-muted)">Navegar até solicitar acesso</text>
+        <circle cx="440" cy="1068" r="9" fill="var(--accent-blue)" stroke="var(--accent-blue)" stroke-width="1"/>
+        <text x="440" y="1072" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">10</text>
+        <g transform="translate(605,1060)">
+          <rect width="24" height="14" rx="2" fill="var(--accent-red-soft)" stroke="var(--accent-red)" stroke-width="0.5"/>
+          <text x="12" y="10" text-anchor="middle" font-size="7" font-weight="700" fill="var(--accent-red)">R3</text>
+        </g>
+      </g>
+
+      <!-- Edge 10→11 -->
+      <line x1="540" y1="1112" x2="540" y2="1140" stroke="var(--border-light)" stroke-width="1.5" marker-end="url(#arrow-flow)"/>
+
+      <!-- Node 11: resolver_captcha() — ERROR/CRITICAL -->
+      <g class="g-node" data-id="11" onclick="selectNode(11)">
+        <rect class="node-box" x="420" y="1140" width="240" height="56" rx="6" fill="var(--accent-red-soft)" stroke="var(--accent-red)" stroke-width="2.5"/>
+        <text x="540" y="1163" text-anchor="middle" font-size="11" font-weight="700" fill="var(--accent-red)">⚠ resolver_captcha()</text>
+        <text x="540" y="1180" text-anchor="middle" font-size="9" fill="var(--text-muted)">Vision API → Manual fallback</text>
+        <circle cx="430" cy="1148" r="9" fill="var(--accent-red)" stroke="var(--accent-red)" stroke-width="1"/>
+        <text x="430" y="1152" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">11</text>
+        <g transform="translate(615,1140)">
+          <rect width="40" height="14" rx="2" fill="var(--accent-red)" stroke="var(--accent-red)" stroke-width="0.5"/>
+          <text x="20" y="10" text-anchor="middle" font-size="7" font-weight="700" fill="#fff">R4 ⚠</text>
+        </g>
+      </g>
+
+      <!-- Edge 11→12 -->
+      <line x1="540" y1="1196" x2="540" y2="1220" stroke="var(--border-light)" stroke-width="1.5" marker-end="url(#arrow-flow)"/>
+
+      <!-- Node 12: captcha_ok() — DIAMOND -->
+      <g class="g-node" data-id="12" onclick="selectNode(12)">
+        <polygon class="node-box" points="540,1220 620,1255 540,1290 460,1255" fill="var(--bg-card)" stroke="var(--accent-orange)" stroke-width="2"/>
+        <text x="540" y="1252" text-anchor="middle" font-size="9" font-weight="600" fill="var(--text-primary)">captcha</text>
+        <text x="540" y="1264" text-anchor="middle" font-size="9" font-weight="600" fill="var(--text-primary)">ok?</text>
+        <circle cx="465" cy="1228" r="9" fill="var(--accent-orange)" stroke="var(--accent-orange)" stroke-width="1"/>
+        <text x="465" y="1232" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">12</text>
+      </g>
+
+      <!-- Edge 12→NÃO→loop to 11 (retry) -->
+      <path d="M460,1255 L380,1255 L380,1168 L420,1168" class="edge-line edge-loop" stroke-width="1.5" stroke-dasharray="5,4" marker-end="url(#arrow-loop)"/>
+      <text x="360" y="1210" font-size="8" font-weight="600" fill="var(--accent-red)" text-anchor="end">retry 3x</text>
+
+      <!-- Edge 12→SIM→13 -->
+      <line x1="540" y1="1290" x2="540" y2="1310" stroke="var(--accent-green)" stroke-width="1.5" marker-end="url(#arrow-yes)"/>
+      <text x="555" y="1304" font-size="9" font-weight="600" fill="var(--accent-green)">SIM</text>
+
+      <!-- Node 13: confirmar_acesso() -->
+      <g class="g-node" data-id="13" onclick="selectNode(13)">
+        <rect class="node-box" x="430" y="1310" width="220" height="42" rx="6" fill="var(--bg-card)" stroke="var(--accent-cyan)" stroke-width="2"/>
+        <text x="540" y="1335" text-anchor="middle" font-size="11" font-weight="600" fill="var(--text-primary)">confirmar_acesso()</text>
+        <circle cx="440" cy="1318" r="9" fill="var(--accent-cyan)" stroke="var(--accent-cyan)" stroke-width="1"/>
+        <text x="440" y="1322" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">13</text>
+      </g>
+
+      <!-- Edge 13→14 (merge with habilitado=SIM path) -->
+      <path d="M540,1352 L540,1370 L750,1370 L750,1350" class="edge-line" stroke="var(--border-light)" stroke-width="1.5"/>
+      <!-- Merge point -->
+      <circle cx="750" cy="1370" r="4" fill="var(--border-light)"/>
+
+      <!-- ====== FASE 5: DOWNLOAD ====== -->
+      <rect x="40" y="1380" width="1000" height="340" rx="12" fill="var(--accent-blue-soft)" stroke="var(--accent-blue)" stroke-width="0.5" opacity="0.4"/>
+      <text x="60" y="1410" font-size="10" font-weight="700" fill="var(--accent-blue)" letter-spacing="1">FASE 5 — DOWNLOAD DA ÍNTEGRA DOS AUTOS</text>
+
+      <!-- Node 14: iniciar_download() -->
+      <g class="g-node" data-id="14" onclick="selectNode(14)">
+        <rect class="node-box" x="640" y="1420" width="220" height="52" rx="6" fill="var(--bg-card)" stroke="var(--accent-blue)" stroke-width="2"/>
+        <text x="750" y="1443" text-anchor="middle" font-size="11" font-weight="600" fill="var(--text-primary)">iniciar_download()</text>
+        <text x="750" y="1458" text-anchor="middle" font-size="9" fill="var(--text-muted)">Clicar "Download Completo"</text>
+        <circle cx="650" cy="1428" r="9" fill="var(--accent-blue)" stroke="var(--accent-blue)" stroke-width="1"/>
+        <text x="650" y="1432" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">14</text>
+        <g transform="translate(815,1420)">
+          <rect width="24" height="14" rx="2" fill="var(--accent-red-soft)" stroke="var(--accent-red)" stroke-width="0.5"/>
+          <text x="12" y="10" text-anchor="middle" font-size="7" font-weight="700" fill="var(--accent-red)">R3</text>
+        </g>
+      </g>
+
+      <!-- Edge 14→15 -->
+      <line x1="750" y1="1472" x2="750" y2="1510" stroke="var(--border-light)" stroke-width="1.5" marker-end="url(#arrow-flow)"/>
+
+      <!-- Node 15: polling_geracao() -->
+      <g class="g-node" data-id="15" onclick="selectNode(15)">
+        <rect class="node-box" x="640" y="1510" width="220" height="52" rx="6" fill="var(--bg-card)" stroke="var(--accent-cyan)" stroke-width="2"/>
+        <text x="750" y="1533" text-anchor="middle" font-size="11" font-weight="600" fill="var(--text-primary)">polling_geracao()</text>
+        <text x="750" y="1548" text-anchor="middle" font-size="9" fill="var(--text-muted)">15s intervalo · 10min timeout</text>
+        <circle cx="650" cy="1518" r="9" fill="var(--accent-cyan)" stroke="var(--accent-cyan)" stroke-width="1"/>
+        <text x="650" y="1522" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">15</text>
+        <g transform="translate(815,1510)">
+          <rect width="24" height="14" rx="2" fill="var(--accent-red-soft)" stroke="var(--accent-red)" stroke-width="0.5"/>
+          <text x="12" y="10" text-anchor="middle" font-size="7" font-weight="700" fill="var(--accent-red)">R6</text>
+        </g>
+      </g>
+
+      <!-- Edge 15→16 -->
+      <line x1="750" y1="1562" x2="750" y2="1590" stroke="var(--border-light)" stroke-width="1.5" marker-end="url(#arrow-flow)"/>
+
+      <!-- Node 16: arquivo_pronto() — DIAMOND -->
+      <g class="g-node" data-id="16" onclick="selectNode(16)">
+        <polygon class="node-box" points="750,1590 840,1625 750,1660 660,1625" fill="var(--bg-card)" stroke="var(--accent-orange)" stroke-width="2"/>
+        <text x="750" y="1622" text-anchor="middle" font-size="9" font-weight="600" fill="var(--text-primary)">arquivo</text>
+        <text x="750" y="1634" text-anchor="middle" font-size="9" font-weight="600" fill="var(--text-primary)">pronto?</text>
+        <circle cx="665" cy="1598" r="9" fill="var(--accent-orange)" stroke="var(--accent-orange)" stroke-width="1"/>
+        <text x="665" y="1602" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">16</text>
+      </g>
+
+      <!-- Edge 16→NÃO→error -->
+      <path d="M660,1625 L580,1625" class="edge-line edge-no" stroke-width="1.5" stroke-dasharray="6,3"/>
+      <text x="620" y="1618" font-size="9" font-weight="600" fill="var(--accent-orange)" text-anchor="middle">TIMEOUT</text>
+      <g>
+        <rect x="460" y="1610" width="120" height="32" rx="6" fill="var(--accent-red-soft)" stroke="var(--accent-red)" stroke-width="1.5"/>
+        <text x="520" y="1630" text-anchor="middle" font-size="10" font-weight="600" fill="var(--accent-red)">❌ Erro timeout</text>
+      </g>
+
+      <!-- Edge 16→SIM→17 -->
+      <line x1="750" y1="1660" x2="750" y2="1690" stroke="var(--accent-green)" stroke-width="1.5" marker-end="url(#arrow-yes)"/>
+      <text x="765" y="1680" font-size="9" font-weight="600" fill="var(--accent-green)">SIM</text>
+
+      <!-- Node 17: baixar_pdf() -->
+      <g class="g-node" data-id="17" onclick="selectNode(17)">
+        <rect class="node-box" x="640" y="1690" width="220" height="52" rx="6" fill="var(--bg-card)" stroke="var(--accent-blue)" stroke-width="2"/>
+        <text x="750" y="1713" text-anchor="middle" font-size="11" font-weight="600" fill="var(--text-primary)">baixar_pdf()</text>
+        <text x="750" y="1728" text-anchor="middle" font-size="9" fill="var(--text-muted)">ZIP ou partes individuais</text>
+        <circle cx="650" cy="1698" r="9" fill="var(--accent-blue)" stroke="var(--accent-blue)" stroke-width="1"/>
+        <text x="650" y="1702" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">17</text>
+        <g transform="translate(815,1690)">
+          <rect width="24" height="14" rx="2" fill="var(--accent-red-soft)" stroke="var(--accent-red)" stroke-width="0.5"/>
+          <text x="12" y="10" text-anchor="middle" font-size="7" font-weight="700" fill="var(--accent-red)">R8</text>
+        </g>
+        <g transform="translate(842,1690)">
+          <rect width="24" height="14" rx="2" fill="var(--accent-red-soft)" stroke="var(--accent-red)" stroke-width="0.5"/>
+          <text x="12" y="10" text-anchor="middle" font-size="7" font-weight="700" fill="var(--accent-red)">R7</text>
+        </g>
+      </g>
+
+      <!-- Edge 17→18 -->
+      <line x1="750" y1="1742" x2="750" y2="1800" stroke="var(--border-light)" stroke-width="1.5" marker-end="url(#arrow-flow)"/>
+
+      <!-- ====== FASE 6: FINALIZAÇÃO ====== -->
+      <rect x="40" y="1770" width="1000" height="260" rx="12" fill="var(--accent-yellow-soft)" stroke="var(--accent-yellow)" stroke-width="0.5" opacity="0.4"/>
+      <text x="60" y="1800" font-size="10" font-weight="700" fill="var(--accent-yellow)" letter-spacing="1">FASE 6 — ORGANIZAÇÃO E FINALIZAÇÃO</text>
+
+      <!-- Node 18: organizar_arquivos() -->
+      <g class="g-node" data-id="18" onclick="selectNode(18)">
+        <rect class="node-box" x="640" y="1820" width="220" height="52" rx="6" fill="var(--bg-card)" stroke="var(--accent-blue)" stroke-width="2"/>
+        <text x="750" y="1843" text-anchor="middle" font-size="11" font-weight="600" fill="var(--text-primary)">organizar_arquivos()</text>
+        <text x="750" y="1858" text-anchor="middle" font-size="9" fill="var(--text-muted)">Google Drive · OneDrive</text>
+        <circle cx="650" cy="1828" r="9" fill="var(--accent-blue)" stroke="var(--accent-blue)" stroke-width="1"/>
+        <text x="650" y="1832" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">18</text>
+      </g>
+
+      <!-- Edge 18→19 -->
+      <line x1="750" y1="1872" x2="750" y2="1910" stroke="var(--border-light)" stroke-width="1.5" marker-end="url(#arrow-flow)"/>
+
+      <!-- Node 19: mais_processos() — DIAMOND -->
+      <g class="g-node" data-id="19" onclick="selectNode(19)">
+        <polygon class="node-box" points="750,1910 840,1945 750,1980 660,1945" fill="var(--bg-card)" stroke="var(--accent-orange)" stroke-width="2"/>
+        <text x="750" y="1942" text-anchor="middle" font-size="9" font-weight="600" fill="var(--text-primary)">mais</text>
+        <text x="750" y="1954" text-anchor="middle" font-size="9" font-weight="600" fill="var(--text-primary)">processos?</text>
+        <circle cx="665" cy="1918" r="9" fill="var(--accent-orange)" stroke="var(--accent-orange)" stroke-width="1"/>
+        <text x="665" y="1922" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">19</text>
+      </g>
+
+      <!-- Edge 19→SIM→loop back to 7 -->
+      <path d="M660,1945 L130,1945 L130,726 L430,726" class="edge-line edge-loop" stroke-width="1.5" stroke-dasharray="5,4" marker-end="url(#arrow-loop)"/>
+      <text x="120" y="1350" font-size="9" font-weight="600" fill="var(--accent-red)" text-anchor="end" transform="rotate(-90,120,1350)">SIM → próximo processo (throttle R7)</text>
+
+      <!-- Edge 19→NÃO→20 -->
+      <line x1="750" y1="1980" x2="750" y2="2010" stroke="var(--accent-orange)" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrow-no)"/>
+      <text x="765" y="2000" font-size="9" font-weight="600" fill="var(--accent-orange)">NÃO</text>
+
+      <!-- Node 20: __fim__ -->
+      <g class="g-node" data-id="20" onclick="selectNode(20)">
+        <rect class="node-box" x="670" y="2010" width="160" height="48" rx="24" fill="var(--accent-yellow)" stroke="var(--accent-yellow)" stroke-width="2"/>
+        <text x="750" y="2030" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">__fim__</text>
+        <text x="750" y="2046" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.7)">Relatório final</text>
+        <circle cx="680" cy="2018" r="9" fill="#fff" stroke="var(--accent-yellow)" stroke-width="1.5"/>
+        <text x="680" y="2022" text-anchor="middle" font-size="8" font-weight="700" fill="var(--accent-yellow)">20</text>
+      </g>
+
+    </svg>
+  </div>
+</div>
+
+<!-- DETAIL PANEL -->
+<div class="detail-panel" id="detail-panel">
+  <button class="detail-close" onclick="closeDetail()">×</button>
+  <div id="detail-content"></div>
+</div>
+
+<!-- ZOOM CONTROLS -->
+<div class="zoom-controls">
+  <button class="zoom-btn" onclick="zoomIn()">+</button>
+  <div class="zoom-label" id="zoom-label">100%</div>
+  <button class="zoom-btn" onclick="zoomOut()">−</button>
+  <button class="zoom-btn" onclick="fitToScreen()" title="Ajustar">⊞</button>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-item"><span class="legend-dot start"></span> Início/Fim</div>
+  <div class="legend-item"><span class="legend-dot action"></span> Ação</div>
+  <div class="legend-item"><span class="legend-dot decision"></span> Decisão</div>
+  <div class="legend-item"><span class="legend-dot system"></span> Sistema</div>
+  <div class="legend-item"><span class="legend-dot error"></span> Crítico</div>
+  <div class="legend-item"><span class="legend-dot router"></span> Roteador</div>
+  <div class="legend-item"><span class="legend-line flow"></span> Fluxo</div>
+  <div class="legend-item"><span class="legend-line yes"></span> Sim</div>
+  <div class="legend-item"><span class="legend-line no"></span> Não</div>
+  <div class="legend-item"><span class="legend-line loop"></span> Loop</div>
+</div>
+
+<script>
+// ===== NODE DATA =====
+const nodeData = {
+  1: {
+    name: '__inicio__', type: 'Nó inicial · Start Node', phase: 'Fase 1 — Identificação',
+    desc: 'Ponto de entrada do agente. Recebe a solicitação de download via chat do Claude Code/Cowork ou via chamada MCP automatizada.',
+    connections: [{to:2, label:'Próximo', type:'flow'}],
+    risks: [],
+    code: 'eproc_baixar_processo(numero_processo)\neproc_baixar_lote(numeros_processos[])'
+  },
+  2: {
+    name: 'numero_fornecido()', type: 'Decisão condicional · Conditional Edge', phase: 'Fase 1 — Identificação',
+    desc: 'Verifica se o número do processo foi fornecido diretamente na solicitação (ex: "baixar 5003797-20.2025.8.24.0052") ou se precisa buscar.',
+    connections: [{to:5, label:'SIM — número presente', type:'yes'}, {to:3, label:'NÃO — buscar nas bases', type:'no'}],
+    risks: [],
+    code: 'if numero_processo:\n  goto parsear_cnj()\nelse:\n  goto buscar_bases()'
+  },
+  3: {
+    name: 'buscar_bases()', type: 'Nó de sistema · System Node (MCP)', phase: 'Fase 1 — Identificação',
+    desc: 'Consulta múltiplas bases de dados via MCP para encontrar números de processo:\n\n• Supabase — tabela de casos ativos\n• Trello — cards com processos pendentes\n• Slack — mensagens recentes com números CNJ\n• Google Drive — documentos com referências\n• Todoist — tarefas com números de processo',
+    connections: [{to:4, label:'Resultados encontrados', type:'flow'}],
+    risks: [],
+    code: 'mcp.supabase.execute_sql("SELECT * FROM casos...")\nmcp.trello.getMyCards()\nmcp.slack.search_public("CNJ")\nmcp.google_drive.search("processo")'
+  },
+  4: {
+    name: 'validar_numero()', type: 'Decisão condicional · Conditional Edge', phase: 'Fase 1 — Identificação',
+    desc: 'Valida se o número encontrado/fornecido é um CNJ válido no formato NNNNNNN-DD.AAAA.J.TR.OOOO. Verifica dígito verificador.',
+    connections: [{to:5, label:'SIM — válido', type:'yes'}, {to:1, label:'NÃO — solicitar novamente', type:'loop'}],
+    risks: [],
+    code: 'regex = r"\\d{7}-\\d{2}\\.\\d{4}\\.\\d\\.\\d{2}\\.\\d{4}"\nif re.match(regex, numero):\n  validar_digito(numero)'
+  },
+  5: {
+    name: 'parsear_cnj()', type: 'Nó de ação · Action Node', phase: 'Fase 2 — Roteamento',
+    desc: 'Decompõe o número CNJ para identificar:\n• J (Justiça): 8=Estadual, 4=Federal\n• TR (Tribunal): 24=TJSC, etc.\n• Instância: inferida pelo código da vara/câmara',
+    connections: [{to:6, label:'Tribunal identificado', type:'flow'}],
+    risks: [],
+    code: '# NNNNNNN-DD.AAAA.J.TR.OOOO\njustica = numero[16]  # 8=Estadual, 4=Federal\ntribunal = numero[18:20]  # 24=SC\norigem = numero[21:25]  # vara/câmara'
+  },
+  6: {
+    name: 'router_tribunal()', type: 'Roteador condicional · Conditional Router', phase: 'Fase 2 — Roteamento',
+    desc: 'Seleciona a configuração correta do E-Proc (URL base, seletores CSS, certificado) com base no tribunal e instância:\n\n• TJSC 1ª Inst. → eproc1g.tjsc.jus.br\n• TJSC 2ª Inst. → eproc2g.tjsc.jus.br\n• TRF4 1ª Inst. → eproc.trf4.jus.br\n• TRF4 2ª Inst. → eproc.trf4.jus.br/2g\n• Futuro: PROJUDI, ESAJ...',
+    connections: [{to:7, label:'Config selecionada', type:'flow'}],
+    risks: ['R10 — URLs/endpoints diferentes por tribunal', 'R11 — Instância errada (1G vs 2G)'],
+    code: 'TRIBUNAIS = {\n  "TJSC_1G": "https://eproc1g.tjsc.jus.br/eproc",\n  "TJSC_2G": "https://eproc2g.tjsc.jus.br/eproc",\n  "TRF4_1G": "https://eproc.trf4.jus.br",\n  "TRF4_2G": "https://eproc.trf4.jus.br/eproc2trf4",\n}'
+  },
+  7: {
+    name: 'autenticar_eproc()', type: 'Nó de sistema · System Node (Playwright)', phase: 'Fase 3 — Autenticação',
+    desc: 'Autentica no E-Proc usando certificado digital A1 (.pfx):\n\n1. Inicia Playwright (headless ou não)\n2. Carrega certificado no contexto SSL\n3. Navega para a página de login SSO\n4. Seleciona login por certificado\n5. Confirma autenticação',
+    connections: [{to:8, label:'Autenticado com sucesso', type:'flow'}],
+    risks: ['R1 — Certificado A1 expirado (validade anual)', 'R2 — Múltiplos certificados (advogados diferentes)', 'R12 — 2FA futuro (TJRS já implementou)'],
+    code: 'context = browser.new_context(\n  client_certificates=[{\n    "origin": base_url,\n    "pfxPath": cert_path,\n    "passphrase": cert_senha\n  }]\n)'
+  },
+  8: {
+    name: 'localizar_processo()', type: 'Nó de ação · Action Node', phase: 'Fase 3 — Autenticação',
+    desc: 'Busca o processo por número no sistema E-Proc. Tenta múltiplos seletores CSS pois a interface varia entre tribunais.',
+    connections: [{to:9, label:'Processo encontrado', type:'flow'}],
+    risks: ['R5 — Segredo de justiça (acesso negado)', 'R9 — Manutenção do tribunal (sistema indisponível)'],
+    code: 'seletores = [\n  "#txtNumProcesso",\n  "input[name=\'numProcesso\']",\n  "#pesquisarProcesso input"\n]\nfor sel in seletores:\n  if page.query_selector(sel):\n    page.fill(sel, numero)\n    break'
+  },
+  9: {
+    name: 'habilitado()', type: 'Decisão condicional · Conditional Edge', phase: 'Fase 3 — Autenticação',
+    desc: 'Verifica se o escritório já está habilitado como procurador/advogado no processo. Se SIM, pula direto para download. Se NÃO, precisa solicitar acesso.',
+    connections: [{to:14, label:'SIM — pular para download', type:'yes'}, {to:10, label:'NÃO — solicitar acesso', type:'no'}],
+    risks: [],
+    code: 'habilitado = page.query_selector(\n  ".advogado-habilitado, .partes-processo"\n)\nif habilitado:\n  goto iniciar_download()\nelse:\n  goto solicitar_acesso()'
+  },
+  10: {
+    name: 'solicitar_acesso()', type: 'Nó de ação · Action Node', phase: 'Fase 4 — Acesso',
+    desc: 'Navega até a página de "Solicitar acesso à íntegra dos autos". Clica no botão/link correspondente.',
+    connections: [{to:11, label:'Página carregada', type:'flow'}],
+    risks: ['R3 — Mudança de interface do E-Proc (seletores CSS quebram)'],
+    code: 'page.click("a:has-text(\'Solicitar\')")\npage.wait_for_selector("#formCaptcha")'
+  },
+  11: {
+    name: '⚠ resolver_captcha()', type: 'Ponto crítico · Critical Node', phase: 'Fase 4 — Acesso',
+    desc: 'PONTO CRÍTICO DO FLUXO.\n\nEstratégia em camadas:\n1. Claude Vision API — captura screenshot, envia para claude-haiku, tenta ler o texto\n2. Fallback manual — se Vision falhar, pausa execução e envia screenshot para o chat do usuário\n\nTipos de CAPTCHA conhecidos:\n• TJSC: imagem com texto/números\n• TRF4: letras vermelhas sobre fundo ruidoso',
+    connections: [{to:12, label:'Tentativa de resolução', type:'flow'}],
+    risks: ['R4 — Evolução do CAPTCHA (reCAPTCHA v3, hCaptcha, etc.)'],
+    code: 'solver = CaptchaSolver(api_key=ANTHROPIC_KEY)\nresult = await solver.resolver(\n  page,\n  metodo="vision",  # ou "manual"\n  max_tentativas=3\n)\n# result.sucesso, result.texto, result.metodo'
+  },
+  12: {
+    name: 'captcha_ok()', type: 'Decisão condicional · Conditional Edge', phase: 'Fase 4 — Acesso',
+    desc: 'Verifica se o CAPTCHA foi resolvido com sucesso. Se não, retenta até 3 vezes (refresh do CAPTCHA entre tentativas). Após 3 falhas, aborta.',
+    connections: [{to:13, label:'SIM — resolvido', type:'yes'}, {to:11, label:'NÃO — retry (máx 3x)', type:'loop'}],
+    risks: [],
+    code: 'if not result.sucesso:\n  if tentativas < 3:\n    page.click("#refreshCaptcha")\n    goto resolver_captcha()\n  else:\n    raise CaptchaError("Falha após 3 tentativas")'
+  },
+  13: {
+    name: 'confirmar_acesso()', type: 'Nó de sistema · System Node', phase: 'Fase 4 — Acesso',
+    desc: 'Verifica que o acesso foi liberado após resolver o CAPTCHA. Checa se a página redirecionou para a visualização do processo.',
+    connections: [{to:14, label:'Acesso confirmado → download', type:'flow'}],
+    risks: [],
+    code: 'page.wait_for_selector(\n  ".autos-processo, #btnDownload",\n  timeout=10000\n)'
+  },
+  14: {
+    name: 'iniciar_download()', type: 'Nó de ação · Action Node', phase: 'Fase 5 — Download',
+    desc: 'Acessa a funcionalidade de download completo dos autos. Clica no botão "Baixar Documentos" ou equivalente.',
+    connections: [{to:15, label:'Geração solicitada', type:'flow'}],
+    risks: ['R3 — Mudança de interface (botões/seletores)'],
+    code: 'page.click("a:has-text(\'Download Completo\')")\npage.click("#gerarArquivo")'
+  },
+  15: {
+    name: 'polling_geracao()', type: 'Nó de sistema · System Node', phase: 'Fase 5 — Download',
+    desc: 'Aguarda a geração do arquivo pelo servidor do tribunal. O E-Proc gera PDFs assincronamente — pode levar de 30 segundos a 10 minutos.\n\nPolling a cada 15 segundos verificando status.',
+    connections: [{to:16, label:'Verificar status', type:'flow'}],
+    risks: ['R6 — Sessão expirada durante download (>10min)', 'R9 — Manutenção do tribunal'],
+    code: 'MAX_WAIT = 600  # 10 min\nINTERVAL = 15\nelapsed = 0\nwhile elapsed < MAX_WAIT:\n  status = page.query_selector("#statusDownload")\n  if "Concluído" in status.text():\n    break\n  await asyncio.sleep(INTERVAL)\n  elapsed += INTERVAL'
+  },
+  16: {
+    name: 'arquivo_pronto()', type: 'Decisão condicional · Conditional Edge', phase: 'Fase 5 — Download',
+    desc: 'Verifica se o arquivo foi gerado com sucesso dentro do timeout de 10 minutos. Se timeout, registra erro.',
+    connections: [{to:17, label:'SIM — baixar', type:'yes'}, {to:null, label:'TIMEOUT — erro', type:'no'}],
+    risks: [],
+    code: 'if elapsed >= MAX_WAIT:\n  raise TimeoutError("Geração excedeu 10min")\n# else: arquivo pronto para download'
+  },
+  17: {
+    name: 'baixar_pdf()', type: 'Nó de ação · Action Node', phase: 'Fase 5 — Download',
+    desc: 'Baixa o(s) arquivo(s) PDF. Estratégia em ordem:\n1. Botão ZIP ("Baixar Todas as Partes")\n2. Links individuais ("BAIXAR ARQUIVO" parte 1, 2...)\n3. Fallback: links genéricos via href\n\nProcessos grandes (>50MB) vêm em múltiplas partes.',
+    connections: [{to:18, label:'Download concluído', type:'flow'}],
+    risks: ['R7 — Rate limiting / bloqueio de IP', 'R8 — PDF corrompido / incompleto', 'R13 — Disco cheio'],
+    code: 'zip_btn = page.query_selector(\n  "a:has-text(\'ZIP\'), a:has-text(\'Todas as Partes\')"\n)\nif zip_btn:\n  download = page.expect_download()\n  zip_btn.click()\n  download.save_as(path)\nelse:\n  for link in page.query_selector_all("a.btnDownload"):\n    ...'
+  },
+  18: {
+    name: 'organizar_arquivos()', type: 'Nó de ação · Action Node', phase: 'Fase 6 — Finalização',
+    desc: 'Organiza os arquivos baixados:\n• Renomeia com padrão: CNJ_tribunal_data.pdf\n• Move para Google Drive ou OneDrive do escritório\n• Verifica integridade do PDF',
+    connections: [{to:19, label:'Arquivos organizados', type:'flow'}],
+    risks: [],
+    code: 'nome = f"{numero_cnj}_{tribunal}_{date.today()}.pdf"\nshutil.move(temp_path, dest_path)\n# Validar PDF\nwith open(dest_path, "rb") as f:\n  header = f.read(5)\n  assert header == b"%PDF-"'
+  },
+  19: {
+    name: 'mais_processos()', type: 'Decisão condicional · Conditional Edge', phase: 'Fase 6 — Finalização',
+    desc: 'Verifica se há mais processos na fila de download (modo lote/batch). Se SIM, volta para autenticar_eproc() com throttle entre processos para evitar bloqueio.',
+    connections: [{to:7, label:'SIM → próximo (com throttle)', type:'loop'}, {to:20, label:'NÃO → finalizar', type:'no'}],
+    risks: ['R7 — Rate limiting entre processos em lote'],
+    code: 'if fila_processos:\n  await asyncio.sleep(30)  # throttle\n  goto autenticar_eproc()\nelse:\n  goto __fim__'
+  },
+  20: {
+    name: '__fim__', type: 'Nó final · End Node', phase: 'Fase 6 — Finalização',
+    desc: 'Gera relatório final com:\n• Processos baixados com sucesso\n• Processos com falha (e motivo)\n• Acessos solicitados\n• Arquivos e caminhos\n\nEnvia relatório ao usuário via chat.',
+    connections: [],
+    risks: [],
+    code: 'relatorio = {\n  "sucesso": [...],\n  "falha": [...],\n  "acessos_solicitados": [...],\n  "arquivos": [...]\n}\nreturn relatorio'
+  }
+};
+
+// ===== PAN & ZOOM =====
+let scale = 0.5;
+let panX = 0, panY = 0;
+let isPanning = false;
+let startX, startY;
+
+const canvas = document.getElementById('canvas');
+const inner = document.getElementById('canvas-inner');
+
+function updateTransform() {
+  inner.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+  document.getElementById('zoom-label').textContent = Math.round(scale * 100) + '%';
+}
+
+canvas.addEventListener('mousedown', (e) => {
+  if (e.target.closest('.g-node')) return;
+  isPanning = true;
+  startX = e.clientX - panX;
+  startY = e.clientY - panY;
+  canvas.style.cursor = 'grabbing';
+});
+
+window.addEventListener('mousemove', (e) => {
+  if (!isPanning) return;
+  panX = e.clientX - startX;
+  panY = e.clientY - startY;
+  updateTransform();
+});
+
+window.addEventListener('mouseup', () => {
+  isPanning = false;
+  canvas.style.cursor = 'grab';
+});
+
+canvas.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const delta = e.deltaY > 0 ? -0.05 : 0.05;
+  scale = Math.max(0.15, Math.min(1.5, scale + delta));
+  updateTransform();
+}, { passive: false });
+
+function zoomIn() { scale = Math.min(1.5, scale + 0.1); updateTransform(); }
+function zoomOut() { scale = Math.max(0.15, scale - 0.1); updateTransform(); }
+function fitToScreen() {
+  const cw = canvas.clientWidth;
+  const ch = canvas.clientHeight;
+  scale = Math.min(cw / 1400, ch / 2100) * 0.9;
+  panX = (cw - 1400 * scale) / 2;
+  panY = 10;
+  updateTransform();
+}
+
+// ===== NODE SELECTION =====
+function selectNode(id) {
+  const data = nodeData[id];
+  if (!data) return;
+
+  // Highlight sidebar
+  document.querySelectorAll('.node-item').forEach(el => el.classList.remove('active'));
+  const item = document.querySelector(`.node-item[data-node="${id}"]`);
+  if (item) { item.classList.add('active'); item.scrollIntoView({block:'nearest'}); }
+
+  // Build detail
+  let html = `<div class="detail-title">${data.name}</div>`;
+  html += `<div class="detail-type">${data.type}</div>`;
+  html += `<div style="font-size:10px;color:var(--accent-green);margin-bottom:12px;font-weight:600">${data.phase}</div>`;
+
+  html += `<div class="detail-section">Descrição</div>`;
+  html += `<div class="detail-text">${data.desc.replace(/\n/g,'<br>')}</div>`;
+
+  if (data.connections.length > 0) {
+    html += `<div class="detail-section">Conexões · Edges</div>`;
+    html += `<div class="detail-connections">`;
+    data.connections.forEach(c => {
+      const cls = c.type === 'yes' ? '' : c.type === 'no' ? ' no' : c.type === 'loop' ? ' loop' : '';
+      const target = c.to ? nodeData[c.to]?.name || `Nó ${c.to}` : '❌ Erro';
+      html += `<div class="detail-conn"><span class="arrow${cls}">→</span> ${c.label} → <b>${target}</b></div>`;
+    });
+    html += `</div>`;
+  }
+
+  if (data.risks.length > 0) {
+    html += `<div class="detail-section">Riscos Mapeados</div>`;
+    html += `<div class="detail-risks">`;
+    data.risks.forEach(r => { html += `<div class="detail-risk">${r}</div>`; });
+    html += `</div>`;
+  }
+
+  if (data.code) {
+    html += `<div class="detail-section">Pseudocódigo</div>`;
+    html += `<div class="detail-code">${data.code}</div>`;
+  }
+
+  document.getElementById('detail-content').innerHTML = html;
+  document.getElementById('detail-panel').classList.add('open');
+}
+
+function closeDetail() {
+  document.getElementById('detail-panel').classList.remove('open');
+  document.querySelectorAll('.node-item').forEach(el => el.classList.remove('active'));
+}
+
+// ===== THEME TOGGLE =====
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('taques-theme-eproc', next);
+  document.getElementById('theme-btn').textContent = next === 'light' ? '🌙 Escuro' : '☀️ Claro';
+}
+
+(function() {
+  const saved = localStorage.getItem('taques-theme-eproc');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.getElementById('theme-btn').textContent = saved === 'light' ? '🌙 Escuro' : '☀️ Claro';
+  }
+  // Initial fit
+  setTimeout(fitToScreen, 100);
+})();
+</script>
+</body>
+</html>
