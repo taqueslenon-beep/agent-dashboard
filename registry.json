@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generated_at": "2026-04-06T15:58:44.760582",
+    "generated_at": "2026-04-06T17:58:38.428825",
     "generator": "sync-registry.py",
     "vault": "/Users/lenontaques/Documents/Obsidian do Lenon"
   },
@@ -9,9 +9,9 @@
     "habilidades_construcao": 3,
     "habilidades_total": 9,
     "agentes_total": 18,
-    "automacoes_total": 7,
+    "automacoes_total": 8,
     "mcps_total": 8,
-    "mcps_connected": 8
+    "mcps_connected": 7
   },
   "skills": [
     {
@@ -747,6 +747,28 @@
         "dry_run_flag": "--dry-run",
         "board_filter_flag": "--board"
       }
+    },
+    {
+      "id": "padronizador-agenda",
+      "name": "Padronizador de Agenda Google Calendar",
+      "type_label": "Automação · Cron · Google Calendar + Supabase",
+      "description": "Padroniza títulos de todos os eventos da semana corrente no Google Calendar seguindo o guia documentado no Obsidian. Aplica emojis, separadores, prefixo PRÉ-AGENDADO e tom de pele. Roda diariamente à meia-noite (BRT).",
+      "tags": [
+        "Google Calendar",
+        "Supabase",
+        "Padronização",
+        "Cron",
+        "00h"
+      ],
+      "status": "active",
+      "icon": "📅",
+      "agent_id": "padronizador-agenda",
+      "trigger_type": "cron",
+      "trigger_config": {
+        "cron": "0 3 * * *",
+        "trigger_id": "trig_013KWNDLYq9CznGdKcA2kRJQ",
+        "endpoint": "RemoteTrigger (CCR)"
+      }
     }
   ],
   "mcps": [
@@ -768,7 +790,7 @@
       "id": "trello",
       "name": "Trello",
       "url": "mcp://trello",
-      "status": "connected",
+      "status": "disconnected",
       "tools_available": [
         "getMyBoards",
         "getLists",
