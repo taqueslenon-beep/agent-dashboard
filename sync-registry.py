@@ -232,17 +232,20 @@ def get_agents():
             {"id": "gestor-rotinas", "name": "Gestor de Agendas e Tarefas", "role": "Gestão de Agenda, Tarefas e Rituais", "description": "Gerencia rotinas diárias (rituais matinal/noturno), sincroniza Google Calendar com Todoist, e mantém a agenda organizada.", "tags": ["Google Calendar", "Todoist", "Rituais", "Agenda", "WhatsApp"], "status": "planned", "icon": "📅", "department": "gabinete-ceo", "level": 1},
         ],
         "juridico": [
-            {"id": "estagiario-juridico", "name": "Estagiário Jurídico", "role": "Extração e Coleta", "description": "Extrai autos de processos dos sistemas judiciais.", "tags": ["EPROC", "SGPe", "PROJUDI", "ESAJ"], "status": "prototype", "icon": "🎓", "department": "juridico", "level": 0},
-            {"id": "advogado-junior", "name": "Advogado Júnior", "role": "Análise e Separação", "description": "Separa e classifica peças processuais.", "tags": ["Proc. Admin.", "EPROC", "PROJUDI"], "status": "planned", "icon": "🔍", "department": "juridico", "level": 1},
-            {"id": "advogado-pleno", "name": "Advogado Pleno", "role": "Redação e Argumentação", "description": "Redige peças completas.", "tags": ["Fatos", "Fundamentos", "Pedidos", "Resumo"], "status": "planned", "icon": "✍", "department": "juridico", "level": 2, "sub_agents": [
-                {"id": "pesquisador-juris-dominante", "name": "Pesq. Juris. Dominante", "role": "Analista de tendências majoritárias", "description": "Mapeia jurisprudência consolidada nos tribunais.", "tags": ["jurisprudência", "tendências", "súmulas", "entendimento-majoritário"], "status": "planned", "icon": "⚖️", "department": "juridico", "level": 3},
-                {"id": "pesquisador-juris-vanguarda", "name": "Pesq. Juris. Vanguarda", "role": "Analista de tendências emergentes", "description": "Identifica decisões inovadoras e divergentes.", "tags": ["jurisprudência", "divergência", "inovação", "tendências-emergentes"], "status": "planned", "icon": "🔭", "department": "juridico", "level": 3},
-                {"id": "analista-jurimetria", "name": "Analista de Jurimetria", "role": "Analista quantitativo", "description": "Análise estatística de decisões por tribunal.", "tags": ["jurimetria", "estatística", "análise-quantitativa", "dados"], "status": "planned", "icon": "📊", "department": "juridico", "level": 3},
-                {"id": "pesquisador-jurisprudencia", "name": "Compilador de Jurisprudência", "role": "Pesquisador de decisões específicas", "description": "Busca decisões concretas conforme plano aprovado.", "tags": ["jurisprudência", "compilação", "busca-decisões", "TJ", "TRF", "STJ", "STF"], "status": "planned", "icon": "📚", "department": "juridico", "level": 3},
+            # Núcleo de Direito Ambiental
+            {"id": "estagiario-juridico", "name": "Estagiário Jurídico", "role": "Extração e Coleta", "description": "Extrai autos de processos dos sistemas judiciais.", "tags": ["EPROC", "SGPe", "PROJUDI", "ESAJ"], "status": "prototype", "icon": "🎓", "department": "juridico", "nucleus": "ambiental", "level": 0},
+            {"id": "advogado-junior", "name": "Advogado Júnior", "role": "Análise e Separação", "description": "Separa e classifica peças processuais.", "tags": ["Proc. Admin.", "EPROC", "PROJUDI"], "status": "planned", "icon": "🔍", "department": "juridico", "nucleus": "ambiental", "level": 1},
+            {"id": "advogado-pleno", "name": "Advogado Pleno", "role": "Redação e Argumentação", "description": "Redige peças completas.", "tags": ["Fatos", "Fundamentos", "Pedidos", "Resumo"], "status": "planned", "icon": "✍", "department": "juridico", "nucleus": "ambiental", "level": 2, "sub_agents": [
+                {"id": "pesquisador-juris-dominante", "name": "Pesq. Juris. Dominante", "role": "Analista de tendências majoritárias", "description": "Mapeia jurisprudência consolidada nos tribunais.", "tags": ["jurisprudência", "tendências", "súmulas", "entendimento-majoritário"], "status": "planned", "icon": "⚖️", "department": "juridico", "nucleus": "ambiental", "level": 3},
+                {"id": "pesquisador-juris-vanguarda", "name": "Pesq. Juris. Vanguarda", "role": "Analista de tendências emergentes", "description": "Identifica decisões inovadoras e divergentes.", "tags": ["jurisprudência", "divergência", "inovação", "tendências-emergentes"], "status": "planned", "icon": "🔭", "department": "juridico", "nucleus": "ambiental", "level": 3},
+                {"id": "analista-jurimetria", "name": "Analista de Jurimetria", "role": "Analista quantitativo", "description": "Análise estatística de decisões por tribunal.", "tags": ["jurimetria", "estatística", "análise-quantitativa", "dados"], "status": "planned", "icon": "📊", "department": "juridico", "nucleus": "ambiental", "level": 3},
+                {"id": "pesquisador-jurisprudencia", "name": "Compilador de Jurisprudência", "role": "Pesquisador de decisões específicas", "description": "Busca decisões concretas conforme plano aprovado.", "tags": ["jurisprudência", "compilação", "busca-decisões", "TJ", "TRF", "STJ", "STF"], "status": "planned", "icon": "📚", "department": "juridico", "nucleus": "ambiental", "level": 3},
             ]},
-            {"id": "advogado-senior", "name": "Advogado Sênior", "role": "Estratégia e Jurisprudência", "description": "Estratégia processual e jurisprudência.", "tags": ["Estratégia", "Juris. Dominante", "Juris. Vanguarda"], "status": "planned", "icon": "🎯", "department": "juridico", "level": 3, "sub_agents": [
-                {"id": "contra-argumentador-juridico", "name": "Contra-Argumentador Jurídico", "role": "Advogado do Diabo — Jurídico", "description": "Ataca teses e petições como faria a parte contrária. Identifica pontos fracos, jurisprudência adversa e lacunas argumentativas antes da audiência.", "tags": ["contra-argumentação", "pontos-fracos", "parte-contrária", "estratégia-adversarial"], "status": "planned", "icon": "⚔️", "department": "juridico", "level": 4},
+            {"id": "advogado-senior", "name": "Advogado Sênior", "role": "Estratégia e Jurisprudência", "description": "Estratégia processual e jurisprudência.", "tags": ["Estratégia", "Juris. Dominante", "Juris. Vanguarda"], "status": "planned", "icon": "🎯", "department": "juridico", "nucleus": "ambiental", "level": 3, "sub_agents": [
+                {"id": "contra-argumentador-juridico", "name": "Contra-Argumentador Jurídico", "role": "Advogado do Diabo — Jurídico", "description": "Ataca teses e petições como faria a parte contrária. Identifica pontos fracos, jurisprudência adversa e lacunas argumentativas antes da audiência.", "tags": ["contra-argumentação", "pontos-fracos", "parte-contrária", "estratégia-adversarial"], "status": "planned", "icon": "⚔️", "department": "juridico", "nucleus": "ambiental", "level": 4},
             ]},
+            # Núcleo de Cobranças e Recuperação (sem agentes ainda)
+            # Núcleo Generalista (sem agentes ainda)
         ],
         "tecnico": [
             {"id": "estagiario-tecnico", "name": "Estagiário Técnico", "role": "Extração de Dados Ambientais", "description": "Coleta dados das bases ambientais e fundiárias.", "tags": ["CAR", "INCRA", "MapBiomas", "IMA-SC", "IBAMA"], "status": "prototype", "icon": "🧪", "department": "tecnico", "level": 0},
@@ -438,7 +441,8 @@ def sync_to_supabase(registry):
         for agent in dept_agents:
             upsert("agents", [{
                 "id": agent["id"], "name": agent["name"],
-                "department": agent["department"], "level": agent["level"],
+                "department": agent["department"], "nucleus": agent.get("nucleus"),
+                "level": agent["level"],
                 "role": agent["role"], "framework": "Claude SDK",
                 "status": agent["status"], "description": agent["description"],
                 "icon": agent["icon"], "tags": agent["tags"],

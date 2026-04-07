@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generated_at": "2026-04-06T17:58:38.428825",
+    "generated_at": "2026-04-06T20:21:51.012328",
     "generator": "sync-registry.py",
     "vault": "/Users/lenontaques/Documents/Obsidian do Lenon"
   },
@@ -241,6 +241,7 @@
         "status": "prototype",
         "icon": "🎓",
         "department": "juridico",
+        "nucleus": "ambiental",
         "level": 0
       },
       {
@@ -256,6 +257,7 @@
         "status": "planned",
         "icon": "🔍",
         "department": "juridico",
+        "nucleus": "ambiental",
         "level": 1
       },
       {
@@ -272,6 +274,7 @@
         "status": "planned",
         "icon": "✍",
         "department": "juridico",
+        "nucleus": "ambiental",
         "level": 2,
         "sub_agents": [
           {
@@ -288,6 +291,7 @@
             "status": "planned",
             "icon": "⚖️",
             "department": "juridico",
+            "nucleus": "ambiental",
             "level": 3
           },
           {
@@ -304,6 +308,7 @@
             "status": "planned",
             "icon": "🔭",
             "department": "juridico",
+            "nucleus": "ambiental",
             "level": 3
           },
           {
@@ -320,6 +325,7 @@
             "status": "planned",
             "icon": "📊",
             "department": "juridico",
+            "nucleus": "ambiental",
             "level": 3
           },
           {
@@ -339,6 +345,7 @@
             "status": "planned",
             "icon": "📚",
             "department": "juridico",
+            "nucleus": "ambiental",
             "level": 3
           }
         ]
@@ -356,6 +363,7 @@
         "status": "planned",
         "icon": "🎯",
         "department": "juridico",
+        "nucleus": "ambiental",
         "level": 3,
         "sub_agents": [
           {
@@ -372,6 +380,7 @@
             "status": "planned",
             "icon": "⚔️",
             "department": "juridico",
+            "nucleus": "ambiental",
             "level": 4
           }
         ]
