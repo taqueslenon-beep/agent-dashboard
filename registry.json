@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generated_at": "2026-04-06T20:21:51.012328",
+    "generated_at": "2026-04-06T21:06:33.012750",
     "generator": "sync-registry.py",
     "vault": "/Users/lenontaques/Documents/Obsidian do Lenon"
   },
@@ -8,10 +8,10 @@
     "habilidades_ativas": 6,
     "habilidades_construcao": 3,
     "habilidades_total": 9,
-    "agentes_total": 18,
+    "agentes_total": 19,
     "automacoes_total": 8,
     "mcps_total": 8,
-    "mcps_connected": 7
+    "mcps_connected": 8
   },
   "skills": [
     {
@@ -488,6 +488,22 @@
         "icon": "📋",
         "department": "administrativo",
         "level": 0
+      },
+      {
+        "id": "padronizador-agenda",
+        "name": "Padronizador de Agenda",
+        "role": "Padronização de Eventos no Google Calendar",
+        "description": "Padroniza títulos dos eventos da semana no Google Calendar seguindo guia do Obsidian. Aplica emojis, separadores e prefixo PRÉ-AGENDADO.",
+        "tags": [
+          "Google Calendar",
+          "Automação",
+          "Cron",
+          "Padronização"
+        ],
+        "status": "active",
+        "icon": "📅",
+        "department": "administrativo",
+        "level": 0
       }
     ],
     "comercial": [
@@ -799,7 +815,7 @@
       "id": "trello",
       "name": "Trello",
       "url": "mcp://trello",
-      "status": "disconnected",
+      "status": "connected",
       "tools_available": [
         "getMyBoards",
         "getLists",

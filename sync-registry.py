@@ -257,6 +257,7 @@ def get_agents():
         ],
         "administrativo": [
             {"id": "controlador-juridico", "name": "Controlador Jurídico", "role": "Controle e Distribuição de Prazos", "description": "Anota, acompanha e distribui prazos judiciais e extrajudiciais. Cria tarefas no Trello.", "tags": ["Prazos", "Trello", "Judicial", "Extrajudicial", "Distribuição"], "status": "planned", "icon": "📋", "department": "administrativo", "level": 0},
+            {"id": "padronizador-agenda", "name": "Padronizador de Agenda", "role": "Padronização de Eventos no Google Calendar", "description": "Padroniza títulos dos eventos da semana no Google Calendar seguindo guia do Obsidian. Aplica emojis, separadores e prefixo PRÉ-AGENDADO.", "tags": ["Google Calendar", "Automação", "Cron", "Padronização"], "status": "active", "icon": "📅", "department": "administrativo", "level": 0},
         ],
         "comercial": [
             {"id": "coordenador-comercial", "name": "Coordenador Comercial", "role": "Prospecção e Gestão Comercial", "description": "Coordena o pipeline comercial do escritório. Acompanha novos negócios, propostas e conversões.", "tags": ["Pipeline", "Propostas", "Follow-up", "Leads", "Conversão"], "status": "planned", "icon": "💼", "department": "comercial", "level": 0},
@@ -291,7 +292,7 @@ MCP_REGISTRY = [
     # Stdio MCPs (definidos em ~/.claude/.mcp.json)
     {"id": "todoist", "name": "Todoist", "url": "mcp://todoist", "detect": "stdio", "config_key": "todoist",
      "tools": ["add-tasks", "find-tasks", "update-tasks", "complete-tasks", "get-overview", "reschedule-tasks"]},
-    {"id": "trello", "name": "Trello", "url": "mcp://trello", "detect": "stdio", "config_key": "trello",
+    {"id": "trello", "name": "Trello", "url": "mcp://trello", "detect": "connector",
      "tools": ["getMyBoards", "getLists", "getCardsByList", "getMyCards", "addCard", "updateCard", "moveCard", "archiveCard"]},
     {"id": "google-drive", "name": "Google Drive", "url": "mcp://gdrive", "detect": "stdio", "config_key": "google-drive",
      "tools": ["google_drive_search", "google_drive_fetch"]},
