@@ -99,6 +99,8 @@ def extract_tags_from_skill(fm):
         "extrator-car": ["CAR/SICAR", "Shapefiles", "GeoPandas", "Alertas", "Lote"],
         "extrator-eproc": ["E-PROC", "TJSC", "Playwright", "Cert. A1", "Lote"],
         "revisor-trello-diario": ["Trello", "Obsidian", "Cron", "Auto-sync", "19h"],
+        "incluir-prazo": ["Supabase", "Todoist", "Trello", "Google Tasks", "Prazos"],
+        "cumprir-prazo": ["Supabase", "Todoist", "Trello", "Google Tasks", "Baixa"],
     }
     name = fm.get("name", "")
     if name in tag_map:
@@ -256,7 +258,7 @@ def get_agents():
             ]},
         ],
         "administrativo": [
-            {"id": "controlador-juridico", "name": "Controlador Jurídico", "role": "Controle e Distribuição de Prazos", "description": "Anota, acompanha e distribui prazos judiciais e extrajudiciais. Cria tarefas no Trello.", "tags": ["Prazos", "Trello", "Judicial", "Extrajudicial", "Distribuição"], "status": "planned", "icon": "📋", "department": "administrativo", "level": 0},
+            {"id": "controlador-juridico", "name": "Controlador Jurídico", "role": "Controle e Distribuição de Prazos", "description": "Controla o ciclo de vida dos prazos processuais. Inclui novos prazos (Supabase → Todoist → Trello → Google Tasks) e baixa prazos cumpridos atomicamente em todos os sistemas.", "tags": ["Prazos", "Supabase", "Todoist", "Trello", "Google Tasks"], "status": "active", "icon": "📋", "department": "administrativo", "level": 0, "skills": ["incluir-prazo", "cumprir-prazo"]},
         ],
         "comercial": [
             {"id": "coordenador-comercial", "name": "Coordenador Comercial", "role": "Prospecção e Gestão Comercial", "description": "Coordena o pipeline comercial do escritório. Acompanha novos negócios, propostas e conversões.", "tags": ["Pipeline", "Propostas", "Follow-up", "Leads", "Conversão"], "status": "planned", "icon": "💼", "department": "comercial", "level": 0},

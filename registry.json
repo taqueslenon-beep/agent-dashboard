@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generated_at": "2026-04-06T21:13:24.667521",
+    "generated_at": "2026-04-06T21:14:47.003454",
     "generator": "sync-registry.py",
     "vault": "/Users/lenontaques/Documents/Obsidian do Lenon"
   },
@@ -38,7 +38,13 @@
       "name": "Cumprir Prazo",
       "type_label": "Habilidade · Geral",
       "description": "Baixa atomica de prazo processual cumprido em todos os sistemas integrados. Marca como concluido no Supabase, completa no Todoist, arquiva no Trello e marca Google Task como concluida",
-      "tags": [],
+      "tags": [
+        "Supabase",
+        "Todoist",
+        "Trello",
+        "Google Tasks",
+        "Baixa"
+      ],
       "status": "active",
       "icon": "⚙",
       "path": ".claude/skills/cumprir-prazo/SKILL.md",
@@ -107,7 +113,13 @@
       "name": "Incluir Prazo",
       "type_label": "Habilidade · Geral",
       "description": "Inclui novo prazo processual no sistema integrado do escritorio. Registra no Supabase (fonte verdade), cria tarefa no Todoist, card no Trello e Google Task automaticamente",
-      "tags": [],
+      "tags": [
+        "Supabase",
+        "Todoist",
+        "Trello",
+        "Google Tasks",
+        "Prazos"
+      ],
       "status": "active",
       "icon": "⚙",
       "path": ".claude/skills/incluir-prazo/SKILL.md",
@@ -502,18 +514,22 @@
         "id": "controlador-juridico",
         "name": "Controlador Jurídico",
         "role": "Controle e Distribuição de Prazos",
-        "description": "Anota, acompanha e distribui prazos judiciais e extrajudiciais. Cria tarefas no Trello.",
+        "description": "Controla o ciclo de vida dos prazos processuais. Inclui novos prazos (Supabase → Todoist → Trello → Google Tasks) e baixa prazos cumpridos atomicamente em todos os sistemas.",
         "tags": [
           "Prazos",
+          "Supabase",
+          "Todoist",
           "Trello",
-          "Judicial",
-          "Extrajudicial",
-          "Distribuição"
+          "Google Tasks"
         ],
-        "status": "planned",
+        "status": "active",
         "icon": "📋",
         "department": "administrativo",
-        "level": 0
+        "level": 0,
+        "skills": [
+          "incluir-prazo",
+          "cumprir-prazo"
+        ]
       }
     ],
     "comercial": [
