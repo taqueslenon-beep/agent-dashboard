@@ -1,13 +1,13 @@
 {
   "_meta": {
-    "generated_at": "2026-04-06T21:12:47.457311",
+    "generated_at": "2026-04-06T21:13:24.667521",
     "generator": "sync-registry.py",
     "vault": "/Users/lenontaques/Documents/Obsidian do Lenon"
   },
   "stats": {
-    "habilidades_ativas": 7,
+    "habilidades_ativas": 8,
     "habilidades_construcao": 3,
-    "habilidades_total": 10,
+    "habilidades_total": 11,
     "agentes_total": 18,
     "automacoes_total": 8,
     "mcps_total": 8,
@@ -32,6 +32,19 @@
       "department": "tecnico",
       "passos": 5,
       "tem_codigo": false
+    },
+    {
+      "id": "cumprir-prazo",
+      "name": "Cumprir Prazo",
+      "type_label": "Habilidade · Geral",
+      "description": "Baixa atomica de prazo processual cumprido em todos os sistemas integrados. Marca como concluido no Supabase, completa no Todoist, arquiva no Trello e marca Google Task como concluida",
+      "tags": [],
+      "status": "active",
+      "icon": "⚙",
+      "path": ".claude/skills/cumprir-prazo/SKILL.md",
+      "department": "juridico",
+      "passos": 6,
+      "tem_codigo": true
     },
     {
       "id": "digitalizador-documentos",
