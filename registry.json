@@ -1,17 +1,17 @@
 {
   "_meta": {
-    "generated_at": "2026-04-06T21:33:09.847694",
+    "generated_at": "2026-04-10T15:03:41.038803",
     "generator": "sync-registry.py",
     "vault": "/Users/lenontaques/Documents/Obsidian do Lenon"
   },
   "stats": {
-    "habilidades_ativas": 8,
+    "habilidades_ativas": 12,
     "habilidades_construcao": 3,
-    "habilidades_total": 11,
+    "habilidades_total": 15,
     "agentes_total": 18,
     "automacoes_total": 8,
-    "mcps_total": 8,
-    "mcps_connected": 8
+    "mcps_total": 23,
+    "mcps_connected": 21
   },
   "skills": [
     {
@@ -31,6 +31,19 @@
       "path": ".claude/skills/assessor-comunicacao/SKILL.md",
       "department": "tecnico",
       "passos": 5,
+      "tem_codigo": false
+    },
+    {
+      "id": "contexto",
+      "name": "Contexto",
+      "type_label": "Habilidade · Geral",
+      "description": "Busca completa e estruturada em todas as bases do escritório sobre qualquer tema, caso ou situação. Acionar quando o usuário quiser entender o estado atual de um caso, cliente, projeto ou tema antes d...",
+      "tags": [],
+      "status": "active",
+      "icon": "⚙",
+      "path": ".claude/skills/contexto/SKILL.md",
+      "department": "tecnico",
+      "passos": 3,
       "tem_codigo": false
     },
     {
@@ -109,6 +122,32 @@
       "tem_codigo": false
     },
     {
+      "id": "financeiro",
+      "name": "Financeiro",
+      "type_label": "Habilidade · Geral",
+      "description": "Acessa e analisa as planilhas financeiras do Lenon (PJ e Pessoal) no Excel",
+      "tags": [],
+      "status": "active",
+      "icon": "⚙",
+      "path": ".claude/skills/financeiro/SKILL.md",
+      "department": "geral",
+      "passos": 0,
+      "tem_codigo": true
+    },
+    {
+      "id": "google-drive",
+      "name": "Google Drive",
+      "type_label": "Habilidade · Geral",
+      "description": "Operações no Google Drive do escritório Taques Advogados via terminal",
+      "tags": [],
+      "status": "active",
+      "icon": "⚙",
+      "path": ".claude/skills/google-drive/SKILL.md",
+      "department": "tecnico",
+      "passos": 10,
+      "tem_codigo": false
+    },
+    {
       "id": "incluir-prazo",
       "name": "Incluir Prazo",
       "type_label": "Habilidade · Geral",
@@ -124,7 +163,7 @@
       "icon": "⚙",
       "path": ".claude/skills/incluir-prazo/SKILL.md",
       "department": "tecnico",
-      "passos": 7,
+      "passos": 8,
       "tem_codigo": true
     },
     {
@@ -199,6 +238,19 @@
       "path": ".claude/skills/separador-de-pdfs/SKILL.md",
       "department": "geral",
       "passos": 5,
+      "tem_codigo": false
+    },
+    {
+      "id": "slack-notificacoes",
+      "name": "Slack Notificacoes",
+      "type_label": "Habilidade · Geral",
+      "description": "Consolida e processa notificações pendentes do Slack (taquesadvogados.slack.com) em 3 camadas: busca de menções via MCP, leitura de todos os canais e activity feed visual via Playwright. Exibe notific...",
+      "tags": [],
+      "status": "active",
+      "icon": "⚙",
+      "path": ".claude/skills/slack-notificacoes/SKILL.md",
+      "department": "tecnico",
+      "passos": 0,
       "tem_codigo": false
     },
     {
@@ -865,7 +917,7 @@
       "id": "whatsapp",
       "name": "WhatsApp (GOWA)",
       "url": "http://localhost:8080",
-      "status": "connected",
+      "status": "disconnected",
       "tools_available": [
         "whatsapp_send_text",
         "whatsapp_list_chats",
@@ -919,6 +971,186 @@
         "gmail_search_messages",
         "gmail_read_message",
         "gmail_create_draft"
+      ]
+    },
+    {
+      "id": "firebase-erp-taques",
+      "name": "Firebase · ERP Taques",
+      "url": "mcp://firebase-erp-taques",
+      "status": "connected",
+      "tools_available": [
+        "firestore_get_document",
+        "firestore_list_documents",
+        "firestore_query",
+        "firestore_add_document",
+        "firestore_update_document"
+      ]
+    },
+    {
+      "id": "firebase-financeiro",
+      "name": "Firebase · Financeiro Taques",
+      "url": "mcp://firebase-financeiro",
+      "status": "connected",
+      "tools_available": [
+        "firestore_get_document",
+        "firestore_list_documents",
+        "firestore_query",
+        "firestore_add_document",
+        "firestore_update_document"
+      ]
+    },
+    {
+      "id": "firebase-maestro",
+      "name": "Firebase · Maestro de IA",
+      "url": "mcp://firebase-maestro",
+      "status": "connected",
+      "tools_available": [
+        "firestore_get_document",
+        "firestore_list_documents",
+        "firestore_query"
+      ]
+    },
+    {
+      "id": "firebase-metaflow",
+      "name": "Firebase · MetaFlow",
+      "url": "mcp://firebase-metaflow",
+      "status": "connected",
+      "tools_available": [
+        "firestore_get_document",
+        "firestore_list_documents",
+        "firestore_query"
+      ]
+    },
+    {
+      "id": "firebase-taques-erp",
+      "name": "Firebase · Taques ERP (legado)",
+      "url": "mcp://firebase-taques-erp",
+      "status": "connected",
+      "tools_available": [
+        "firestore_get_document",
+        "firestore_list_documents",
+        "firestore_query"
+      ]
+    },
+    {
+      "id": "firebase-taques-dez",
+      "name": "Firebase · Taques ERP Dez",
+      "url": "mcp://firebase-taques-dez",
+      "status": "connected",
+      "tools_available": [
+        "firestore_get_document",
+        "firestore_list_documents",
+        "firestore_query"
+      ]
+    },
+    {
+      "id": "firebase-financas",
+      "name": "Firebase · Finanças 2026",
+      "url": "mcp://firebase-financas",
+      "status": "connected",
+      "tools_available": [
+        "firestore_get_document",
+        "firestore_list_documents",
+        "firestore_query"
+      ]
+    },
+    {
+      "id": "firebase-zantech",
+      "name": "Firebase · Zantech ERP",
+      "url": "mcp://firebase-zantech",
+      "status": "connected",
+      "tools_available": [
+        "firestore_get_document",
+        "firestore_list_documents",
+        "firestore_query"
+      ]
+    },
+    {
+      "id": "firebase-assistente",
+      "name": "Firebase · Assistente Comunicação",
+      "url": "mcp://firebase-assistente",
+      "status": "connected",
+      "tools_available": [
+        "firestore_get_document",
+        "firestore_list_documents",
+        "firestore_query"
+      ]
+    },
+    {
+      "id": "firebase-week-year",
+      "name": "Firebase · 12 Week Year",
+      "url": "mcp://firebase-week-year",
+      "status": "connected",
+      "tools_available": [
+        "firestore_get_document",
+        "firestore_list_documents",
+        "firestore_query"
+      ]
+    },
+    {
+      "id": "firebase-metodo-eos",
+      "name": "Firebase · Método EOS",
+      "url": "mcp://firebase-metodo-eos",
+      "status": "connected",
+      "tools_available": [
+        "firestore_get_document",
+        "firestore_list_documents",
+        "firestore_query"
+      ]
+    },
+    {
+      "id": "firebase-app-atividades",
+      "name": "Firebase · App Atividades",
+      "url": "mcp://firebase-app-atividades",
+      "status": "connected",
+      "tools_available": [
+        "firestore_get_document",
+        "firestore_list_documents",
+        "firestore_query"
+      ]
+    },
+    {
+      "id": "firebase-artful",
+      "name": "Firebase · My First Project",
+      "url": "mcp://firebase-artful",
+      "status": "connected",
+      "tools_available": [
+        "firestore_get_document",
+        "firestore_list_documents",
+        "firestore_query"
+      ]
+    },
+    {
+      "id": "slack-taques",
+      "name": "Slack Taques (Bot)",
+      "url": "mcp://slack-taques",
+      "status": "connected",
+      "tools_available": [
+        "slack_list_channels",
+        "slack_archive_channel",
+        "slack_unarchive_channel",
+        "slack_rename_channel",
+        "slack_create_channel",
+        "slack_get_channel_info",
+        "slack_set_topic",
+        "slack_list_members",
+        "slack_invite_to_channel"
+      ]
+    },
+    {
+      "id": "slack-files",
+      "name": "Slack Files (Upload)",
+      "url": "mcp://slack-files",
+      "status": "unknown",
+      "tools_available": [
+        "upload_file",
+        "files_list",
+        "conversations_history",
+        "conversations_add_message",
+        "conversations_search_messages",
+        "channels_list",
+        "users_list",
+        "add_reaction"
       ]
     }
   ]

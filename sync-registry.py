@@ -311,6 +311,56 @@ MCP_REGISTRY = [
      "tools": ["gcal_list_events", "gcal_create_event", "gcal_update_event", "gcal_find_free_time"]},
     {"id": "gmail", "name": "Gmail", "url": "mcp://gmail", "detect": "connector",
      "tools": ["gmail_search_messages", "gmail_read_message", "gmail_create_draft"]},
+    # Firebase MCPs (13 projetos — ~/. claude.json)
+    {"id": "firebase-erp-taques", "name": "Firebase · ERP Taques", "url": "mcp://firebase-erp-taques",
+     "detect": "claude-json", "config_key": "firebase-erp-taques",
+     "tools": ["firestore_get_document", "firestore_list_documents", "firestore_query", "firestore_add_document", "firestore_update_document"]},
+    {"id": "firebase-financeiro", "name": "Firebase · Financeiro Taques", "url": "mcp://firebase-financeiro",
+     "detect": "claude-json", "config_key": "firebase-financeiro",
+     "tools": ["firestore_get_document", "firestore_list_documents", "firestore_query", "firestore_add_document", "firestore_update_document"]},
+    {"id": "firebase-maestro", "name": "Firebase · Maestro de IA", "url": "mcp://firebase-maestro",
+     "detect": "claude-json", "config_key": "firebase-maestro",
+     "tools": ["firestore_get_document", "firestore_list_documents", "firestore_query"]},
+    {"id": "firebase-metaflow", "name": "Firebase · MetaFlow", "url": "mcp://firebase-metaflow",
+     "detect": "claude-json", "config_key": "firebase-metaflow",
+     "tools": ["firestore_get_document", "firestore_list_documents", "firestore_query"]},
+    {"id": "firebase-taques-erp", "name": "Firebase · Taques ERP (legado)", "url": "mcp://firebase-taques-erp",
+     "detect": "claude-json", "config_key": "firebase-taques-erp",
+     "tools": ["firestore_get_document", "firestore_list_documents", "firestore_query"]},
+    {"id": "firebase-taques-dez", "name": "Firebase · Taques ERP Dez", "url": "mcp://firebase-taques-dez",
+     "detect": "claude-json", "config_key": "firebase-taques-dez",
+     "tools": ["firestore_get_document", "firestore_list_documents", "firestore_query"]},
+    {"id": "firebase-financas", "name": "Firebase · Finanças 2026", "url": "mcp://firebase-financas",
+     "detect": "claude-json", "config_key": "firebase-financas",
+     "tools": ["firestore_get_document", "firestore_list_documents", "firestore_query"]},
+    {"id": "firebase-zantech", "name": "Firebase · Zantech ERP", "url": "mcp://firebase-zantech",
+     "detect": "claude-json", "config_key": "firebase-zantech",
+     "tools": ["firestore_get_document", "firestore_list_documents", "firestore_query"]},
+    {"id": "firebase-assistente", "name": "Firebase · Assistente Comunicação", "url": "mcp://firebase-assistente",
+     "detect": "claude-json", "config_key": "firebase-assistente",
+     "tools": ["firestore_get_document", "firestore_list_documents", "firestore_query"]},
+    {"id": "firebase-week-year", "name": "Firebase · 12 Week Year", "url": "mcp://firebase-week-year",
+     "detect": "claude-json", "config_key": "firebase-week-year",
+     "tools": ["firestore_get_document", "firestore_list_documents", "firestore_query"]},
+    {"id": "firebase-metodo-eos", "name": "Firebase · Método EOS", "url": "mcp://firebase-metodo-eos",
+     "detect": "claude-json", "config_key": "firebase-metodo-eos",
+     "tools": ["firestore_get_document", "firestore_list_documents", "firestore_query"]},
+    {"id": "firebase-app-atividades", "name": "Firebase · App Atividades", "url": "mcp://firebase-app-atividades",
+     "detect": "claude-json", "config_key": "firebase-app-atividades",
+     "tools": ["firestore_get_document", "firestore_list_documents", "firestore_query"]},
+    {"id": "firebase-artful", "name": "Firebase · My First Project", "url": "mcp://firebase-artful",
+     "detect": "claude-json", "config_key": "firebase-artful",
+     "tools": ["firestore_get_document", "firestore_list_documents", "firestore_query"]},
+    # Stdio MCPs globais (--scope user em ~/.claude.json root mcpServers)
+    {"id": "slack-taques", "name": "Slack Taques (Bot)", "url": "mcp://slack-taques", "detect": "claude-json-user",
+     "config_key": "slack-taques",
+     "tools": ["slack_list_channels", "slack_archive_channel", "slack_unarchive_channel",
+               "slack_rename_channel", "slack_create_channel", "slack_get_channel_info",
+               "slack_set_topic", "slack_list_members", "slack_invite_to_channel"]},
+    {"id": "slack-files", "name": "Slack Files (Upload)", "url": "mcp://slack-files", "detect": "claude-json-local",
+     "config_key": "slack-files",
+     "tools": ["upload_file", "files_list", "conversations_history", "conversations_add_message",
+               "conversations_search_messages", "channels_list", "users_list", "add_reaction"]},
 ]
 
 
@@ -350,6 +400,37 @@ def _check_mcp_status(mcp, stdio_config, plugins_dir):
 
     elif detect == "connector":
         return "connected"
+
+    elif detect == "claude-json":
+        claude_json_path = Path.home() / ".claude.json"
+        if not claude_json_path.exists():
+            return "disconnected"
+        try:
+            data = json.loads(claude_json_path.read_text())
+            project_mcps = data.get("projects", {}).get(str(Path.home()), {}).get("mcpServers", {})
+            config_key = mcp.get("config_key", "")
+            if config_key in project_mcps:
+                cmd = project_mcps[config_key].get("command", "")
+                return "connected" if cmd and Path(cmd).exists() else "disconnected"
+        except Exception:
+            pass
+        return "disconnected"
+
+    elif detect == "claude-json-user":
+        # MCPs globais adicionados com --scope user (raiz de mcpServers em ~/.claude.json)
+        claude_json_path = Path.home() / ".claude.json"
+        if not claude_json_path.exists():
+            return "disconnected"
+        try:
+            data = json.loads(claude_json_path.read_text())
+            root_mcps = data.get("mcpServers", {})
+            config_key = mcp.get("config_key", "")
+            if config_key in root_mcps:
+                cmd = root_mcps[config_key].get("command", "")
+                return "connected" if cmd and Path(cmd).exists() else "disconnected"
+        except Exception:
+            pass
+        return "disconnected"
 
     return "unknown"
 

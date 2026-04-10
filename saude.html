@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saúde do Sistema — Taques Agents</title>
+<style>
+  :root {
+    --bg:        #0d0d0c;
+    --surface:   #161614;
+    --border:    #252522;
+    --border2:   #333330;
+    --text:      #e8e0d5;
+    --muted:     #7a7268;
+    --dim:       #3a3830;
+
+    --green:     #4a8c6f;
+    --green-bg:  rgba(74,140,111,0.12);
+    --red:       #b85450;
+    --red-bg:    rgba(184,84,80,0.12);
+    --yellow:    #c4944a;
+    --gray:      #555250;
+    --gray-bg:   rgba(85,82,80,0.12);
+
+    --header:    #1a2b27;
+    --radius:    7px;
+    --font:      'Inter', -apple-system, system-ui, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+  /* ── Cabeçalho ── */
+  header {
+    background: var(--header);
+    padding: 14px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-mark {
+    width: 28px; height: 28px;
+    border: 1.5px solid rgba(214,204,193,0.5);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; color: #d6ccc1; letter-spacing: 1px;
+  }
+  .logo-title { font-size: 14px; font-weight: 600; color: #e8e0d5; }
+  .logo-sub   { font-size: 10px; color: var(--muted); margin-top: 1px; }
+  .header-right { display: flex; align-items: center; gap: 16px; font-size: 11px; color: var(--muted); }
+  .refresh-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); display: inline-block; margin-right: 4px; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* ── Resumo ── */
+  .summary { display: flex; gap: 12px; padding: 18px 28px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .summary-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 20px; min-width: 110px; }
+  .summary-card .num { font-size: 26px; font-weight: 700; letter-spacing: -1px; line-height: 1; }
+  .summary-card .lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+  .num.green  { color: var(--green); }
+  .num.red    { color: var(--red); }
+  .num.yellow { color: var(--yellow); }
+  .num.plain  { color: var(--text); }
+
+  /* ── Toolbar ── */
+  .toolbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 28px; border-bottom: 1px solid var(--border); gap: 12px; flex-wrap: wrap;
+  }
+  .filters { display: flex; gap: 6px; }
+  .filter-btn {
+    font-size: 11px; padding: 4px 12px; border-radius: 4px;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--muted); cursor: pointer; font-family: var(--font); transition: all 0.15s;
+  }
+  .filter-btn:hover { border-color: var(--border2); color: var(--text); }
+  .filter-btn.active { background: var(--surface); border-color: var(--border2); color: var(--text); }
+
+  .view-toggle { display: flex; border: 1px solid var(--border); border-radius: 5px; overflow: hidden; }
+  .view-btn {
+    font-size: 11px; padding: 4px 14px; background: transparent;
+    border: none; color: var(--muted); cursor: pointer; font-family: var(--font); transition: all 0.15s;
+  }
+  .view-btn.active { background: var(--surface); color: var(--text); }
+
+  /* ── Page ── */
+  .page { padding: 24px 28px; }
+  .section { margin-bottom: 36px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .section-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); }
+  .section-count { font-size: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 3px; padding: 1px 7px; color: var(--muted); }
+
+  /* ── Cards (grid view) ── */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px;
+    display: flex; flex-direction: column; gap: 8px;
+    transition: border-color 0.15s; position: relative; overflow: hidden;
+  }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; }
+  .card.ok::before    { background: var(--green); }
+  .card.error::before { background: var(--red); }
+  .card.unused::before { background: var(--dim); }
+  .card.error { border-color: rgba(184,84,80,0.25); }
+  .card:hover { border-color: var(--border2); }
+  .card-top { display: flex; align-items: center; justify-content: space-between; }
+  .card-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .card-desc { font-size: 11px; color: var(--muted); line-height: 1.5; }
+  .status-pill { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; padding: 2px 8px; border-radius: 3px; flex-shrink: 0; }
+  .pill-ok     { background: var(--green-bg); color: var(--green); }
+  .pill-error  { background: var(--red-bg);   color: var(--red);   }
+  .pill-unused { background: var(--gray-bg);  color: var(--gray);  }
+  .card-meta { font-size: 11px; color: var(--muted); display: flex; flex-direction: column; gap: 3px; }
+  .meta-row { display: flex; justify-content: space-between; align-items: center; }
+  .meta-val { color: #a09890; font-size: 11px; }
+  .meta-val.red { color: var(--red); }
+  .last-action { font-size: 10px; color: var(--dim); font-family: 'SF Mono','Fira Code',monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .error-msg { font-size: 10px; color: var(--red); background: var(--red-bg); border-radius: 4px; padding: 5px 8px; line-height: 1.4; word-break: break-word; }
+
+  /* ── Tabela (table view) ── */
+  .tbl-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead th {
+    background: var(--surface); padding: 10px 14px; text-align: left;
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--muted); border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+  tbody td { padding: 11px 14px; vertical-align: middle; }
+  .td-name { font-weight: 600; color: var(--text); white-space: nowrap; }
+  .td-desc { color: var(--muted); line-height: 1.5; max-width: 360px; }
+  .invoke {
+    display: inline-block;
+    font-family: 'SF Mono','Fira Code',monospace;
+    font-size: 10px;
+    color: #6b8fa3;
+    background: rgba(107,143,163,0.10);
+    border: 1px solid rgba(107,143,163,0.2);
+    border-radius: 3px;
+    padding: 1px 6px;
+    margin-top: 3px;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+  }
+  .td-num  { color: #a09890; text-align: right; white-space: nowrap; }
+  .td-num.red { color: var(--red); }
+  .td-time { color: var(--muted); white-space: nowrap; }
+  .td-action { font-family: 'SF Mono','Fira Code',monospace; font-size: 10px; color: var(--dim); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .dot.ok     { background: var(--green); }
+  .dot.error  { background: var(--red); }
+  .dot.unused { background: var(--dim); }
+  .dot-cell   { display: flex; align-items: center; gap: 7px; white-space: nowrap; }
+
+  /* ── Empty ── */
+  .empty { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 12px; }
+
+  /* ── Footer ── */
+  footer { text-align: center; padding: 20px; font-size: 11px; color: var(--muted); border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">TA</div>
+    <div>
+      <div class="logo-title">Saúde do Sistema</div>
+      <div class="logo-sub">MCPs · Skills · Observabilidade</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <span><span class="refresh-dot"></span>Atualiza a cada 10s</span>
+    <span id="last-update">—</span>
+  </div>
+</header>
+
+<div class="summary">
+  <div class="summary-card"><div class="num plain"  id="s-total">—</div><div class="lbl">Total</div></div>
+  <div class="summary-card"><div class="num green"  id="s-ok">—</div><div class="lbl">OK</div></div>
+  <div class="summary-card"><div class="num red"    id="s-err">—</div><div class="lbl">Com Erro</div></div>
+  <div class="summary-card"><div class="num yellow" id="s-unused">—</div><div class="lbl">Nunca Usados</div></div>
+</div>
+
+<div class="toolbar">
+  <div class="filters">
+    <button class="filter-btn active" onclick="setFilter('all',this)">Todos</button>
+    <button class="filter-btn" onclick="setFilter('ok',this)">OK</button>
+    <button class="filter-btn" onclick="setFilter('error',this)">Com Erro</button>
+    <button class="filter-btn" onclick="setFilter('unused',this)">Nunca Usados</button>
+  </div>
+  <div class="view-toggle">
+    <button class="view-btn" id="btn-cards" onclick="setView('cards')">Cards</button>
+    <button class="view-btn active" id="btn-table" onclick="setView('table')">Tabela</button>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- MCPs -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">MCPs — Servidores de Ferramentas</span>
+      <span class="section-count" id="mcp-count">0</span>
+    </div>
+    <div id="mcp-cards" class="grid" style="display:none"></div>
+    <div id="mcp-table" class="tbl-wrap"></div>
+  </div>
+
+  <!-- Skills -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">Skills — Habilidades</span>
+      <span class="section-count" id="skill-count">0</span>
+    </div>
+    <div id="skill-cards" class="grid" style="display:none"></div>
+    <div id="skill-table" class="tbl-wrap"></div>
+  </div>
+
+</div>
+
+<footer id="footer-ts">Carregando dados...</footer>
+
+<script>
+/* ── Atalho de invocação ──────────────────────── */
+function invokeTag(key, category) {
+  const cmd = category === 'skill'
+    ? `/${key}`
+    : `mcp__${key}__*`;
+  return `<span class="invoke">${cmd}</span>`;
+}
+
+/* ── Descrições estáticas ─────────────────────── */
+const DESCRIPTIONS = {
+  // MCPs
+  'trello':                   'Gerencia boards, listas e cards do escritório Taques Advogados',
+  'trello-extended':          'Checklists, labels, vínculos, campos customizados e operações em lote de cards',
+  'todoist':                  'Criação e gestão completa de tarefas, projetos, seções e produtividade',
+  'whatsapp':                 'Envio e leitura de mensagens, mídias e contatos via WhatsApp',
+  'notebooklm-mcp':           'Notebooks de pesquisa, geração de áudio/vídeo e consulta de fontes no NotebookLM',
+  'playwright':               'Automação de browser para scraping, navegação e interação com sites',
+  'claude_ai_Google_Calendar':'Criação, leitura, atualização e busca de eventos na agenda Google',
+  'claude_ai_Gmail':          'Leitura de e-mails, threads e rascunhos no Gmail',
+  'claude_ai_Slack':          'Envio de mensagens, leitura de canais e busca no Slack do escritório',
+  'claude_ai_Canva':          'Criação e edição de materiais visuais e apresentações no Canva',
+  'claude_ai_Supabase':       'Banco de dados do escritório — tabelas de casos, prazos e metadados',
+  'bnp-api':                  'Busca de precedentes jurídicos e geração de relatórios via API BNP',
+  // Skills
+  'assessor-comunicacao':     'Redige e formata mensagens profissionais para qualquer canal (Slack, WhatsApp, e-mail)',
+  'contexto':                 'Busca completa e estruturada sobre casos, clientes ou temas em todas as bases',
+  'cumprir-prazo':            'Baixa atômica de prazo em Supabase, Todoist, Trello e Google Tasks simultaneamente',
+  'digitalizador-documentos': 'Processa fotos de documentos com qualidade CamScanner (auto, cor, P&B)',
+  'extrator-car':             'Consulta e extrai dados do Cadastro Ambiental Rural (CAR/SICAR)',
+  'extrator-eproc':           'Baixa e extrai processos judiciais completos do E-PROC (TJSC/TRF4)',
+  'financeiro':               'Acessa e analisa planilhas financeiras PJ e pessoal do escritório no Excel',
+  'google-drive':             'Renomeia, move e organiza arquivos e pastas no Google Drive via terminal',
+  'incluir-prazo':            'Registra novo prazo processual em todos os sistemas integrados de uma vez',
+  'padronizador-agenda':      'Padroniza títulos dos eventos da semana no Google Calendar com emojis e prefixos',
+  'processar-trello':         'Revisão e processamento de cards pelo fluxo da secretaria executiva',
+  'redacao-juridica':         'Elabora petições, pareceres e peças processuais integrado ao Obsidian do caso',
+  'revisor-trello-diario':    'Coleta atividade das últimas 24h no Trello e atualiza fichas de caso no Obsidian',
+  'separador-de-pdfs':        'Divide PDFs grandes em partes menores organizadas cronologicamente com índice',
+  'verificador-compromissos': 'Verifica compromissos recorrentes (terapia, barbearia) via WhatsApp + Calendar',
+};
+
+/* ── Estado ───────────────────────────────────── */
+let activeFilter = 'all';
+let activeView   = 'table';
+window._lastData = null;
+
+/* ── Helpers ──────────────────────────────────── */
+function statusOf(item) {
+  if (!item.last_call)              return 'unused';
+  if (item.last_status === 'error') return 'error';
+  return 'ok';
+}
+
+function relTime(iso) {
+  if (!iso) return '—';
+  const s = (Date.now() - new Date(iso)) / 1000;
+  if (s < 60)    return 'agora mesmo';
+  if (s < 3600)  return `${Math.floor(s/60)}min atrás`;
+  if (s < 86400) return `${Math.floor(s/3600)}h atrás`;
+  return `${Math.floor(s/86400)}d atrás`;
+}
+
+function desc(key) {
+  return DESCRIPTIONS[key] || '—';
+}
+
+/* ── Controles ────────────────────────────────── */
+function setFilter(f, btn) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAll(window._lastData);
+}
+
+function setView(v) {
+  activeView = v;
+  document.getElementById('btn-cards').classList.toggle('active', v === 'cards');
+  document.getElementById('btn-table').classList.toggle('active', v === 'table');
+  renderAll(window._lastData);
+}
+
+/* ── Render Cards ─────────────────────────────── */
+function renderCards(data, gridId, countId, category) {
+  const grid  = document.getElementById(gridId);
+  const count = document.getElementById(countId);
+  const items = Object.entries(data);
+  count.textContent = items.length;
+
+  const visible = items.filter(([,i]) => activeFilter === 'all' || statusOf(i) === activeFilter);
+
+  if (!visible.length) { grid.innerHTML = '<div class="empty">Nenhum item com esse filtro.</div>'; return; }
+
+  grid.innerHTML = visible.map(([key, item]) => {
+    const st = statusOf(item);
+    const pill = st === 'ok' ? 'pill-ok' : st === 'error' ? 'pill-error' : 'pill-unused';
+    const pillTxt = st === 'ok' ? 'OK' : st === 'error' ? 'ERRO' : 'Nunca usado';
+    const errRate = item.calls > 0 ? `${((item.errors/item.calls)*100).toFixed(0)}%` : '0%';
+    const errVal = item.errors > 0
+      ? `<span class="meta-val red">${item.errors} (${errRate})</span>`
+      : `<span class="meta-val">0</span>`;
+    const lastAction = item.last_action ? `<div class="last-action">${item.last_action}</div>` : '';
+    const errMsg = (st === 'error' && item.last_error)
+      ? `<div class="error-msg">${item.last_error}</div>` : '';
+
+    return `<div class="card ${st}">
+      <div class="card-top">
+        <span class="card-name">${item.label}</span>
+        <span class="status-pill ${pill}">${pillTxt}</span>
+      </div>
+      ${invokeTag(key, category)}
+      <div class="card-desc">${desc(key)}</div>
+      <div class="card-meta">
+        <div class="meta-row"><span>Último uso</span><span class="meta-val">${relTime(item.last_call)}</span></div>
+        <div class="meta-row"><span>Chamadas</span><span class="meta-val">${item.calls}</span></div>
+        <div class="meta-row"><span>Erros</span>${errVal}</div>
+      </div>
+      ${lastAction}${errMsg}
+    </div>`;
+  }).join('');
+}
+
+/* ── Render Table ─────────────────────────────── */
+function renderTable(data, tableId, countId, category) {
+  const wrap  = document.getElementById(tableId);
+  const count = document.getElementById(countId);
+  const items = Object.entries(data);
+  count.textContent = items.length;
+
+  const visible = items.filter(([,i]) => activeFilter === 'all' || statusOf(i) === activeFilter);
+
+  if (!visible.length) { wrap.innerHTML = '<div class="empty">Nenhum item com esse filtro.</div>'; return; }
+
+  const rows = visible.map(([key, item]) => {
+    const st = statusOf(item);
+    const dotCls = st;
+    const stLabel = st === 'ok' ? 'OK' : st === 'error' ? 'Erro' : 'Nunca usado';
+    const errRate = item.calls > 0 ? ` (${((item.errors/item.calls)*100).toFixed(0)}%)` : '';
+    const errClass = item.errors > 0 ? 'red' : '';
+    const action = item.last_action || '—';
+
+    return `<tr>
+      <td class="td-name">
+        <div class="dot-cell"><span class="dot ${dotCls}"></span>${item.label}</div>
+        ${invokeTag(key, category)}
+      </td>
+      <td class="td-desc">${desc(key)}</td>
+      <td class="td-time">${relTime(item.last_call)}</td>
+      <td class="td-num">${item.calls}</td>
+      <td class="td-num ${errClass}">${item.errors > 0 ? item.errors + errRate : '0'}</td>
+      <td class="td-action">${action}</td>
+    </tr>`;
+  }).join('');
+
+  wrap.innerHTML = `<table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Descrição</th>
+        <th>Último Uso</th>
+        <th style="text-align:right">Chamadas</th>
+        <th style="text-align:right">Erros</th>
+        <th>Última Ação</th>
+      </tr>
+    </thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+/* ── Render All ───────────────────────────────── */
+function renderAll(data) {
+  if (!data) return;
+  window._lastData = data;
+
+  const isCards = activeView === 'cards';
+
+  document.getElementById('mcp-cards').style.display  = isCards ? '' : 'none';
+  document.getElementById('mcp-table').style.display  = isCards ? 'none' : '';
+  document.getElementById('skill-cards').style.display = isCards ? '' : 'none';
+  document.getElementById('skill-table').style.display = isCards ? 'none' : '';
+
+  if (isCards) {
+    renderCards(data.mcps   || {}, 'mcp-cards',   'mcp-count',   'mcp');
+    renderCards(data.skills || {}, 'skill-cards', 'skill-count', 'skill');
+  } else {
+    renderTable(data.mcps   || {}, 'mcp-table',   'mcp-count',   'mcp');
+    renderTable(data.skills || {}, 'skill-table', 'skill-count', 'skill');
+  }
+
+  // Resumo
+  const all = [...Object.values(data.mcps||{}), ...Object.values(data.skills||{})];
+  document.getElementById('s-total').textContent  = all.length;
+  document.getElementById('s-ok').textContent     = all.filter(i=>statusOf(i)==='ok').length;
+  document.getElementById('s-err').textContent    = all.filter(i=>statusOf(i)==='error').length;
+  document.getElementById('s-unused').textContent = all.filter(i=>statusOf(i)==='unused').length;
+
+  document.getElementById('footer-ts').textContent = data.updated
+    ? `Última atividade registrada: ${new Date(data.updated).toLocaleString('pt-BR')}`
+    : 'Nenhuma atividade registrada ainda — use um MCP ou Skill para começar.';
+  document.getElementById('last-update').textContent = `Sync ${new Date().toLocaleTimeString('pt-BR')}`;
+}
+
+/* ── Fetch loop ───────────────────────────────── */
+async function fetchData() {
+  try {
+    const r = await fetch(`./tool-status.json?t=${Date.now()}`);
+    renderAll(await r.json());
+  } catch(e) {
+    document.getElementById('footer-ts').textContent = 'Erro ao carregar tool-status.json';
+  }
+}
+
+fetchData();
+setInterval(fetchData, 10000);
+</script>
+</body>
+</html>

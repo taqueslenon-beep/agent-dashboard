@@ -1,0 +1,142 @@
+{
+  "updated": null,
+  "mcps": {
+    "trello": {
+      "label": "Trello (base)",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    },
+    "trello-extended": {
+      "label": "Trello Extended",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    },
+    "todoist": {
+      "label": "Todoist",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    },
+    "whatsapp": {
+      "label": "WhatsApp",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    },
+    "notebooklm-mcp": {
+      "label": "NotebookLM",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    },
+    "playwright": {
+      "label": "Playwright",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    },
+    "claude_ai_Google_Calendar": {
+      "label": "Google Calendar",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    },
+    "claude_ai_Gmail": {
+      "label": "Gmail",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    },
+    "claude_ai_Slack": {
+      "label": "Slack",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    },
+    "claude_ai_Canva": {
+      "label": "Canva",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    },
+    "claude_ai_Supabase": {
+      "label": "Supabase",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    },
+    "bnp-api": {
+      "label": "BNP API",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    }
+  },
+  "skills": {
+    "assessor-comunicacao": {
+      "label": "Assessor de Comunicação",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    },
+    "contexto": {
+      "label": "Contexto",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    },
+    "cumprir-prazo": {
+      "label": "Cumprir Prazo",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    },
+    "digitalizador-documentos": {
+      "label": "Digitalizador de Documentos",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    },
+    "extrator-car": {
+      "label": "Extrator CAR",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    },
+    "extrator-eproc": {
+      "label": "Extrator E-PROC",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    },
+    "financeiro": {
+      "label": "Financeiro",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    },
+    "google-drive": {
+      "label": "Google Drive",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    },
+    "incluir-prazo": {
+      "label": "Incluir Prazo",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    },
+    "padronizador-agenda": {
+      "label": "Padronizador de Agenda",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    },
+    "processar-trello": {
+      "label": "Processar Trello",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    },
+    "redacao-juridica": {
+      "label": "Redação Jurídica",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    },
+    "revisor-trello-diario": {
+      "label": "Revisor Trello Diário",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    },
+    "separador-de-pdfs": {
+      "label": "Separador de PDFs",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    },
+    "verificador-compromissos": {
+      "label": "Verificador de Compromissos",
+      "calls": 0, "errors": 0,
+      "last_call": null, "last_status": null, "last_error": null, "last_action": null
+    }
+  }
+}
