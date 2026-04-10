@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generated_at": "2026-04-10T15:03:41.038803",
+    "generated_at": "2026-04-10T15:04:44.216296",
     "generator": "sync-registry.py",
     "vault": "/Users/lenontaques/Documents/Obsidian do Lenon"
   },
@@ -11,7 +11,7 @@
     "agentes_total": 18,
     "automacoes_total": 8,
     "mcps_total": 23,
-    "mcps_connected": 21
+    "mcps_connected": 22
   },
   "skills": [
     {
@@ -874,6 +874,26 @@
   ],
   "mcps": [
     {
+      "id": "google-workspace",
+      "name": "Google Workspace",
+      "url": "mcp://google-workspace",
+      "status": "connected",
+      "tools_available": [
+        "create_document",
+        "read_document",
+        "append_text",
+        "replace_text",
+        "search_drive_files",
+        "list_drive_folder_contents",
+        "create_spreadsheet",
+        "read_spreadsheet",
+        "gmail_search",
+        "gmail_send",
+        "gcal_create_event",
+        "tasks_create"
+      ]
+    },
+    {
       "id": "todoist",
       "name": "Todoist",
       "url": "mcp://todoist",
@@ -1141,7 +1161,7 @@
       "id": "slack-files",
       "name": "Slack Files (Upload)",
       "url": "mcp://slack-files",
-      "status": "unknown",
+      "status": "connected",
       "tools_available": [
         "upload_file",
         "files_list",
