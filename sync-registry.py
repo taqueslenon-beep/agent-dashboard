@@ -357,7 +357,7 @@ MCP_REGISTRY = [
      "tools": ["slack_list_channels", "slack_archive_channel", "slack_unarchive_channel",
                "slack_rename_channel", "slack_create_channel", "slack_get_channel_info",
                "slack_set_topic", "slack_list_members", "slack_invite_to_channel"]},
-    {"id": "slack-files", "name": "Slack Files (Upload)", "url": "mcp://slack-files", "detect": "claude-json-local",
+    {"id": "slack-files", "name": "Slack Files (Upload)", "url": "mcp://slack-files", "detect": "claude-json",
      "config_key": "slack-files",
      "tools": ["upload_file", "files_list", "conversations_history", "conversations_add_message",
                "conversations_search_messages", "channels_list", "users_list", "add_reaction"]},

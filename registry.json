@@ -1,13 +1,13 @@
 {
   "_meta": {
-    "generated_at": "2026-04-10T15:04:44.216296",
+    "generated_at": "2026-04-11T14:17:51.632164",
     "generator": "sync-registry.py",
     "vault": "/Users/lenontaques/Documents/Obsidian do Lenon"
   },
   "stats": {
-    "habilidades_ativas": 12,
+    "habilidades_ativas": 13,
     "habilidades_construcao": 3,
-    "habilidades_total": 15,
+    "habilidades_total": 16,
     "agentes_total": 18,
     "automacoes_total": 8,
     "mcps_total": 23,
@@ -133,6 +133,19 @@
       "department": "geral",
       "passos": 0,
       "tem_codigo": true
+    },
+    {
+      "id": "fluxograma",
+      "name": "Fluxograma",
+      "type_label": "Habilidade · Geral",
+      "description": "Cria e edita fluxogramas processuais interativos (HTML + Mermaid) para casos do escritorio, com 5 swimlanes horizontais por esfera (administrativo, criminal, cível, tributário, técnico/PRAD). Suporta ...",
+      "tags": [],
+      "status": "active",
+      "icon": "⚙",
+      "path": ".claude/skills/fluxograma/SKILL.md",
+      "department": "tecnico",
+      "passos": 6,
+      "tem_codigo": false
     },
     {
       "id": "google-drive",
@@ -873,26 +886,6 @@
     }
   ],
   "mcps": [
-    {
-      "id": "google-workspace",
-      "name": "Google Workspace",
-      "url": "mcp://google-workspace",
-      "status": "connected",
-      "tools_available": [
-        "create_document",
-        "read_document",
-        "append_text",
-        "replace_text",
-        "search_drive_files",
-        "list_drive_folder_contents",
-        "create_spreadsheet",
-        "read_spreadsheet",
-        "gmail_search",
-        "gmail_send",
-        "gcal_create_event",
-        "tasks_create"
-      ]
-    },
     {
       "id": "todoist",
       "name": "Todoist",
